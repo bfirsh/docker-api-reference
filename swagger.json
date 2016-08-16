@@ -1,12 +1,14 @@
 {
   "swagger": "2.0",
   "info": {
-    "title": "Docker API",
-    "description": "Implements the docker API",
-    "termsOfService": "http://example.com/tos/",
+    "title": "Docker Remote API",
+    "description": "The Docker API is an HTTP REST API served by Docker Engine. It is the API the Docker client uses to communicate with the Engine, so everything the Docker client can do can be done with the API.",
+    "contact": {
+      "name": "Docker",
+      "url": "https://www.docker.com"
+    },
     "version": "v1.22"
   },
-  "host": "localhost",
   "basePath": "/v1.22",
   "schemes": [
     "http",
