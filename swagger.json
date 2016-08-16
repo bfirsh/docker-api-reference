@@ -320,6 +320,215 @@
         }
       }
     },
+    "ContainerCreateConfig": {
+      "type": "object",
+      "properties": {
+        "Hostname": {
+          "type": "string",
+          "description": "The hostname to use for the container, as a valid RFC 1123 hostname"
+        },
+        "Domainname": {
+          "type": "string",
+          "description": "The domain name to use for the container"
+        },
+        "User": {
+          "type": "string",
+          "description": "The user inside the container"
+        },
+        "AttachStdin": {
+          "type": "boolean",
+          "default": false,
+          "description": "Whether to attach to stdin"
+        },
+        "Image": {
+          "type": "string",
+          "description": "The name of the image to use when creating the container"
+        },
+        "Command": {
+          "type": "string",
+          "description": "Command to run as a string or list of strings"
+        },
+        "Ports": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/port"
+          }
+        },
+        "Labels": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "SizeRw": {
+          "type": "integer"
+        },
+        "SizeRootFs": {
+          "type": "integer"
+        },
+        "AttachStdout": {
+          "type": "boolean",
+          "default": true
+        },
+        "AttachStderr": {
+          "type": "boolean",
+          "default": true
+        },
+        "Tty": {
+          "type": "boolean",
+          "default": false
+        },
+        "OpenStdin": {
+          "type": "boolean",
+          "default": false
+        },
+        "StdinOnce": {
+          "type": "boolean",
+          "default": false
+        },
+        "Env": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "Cmd": {
+          "type": ["array", "string"],
+          "items": {
+            "type": "string"
+          }
+        },
+        "Entrypoint": {
+          "type": ["array", "string"],
+          "items": {
+            "type": "string"
+          }
+        },
+        "Mounts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/mount"
+          }
+        },
+        "WorkingDir": {
+          "type": "string"
+        },
+        "NetworkDisabled": {
+          "type": "boolean"
+        },
+        "MacAddress": {
+          "type": "string"
+        },
+        "ExposedPorts": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "enum": [{}],
+            "default": {}
+          }
+        },
+        "HostConfig": {
+          "$ref": "#/definitions/HostConfig"
+        }
+      },
+      "example": {
+           "Hostname": "",
+           "Domainname": "",
+           "User": "",
+           "AttachStdin": false,
+           "AttachStdout": true,
+           "AttachStderr": true,
+           "Tty": false,
+           "OpenStdin": false,
+           "StdinOnce": false,
+           "Env": [
+                   "FOO=bar",
+                   "BAZ=quux"
+           ],
+           "Cmd": [
+                   "date"
+           ],
+           "Entrypoint": "",
+           "Image": "ubuntu",
+           "Labels": {
+                   "com.example.vendor": "Acme",
+                   "com.example.license": "GPL",
+                   "com.example.version": "1.0"
+           },
+           "Volumes": {
+             "/volumes/data": {}
+           },
+           "WorkingDir": "",
+           "NetworkDisabled": false,
+           "MacAddress": "12:34:56:78:9a:bc",
+           "ExposedPorts": {
+                   "22/tcp": {}
+           },
+           "StopSignal": "SIGTERM",
+           "HostConfig": {
+             "Binds": ["/tmp:/tmp"],
+             "Links": ["redis3:redis"],
+             "Memory": 0,
+             "MemorySwap": 0,
+             "MemoryReservation": 0,
+             "KernelMemory": 0,
+             "CpuPercent": 80,
+             "CpuShares": 512,
+             "CpuPeriod": 100000,
+             "CpuQuota": 50000,
+             "CpusetCpus": "0,1",
+             "CpusetMems": "0,1",
+             "MaximumIOps": 0,
+             "MaximumIOBps": 0,
+             "BlkioWeight": 300,
+             "BlkioWeightDevice": [{}],
+             "BlkioDeviceReadBps": [{}],
+             "BlkioDeviceReadIOps": [{}],
+             "BlkioDeviceWriteBps": [{}],
+             "BlkioDeviceWriteIOps": [{}],
+             "MemorySwappiness": 60,
+             "OomKillDisable": false,
+             "OomScoreAdj": 500,
+             "PidMode": "",
+             "PidsLimit": -1,
+             "PortBindings": { "22/tcp": [{ "HostPort": "11022" }] },
+             "PublishAllPorts": false,
+             "Privileged": false,
+             "ReadonlyRootfs": false,
+             "Dns": ["8.8.8.8"],
+             "DnsOptions": [""],
+             "DnsSearch": [""],
+             "VolumesFrom": ["parent", "other:ro"],
+             "CapAdd": ["NET_ADMIN"],
+             "CapDrop": ["MKNOD"],
+             "GroupAdd": ["newgroup"],
+             "RestartPolicy": { "Name": "", "MaximumRetryCount": 0 },
+             "AutoRemove": true,
+             "NetworkMode": "bridge",
+             "Devices": [],
+             "Ulimits": [{}],
+             "LogConfig": { "Type": "json-file", "Config": {} },
+             "SecurityOpt": [],
+             "StorageOpt": {},
+             "CgroupParent": "",
+             "VolumeDriver": "",
+             "ShmSize": 67108864
+          },
+          "NetworkingConfig": {
+              "EndpointsConfig": {
+                  "isolated_nw" : {
+                      "IPAMConfig": {
+                          "IPv4Address":"172.20.30.33",
+                          "IPv6Address":"2001:db8:abcd::3033",
+                          "LinkLocalIPs":["169.254.34.68", "fe80::3468"]
+                      },
+                      "Links":["container_1", "container_2"],
+                      "Aliases":["server_x", "server_y"]
+                  }
+              }
+          }
+      }
+    },
     "ContainerConfig": {
       "type": "object",
       "properties": {
@@ -438,106 +647,6 @@
         },
         "HostConfig": {
           "$ref": "#/definitions/HostConfig"
-        }
-      },
-      "example": {
-        "application/json": {
-           "Hostname": "",
-           "Domainname": "",
-           "User": "",
-           "AttachStdin": false,
-           "AttachStdout": true,
-           "AttachStderr": true,
-           "Tty": false,
-           "OpenStdin": false,
-           "StdinOnce": false,
-           "Env": [
-                   "FOO=bar",
-                   "BAZ=quux"
-           ],
-           "Cmd": [
-                   "date"
-           ],
-           "Entrypoint": "",
-           "Image": "ubuntu",
-           "Labels": {
-                   "com.example.vendor": "Acme",
-                   "com.example.license": "GPL",
-                   "com.example.version": "1.0"
-           },
-           "Volumes": {
-             "/volumes/data": {}
-           },
-           "WorkingDir": "",
-           "NetworkDisabled": false,
-           "MacAddress": "12:34:56:78:9a:bc",
-           "ExposedPorts": {
-                   "22/tcp": {}
-           },
-           "StopSignal": "SIGTERM",
-           "HostConfig": {
-             "Binds": ["/tmp:/tmp"],
-             "Links": ["redis3:redis"],
-             "Memory": 0,
-             "MemorySwap": 0,
-             "MemoryReservation": 0,
-             "KernelMemory": 0,
-             "CpuPercent": 80,
-             "CpuShares": 512,
-             "CpuPeriod": 100000,
-             "CpuQuota": 50000,
-             "CpusetCpus": "0,1",
-             "CpusetMems": "0,1",
-             "MaximumIOps": 0,
-             "MaximumIOBps": 0,
-             "BlkioWeight": 300,
-             "BlkioWeightDevice": [{}],
-             "BlkioDeviceReadBps": [{}],
-             "BlkioDeviceReadIOps": [{}],
-             "BlkioDeviceWriteBps": [{}],
-             "BlkioDeviceWriteIOps": [{}],
-             "MemorySwappiness": 60,
-             "OomKillDisable": false,
-             "OomScoreAdj": 500,
-             "PidMode": "",
-             "PidsLimit": -1,
-             "PortBindings": { "22/tcp": [{ "HostPort": "11022" }] },
-             "PublishAllPorts": false,
-             "Privileged": false,
-             "ReadonlyRootfs": false,
-             "Dns": ["8.8.8.8"],
-             "DnsOptions": [""],
-             "DnsSearch": [""],
-             "ExtraHosts": null,
-             "VolumesFrom": ["parent", "other:ro"],
-             "CapAdd": ["NET_ADMIN"],
-             "CapDrop": ["MKNOD"],
-             "GroupAdd": ["newgroup"],
-             "RestartPolicy": { "Name": "", "MaximumRetryCount": 0 },
-             "AutoRemove": true,
-             "NetworkMode": "bridge",
-             "Devices": [],
-             "Ulimits": [{}],
-             "LogConfig": { "Type": "json-file", "Config": {} },
-             "SecurityOpt": [],
-             "StorageOpt": {},
-             "CgroupParent": "",
-             "VolumeDriver": "",
-             "ShmSize": 67108864
-          },
-          "NetworkingConfig": {
-              "EndpointsConfig": {
-                  "isolated_nw" : {
-                      "IPAMConfig": {
-                          "IPv4Address":"172.20.30.33",
-                          "IPv6Address":"2001:db8:abcd::3033",
-                          "LinkLocalIPs":["169.254.34.68", "fe80::3468"]
-                      },
-                      "Links":["container_1", "container_2"],
-                      "Aliases":["server_x", "server_y"]
-                  }
-              }
-          }
         }
       }
     },
@@ -1505,8 +1614,12 @@
       "properties": {
         "message": {
           "description": "The error message.",
-          "type": "string"
+          "type": "string",
+          "required": true
         }
+      },
+      "example": {
+        "message": "something went wrong"
       }
     },
     "ContainerListSummary": {
@@ -1888,7 +2001,7 @@
         "parameters": [{
           "name": "name",
           "in": "query",
-          "description": "Assign the specified name to the container. Must match /?[a-zA-Z0-9_-]+.",
+          "description": "Assign the specified name to the container. Must match `/?[a-zA-Z0-9_-]+`.",
           "type": "string",
           "pattern": "/?[a-zA-Z0-9_-]+"
         }, {
@@ -1896,7 +2009,7 @@
           "in": "body",
           "description": "Container to create",
           "schema": {
-            "$ref": "#/definitions/ContainerConfig"
+            "$ref": "#/definitions/ContainerCreateConfig"
           },
           "required": true
         }],
@@ -1905,16 +2018,43 @@
             "description": "no error",
             "schema": {
               "$ref": "#/definitions/ContainerCreateResult"
+            },
+            "examples": {
+              "application/json": {
+             "Id":"e90e34656806",
+             "Warnings":[]
+            }
+            }
+          },
+          "400": {
+            "description": "bad parameter",
+            "schema": {
+              "$ref": "#/definitions/Error"
             }
           },
           "404": {
-            "description": "no such container"
+            "description": "no such container",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           },
           "406": {
-            "description": "impossible to attach"
+            "description": "impossible to attach",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "409": {
+            "description": "conflict",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           },
           "500": {
-            "description": "server error"
+            "description": "server error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           }
         },
         "tags": [
@@ -1925,7 +2065,7 @@
     "/containers/{id}/json": {
       "get": {
         "summary": "Inspect a container",
-        "description": "Return low-level information on the container id",
+        "description": "Return low-level information about a container.",
         "operationId": "GetContainerInspect",
         "produces": [
           "application/json"
@@ -1935,22 +2075,207 @@
             "description": "no error",
             "schema": {
               "$ref": "#/definitions/Container"
+            },
+            "examples": {
+              "application/json": {
+    "AppArmorProfile": "",
+    "Args": [
+        "-c",
+        "exit 9"
+    ],
+    "Config": {
+        "AttachStderr": true,
+        "AttachStdin": false,
+        "AttachStdout": true,
+        "Cmd": [
+            "/bin/sh",
+            "-c",
+            "exit 9"
+        ],
+        "Domainname": "",
+        "Entrypoint": null,
+        "Env": [
+            "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+        ],
+        "ExposedPorts": null,
+        "Hostname": "ba033ac44011",
+        "Image": "ubuntu",
+        "Labels": {
+            "com.example.vendor": "Acme",
+            "com.example.license": "GPL",
+            "com.example.version": "1.0"
+        },
+        "MacAddress": "",
+        "NetworkDisabled": false,
+        "OnBuild": null,
+        "OpenStdin": false,
+        "StdinOnce": false,
+        "Tty": false,
+        "User": "",
+        "Volumes": {
+            "/volumes/data": {}
+        },
+        "WorkingDir": "",
+        "StopSignal": "SIGTERM"
+    },
+    "Created": "2015-01-06T15:47:31.485331387Z",
+    "Driver": "devicemapper",
+    "ExecIDs": null,
+    "HostConfig": {
+        "Binds": null,
+        "MaximumIOps": 0,
+        "MaximumIOBps": 0,
+        "BlkioWeight": 0,
+        "BlkioWeightDevice": [{}],
+        "BlkioDeviceReadBps": [{}],
+        "BlkioDeviceWriteBps": [{}],
+        "BlkioDeviceReadIOps": [{}],
+        "BlkioDeviceWriteIOps": [{}],
+        "CapAdd": null,
+        "CapDrop": null,
+        "ContainerIDFile": "",
+        "CpusetCpus": "",
+        "CpusetMems": "",
+        "CpuPercent": 80,
+        "CpuShares": 0,
+        "CpuPeriod": 100000,
+        "Devices": [],
+        "Dns": null,
+        "DnsOptions": null,
+        "DnsSearch": null,
+        "ExtraHosts": null,
+        "IpcMode": "",
+        "Links": null,
+        "LxcConf": [],
+        "Memory": 0,
+        "MemorySwap": 0,
+        "MemoryReservation": 0,
+        "KernelMemory": 0,
+        "OomKillDisable": false,
+        "OomScoreAdj": 500,
+        "NetworkMode": "bridge",
+        "PidMode": "",
+        "PortBindings": {},
+        "Privileged": false,
+        "ReadonlyRootfs": false,
+        "PublishAllPorts": false,
+        "RestartPolicy": {
+            "MaximumRetryCount": 2,
+            "Name": "on-failure"
+        },
+        "LogConfig": {
+            "Config": null,
+            "Type": "json-file"
+        },
+        "SecurityOpt": null,
+        "Sysctls": {
+                "net.ipv4.ip_forward": "1"
+        },
+        "StorageOpt": null,
+        "VolumesFrom": null,
+        "Ulimits": [{}],
+        "VolumeDriver": "",
+        "ShmSize": 67108864
+    },
+    "HostnamePath": "/var/lib/docker/containers/ba033ac4401106a3b513bc9d639eee123ad78ca3616b921167cd74b20e25ed39/hostname",
+    "HostsPath": "/var/lib/docker/containers/ba033ac4401106a3b513bc9d639eee123ad78ca3616b921167cd74b20e25ed39/hosts",
+    "LogPath": "/var/lib/docker/containers/1eb5fabf5a03807136561b3c00adcd2992b535d624d5e18b6cdc6a6844d9767b/1eb5fabf5a03807136561b3c00adcd2992b535d624d5e18b6cdc6a6844d9767b-json.log",
+    "Id": "ba033ac4401106a3b513bc9d639eee123ad78ca3616b921167cd74b20e25ed39",
+    "Image": "04c5d3b7b0656168630d3ba35d8889bd0e9caafcaeb3004d2bfbc47e7c5d35d2",
+    "MountLabel": "",
+    "Name": "/boring_euclid",
+    "NetworkSettings": {
+        "Bridge": "",
+        "SandboxID": "",
+        "HairpinMode": false,
+        "LinkLocalIPv6Address": "",
+        "LinkLocalIPv6PrefixLen": 0,
+        "Ports": null,
+        "SandboxKey": "",
+        "SecondaryIPAddresses": null,
+        "SecondaryIPv6Addresses": null,
+        "EndpointID": "",
+        "Gateway": "",
+        "GlobalIPv6Address": "",
+        "GlobalIPv6PrefixLen": 0,
+        "IPAddress": "",
+        "IPPrefixLen": 0,
+        "IPv6Gateway": "",
+        "MacAddress": "",
+        "Networks": {
+            "bridge": {
+                "NetworkID": "7ea29fc1412292a2d7bba362f9253545fecdfa8ce9a6e37dd10ba8bee7129812",
+                "EndpointID": "7587b82f0dada3656fda26588aee72630c6fab1536d36e394b2bfbcf898c971d",
+                "Gateway": "172.17.0.1",
+                "IPAddress": "172.17.0.2",
+                "IPPrefixLen": 16,
+                "IPv6Gateway": "",
+                "GlobalIPv6Address": "",
+                "GlobalIPv6PrefixLen": 0,
+                "MacAddress": "02:42:ac:12:00:02"
+            }
+        }
+    },
+    "Path": "/bin/sh",
+    "ProcessLabel": "",
+    "ResolvConfPath": "/var/lib/docker/containers/ba033ac4401106a3b513bc9d639eee123ad78ca3616b921167cd74b20e25ed39/resolv.conf",
+    "RestartCount": 1,
+    "State": {
+        "Error": "",
+        "ExitCode": 9,
+        "FinishedAt": "2015-01-06T15:47:32.080254511Z",
+        "OOMKilled": false,
+        "Dead": false,
+        "Paused": false,
+        "Pid": 0,
+        "Restarting": false,
+        "Running": true,
+        "StartedAt": "2015-01-06T15:47:32.072697474Z",
+        "Status": "running"
+    },
+    "Mounts": [
+        {
+            "Name": "fac362...80535",
+            "Source": "/data",
+            "Destination": "/data",
+            "Driver": "local",
+            "Mode": "ro,Z",
+            "RW": false,
+            "Propagation": ""
+        }
+    ]
+}
             }
           },
           "404": {
-            "description": "no such container"
+            "description": "no such container",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           },
           "500": {
-            "description": "server error"
+            "description": "server error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           }
         },
-        "parameters": [{
-          "name": "id",
-          "in": "path",
-          "required": true,
-          "description": "The container id or name",
-          "type": "string"
-        }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The container id or name",
+            "type": "string"
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "type": "boolean",
+            "default": false,
+            "description": "Return the size of container as fields `SizeRw` and `SizeRootFs`"
+          }
+        ],
         "tags": [
           "Container"
         ]
