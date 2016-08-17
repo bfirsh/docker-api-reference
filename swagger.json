@@ -2284,33 +2284,55 @@
     "/containers/{id}/top": {
       "get": {
         "summary": "List processes running inside a container",
-        "description": "List processes running inside the container id",
+        "description": "List processes running inside a container. On Unix systems, this is done by running the `ps` command. This endpoint is not supported on Windows.",
         "operationId": "GetContainerTop",
         "responses": {
           "200": {
             "description": "no error",
             "schema": {
               "$ref": "#/definitions/ContainerTop"
+            },
+            "examples": {
+              "application/json": {
+   "Titles" : [
+     "UID", "PID", "PPID", "C", "STIME", "TTY", "TIME", "CMD"
+   ],
+   "Processes" : [
+     [
+       "root", "13642", "882", "0", "17:03", "pts/0", "00:00:00", "/bin/bash"
+     ],
+     [
+       "root", "13735", "13642", "0", "17:06", "pts/0", "00:00:00", "sleep 10"
+     ]
+   ]
+}
             }
           },
           "404": {
-            "description": "no such container"
+            "description": "no such container",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           },
           "500": {
-            "description": "server error"
+            "description": "server error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           }
         },
         "parameters": [{
           "name": "id",
           "in": "path",
           "required": true,
-          "description": "The container id or name",
+          "description": "The ID or name of the container",
           "type": "string"
         }, {
           "name": "ps_args",
           "in": "query",
-          "description": "ps arguments to use (e.g., aux)",
-          "type": "string"
+          "description": "The arguments to pass to `ps`. For example, `aux`",
+          "type": "string",
+          "default": "-ef"
         }],
         "tags": [
           "Container"
@@ -2320,69 +2342,77 @@
     "/containers/{id}/logs": {
       "get": {
         "summary": "Get container logs",
-        "description": "Get stdout and stderr logs from the container id. Note: This endpoint works only for containers with json-file logging driver.",
+        "description": "Get stdout and stderr logs from a container.\n\nNote: This endpoint works only for containers with the `json-file` or `journald` logging driver.",
         "operationId": "GetContainerLogs",
         "responses": {
           "101": {
-            "description": "no error, hints proxy about hijacking",
+            "description": "Logs returned as a stream. Hints proxies that the connection is being hijacked.",
             "schema": {
-              "type": "string"
+              "type": "string",
+              "format": "binary"
             }
           },
           "200": {
-            "description": "no error, no upgrade header found",
+            "description": "Logs returned as a string in response body.",
             "schema": {
               "type": "string"
             }
           },
           "404": {
-            "description": "no such container"
+            "description": "no such container",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           },
           "500": {
-            "description": "server error"
+            "description": "server error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           }
         },
         "parameters": [{
           "name": "id",
           "in": "path",
           "required": true,
-          "description": "The container id or name",
+          "description": "The ID or name of the container",
           "type": "string"
         }, {
           "name": "follow",
           "in": "query",
-          "description": "1/True/true or 0/False/false, return stream. Default false.",
+          "description": "Return the logs as a stream. This will return a `101` HTTP response with a `Connection: upgrade` header, then hijack the HTTP connection to send raw output.",
           "type": "boolean",
           "default": false
         }, {
           "name": "stdout",
           "in": "query",
-          "description": "1/True/true or 0/False/false, show stdout log. Default false.",
+          "description": "Return logs from stdout",
           "type": "boolean",
           "default": false
         }, {
           "name": "stderr",
           "in": "query",
-          "description": "1/True/true or 0/False/false, show stderr log. Default false.",
+          "description": "Return logs from stderr",
           "type": "boolean",
           "default": false
         }, {
           "name": "since",
           "in": "query",
-          "description": "UNIX timestamp (integer) to filter logs. Specifying a timestamp will only output log-entries since that timestamp. Default: 0 (unfiltered)",
+          "description": "Only return logs since this time, as a UNIX timestamp",
           "type": "integer",
           "default": 0
         }, {
           "name": "timestamps",
           "in": "query",
-          "description": "1/True/true or 0/False/false, print timestamps for every log line. ",
+          "description": "Add timestamps to every log line",
           "type": "boolean",
           "default": false
         }, {
           "name": "tail",
           "in": "query",
-          "description": "Output specified number of lines at the end of logs: all or <number>. Default all.",
-          "type": "string"
+          "description": "Only return this number of log lines from the end of the logs. Specify as an integer or `all` to output all log lines.",
+          "type": "string",
+          "default": "all"
         }],
         "tags": [
           "Container"
@@ -2391,8 +2421,8 @@
     },
     "/containers/{id}/changes": {
       "get": {
-        "summary": "Inspect changes on a container’s filesystem",
-        "description": "Inspect changes on a container’s filesystem",
+        "summary": "Get changes on a container’s filesystem",
+        "description": "Returns which files in a container's filesystem have been added, deleted, or modified. The `Kind` of modification can be one of:\n - `0`: Modified\n - `1`: Added\n - `2`: Deleted",
         "operationId": "GetContainerChanges",
         "produces": [
           "application/json"
@@ -2405,20 +2435,42 @@
               "items": {
                 "$ref": "#/definitions/ContainerChange"
               }
+            },
+            "examples": {
+              "application/json": [
+     {
+             "Path": "/dev",
+             "Kind": 0
+     },
+     {
+             "Path": "/dev/kmsg",
+             "Kind": 1
+     },
+     {
+             "Path": "/test",
+             "Kind": 1
+     }
+]
             }
           },
           "404": {
-            "description": "no such container"
+            "description": "no such container",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           },
           "500": {
-            "description": "server error"
+            "description": "server error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           }
         },
         "parameters": [{
           "name": "id",
           "in": "path",
           "required": true,
-          "description": "The container id or name",
+          "description": "The ID or name of the container",
           "type": "string"
         }],
         "tags": [
@@ -2429,30 +2481,33 @@
     "/containers/{id}/export": {
       "get": {
         "summary": "Export a container",
-        "description": "Export the contents of container id",
+        "description": "Export the contents of a container as a tarball.",
         "operationId": "GetContainerExport",
         "produces": [
           "application/octet-stream"
         ],
         "responses": {
           "200": {
-            "description": "no error",
-            "schema": {
-              "type": "string"
-            }
+            "description": "no error"
           },
           "404": {
-            "description": "no such container"
+            "description": "no such container",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           },
           "500": {
-            "description": "server error"
+            "description": "server error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           }
         },
         "parameters": [{
           "name": "id",
           "in": "path",
           "required": true,
-          "description": "The container id or name",
+          "description": "The ID or name of the container",
           "type": "string"
         }],
         "tags": [
@@ -2463,7 +2518,7 @@
     "/containers/{id}/stats": {
       "get": {
         "summary": "Get container stats based on resource usage",
-        "description": "This endpoint returns a live stream of a container’s resource usage statistics.",
+        "description": "This endpoint returns a live stream of a container’s resource usage statistics.\n\nThe `precpu_stats` is the CPU statistic of last read, which is used for calculating the CPU usage percentage. It is not the same as the `cpu_stats` field.",
         "operationId": "GetContainerStats",
         "produces": [
           "application/json"
@@ -2473,13 +2528,117 @@
             "description": "no error",
             "schema": {
               "type": "object"
+            },
+            "examples": {
+              "application/json":   {
+     "read" : "2015-01-08T22:57:31.547920715Z",
+     "pids_stats": {
+        "current": 3
+     },
+     "networks": {
+             "eth0": {
+                 "rx_bytes": 5338,
+                 "rx_dropped": 0,
+                 "rx_errors": 0,
+                 "rx_packets": 36,
+                 "tx_bytes": 648,
+                 "tx_dropped": 0,
+                 "tx_errors": 0,
+                 "tx_packets": 8
+             },
+             "eth5": {
+                 "rx_bytes": 4641,
+                 "rx_dropped": 0,
+                 "rx_errors": 0,
+                 "rx_packets": 26,
+                 "tx_bytes": 690,
+                 "tx_dropped": 0,
+                 "tx_errors": 0,
+                 "tx_packets": 9
+             }
+     },
+     "memory_stats" : {
+        "stats" : {
+           "total_pgmajfault" : 0,
+           "cache" : 0,
+           "mapped_file" : 0,
+           "total_inactive_file" : 0,
+           "pgpgout" : 414,
+           "rss" : 6537216,
+           "total_mapped_file" : 0,
+           "writeback" : 0,
+           "unevictable" : 0,
+           "pgpgin" : 477,
+           "total_unevictable" : 0,
+           "pgmajfault" : 0,
+           "total_rss" : 6537216,
+           "total_rss_huge" : 6291456,
+           "total_writeback" : 0,
+           "total_inactive_anon" : 0,
+           "rss_huge" : 6291456,
+           "hierarchical_memory_limit" : 67108864,
+           "total_pgfault" : 964,
+           "total_active_file" : 0,
+           "active_anon" : 6537216,
+           "total_active_anon" : 6537216,
+           "total_pgpgout" : 414,
+           "total_cache" : 0,
+           "inactive_anon" : 0,
+           "active_file" : 0,
+           "pgfault" : 964,
+           "inactive_file" : 0,
+           "total_pgpgin" : 477
+        },
+        "max_usage" : 6651904,
+        "usage" : 6537216,
+        "failcnt" : 0,
+        "limit" : 67108864
+     },
+     "blkio_stats" : {},
+     "cpu_stats" : {
+        "cpu_usage" : {
+           "percpu_usage" : [
+              8646879,
+              24472255,
+              36438778,
+              30657443
+           ],
+           "usage_in_usermode" : 50000000,
+           "total_usage" : 100215355,
+           "usage_in_kernelmode" : 30000000
+        },
+        "system_cpu_usage" : 739306590000000,
+        "throttling_data" : {"periods":0,"throttled_periods":0,"throttled_time":0}
+     },
+     "precpu_stats" : {
+        "cpu_usage" : {
+           "percpu_usage" : [
+              8646879,
+              24350896,
+              36438778,
+              30657443
+           ],
+           "usage_in_usermode" : 50000000,
+           "total_usage" : 100093996,
+           "usage_in_kernelmode" : 30000000
+        },
+        "system_cpu_usage" : 9492140000000,
+        "throttling_data" : {"periods":0,"throttled_periods":0,"throttled_time":0}
+     }
+  }
             }
           },
           "404": {
-            "description": "no such container"
+            "description": "no such container",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           },
           "500": {
-            "description": "server error"
+            "description": "server error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           }
         },
         "parameters": [{
@@ -2491,7 +2650,7 @@
         }, {
           "name": "stream",
           "in": "query",
-          "description": "Stream stats",
+          "description": "Stream the output. If false, the stats will be output once and then it will disconnect.",
           "type": "boolean",
           "default": true
         }],
@@ -2503,7 +2662,7 @@
     "/containers/{id}/resize": {
       "post": {
         "summary": "Resize a container TTY",
-        "description": "Resize the TTY for container with id. The unit is number of characters. You must restart the container for the resize to take effect.",
+        "description": "Resize the TTY for a container. You must restart the container for the resize to take effect.",
         "operationId": "PostContainerResize",
         "consumes": [
           "application/octet-stream"
@@ -2516,27 +2675,33 @@
             "description": "no error"
           },
           "404": {
-            "description": "no such container"
+            "description": "no such container",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           },
           "500": {
-            "description": "cannot resize container"
+            "description": "cannot resize container",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           }
         },
         "parameters": [{
           "name": "id",
           "in": "path",
           "required": true,
-          "description": "The container id or name",
+          "description": "The ID or name of the container",
           "type": "string"
         }, {
           "name": "h",
           "in": "query",
-          "description": "Height of the tty session",
+          "description": "Height of the tty session in characters",
           "type": "integer"
         }, {
           "name": "w",
           "in": "query",
-          "description": "Width of the tty session",
+          "description": "Width of the tty session in characters",
           "type": "integer"
         }],
         "tags": [
@@ -2549,21 +2714,27 @@
         "summary": "Start a container",
         "description": "Start the container id",
         "operationId": "PostContainerStart",
-        "consumes": [
-          "application/octet-stream"
-        ],
         "responses": {
           "204": {
             "description": "no error"
           },
           "304": {
-            "description": "container already started"
+            "description": "container already started",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           },
           "404": {
-            "description": "no such container"
+            "description": "no such container",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           },
           "500": {
-            "description": "server error"
+            "description": "server error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           }
         },
         "parameters": [{
@@ -2575,7 +2746,7 @@
         }, {
           "name": "detachKeys",
           "in": "query",
-          "description": "Override the key sequence for detaching a container. Format is a single character [a-Z] or ctrl-<value> where <value> is one of: a-z, @, ^, [, , or _.",
+          "description": "Override the key sequence for detaching a container. Format is a single character `[a-Z]` or `ctrl-<value>` where `<value>` is one of: `a-z`, `@`, `^`, `[`, `,` or `_`.",
           "type": "string"
         }],
         "tags": [
@@ -2586,35 +2757,41 @@
     "/containers/{id}/stop": {
       "post": {
         "summary": "Stop a container",
-        "description": "Stop the container id",
+        "description": "Stop a container.",
         "operationId": "PostContainerStop",
-        "consumes": [
-          "application/octet-stream"
-        ],
         "responses": {
           "204": {
             "description": "no error"
           },
           "304": {
-            "description": "container already stopped"
+            "description": "container already stopped",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           },
           "404": {
-            "description": "no such container"
+            "description": "no such container",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           },
           "500": {
-            "description": "server error"
+            "description": "server error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           }
         },
         "parameters": [{
           "name": "id",
           "in": "path",
           "required": true,
-          "description": "The container id or name",
+          "description": "The ID or name of the container",
           "type": "string"
         }, {
           "name": "t",
           "in": "query",
-          "description": "number of seconds to wait before killing the container",
+          "description": "The number of seconds to wait before killing the container",
           "type": "integer"
         }],
         "tags": [
@@ -2635,10 +2812,16 @@
             "description": "no error"
           },
           "404": {
-            "description": "no such container"
+            "description": "no such container",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           },
           "500": {
-            "description": "server error"
+            "description": "server error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           }
         },
         "parameters": [{
@@ -2671,10 +2854,16 @@
             "description": "no error"
           },
           "404": {
-            "description": "no such container"
+            "description": "no such container",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           },
           "500": {
-            "description": "server error"
+            "description": "server error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           }
         },
         "parameters": [{
@@ -2710,10 +2899,16 @@
             "description": "no error"
           },
           "404": {
-            "description": "no such container"
+            "description": "no such container",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           },
           "500": {
-            "description": "server error"
+            "description": "server error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           }
         },
         "parameters": [{
@@ -2748,13 +2943,22 @@
             "description": "no error"
           },
           "404": {
-            "description": "no such container"
+            "description": "no such container",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           },
           "409": {
-            "description": "conflict, name already assigned"
+            "description": "conflict, name already assigned",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           },
           "500": {
-            "description": "server error"
+            "description": "server error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           }
         },
         "parameters": [{
@@ -2788,10 +2992,16 @@
             "description": "no error"
           },
           "404": {
-            "description": "no such container"
+            "description": "no such container",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           },
           "500": {
-            "description": "server error"
+            "description": "server error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           }
         },
         "parameters": [{
@@ -2819,10 +3029,16 @@
             "description": "no error"
           },
           "404": {
-            "description": "no such container"
+            "description": "no such container",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           },
           "500": {
-            "description": "server error"
+            "description": "server error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           }
         },
         "parameters": [{
@@ -2857,13 +3073,22 @@
             "description": "no error, no upgrade header found"
           },
           "400": {
-            "description": "bad parameter"
+            "description": "bad parameter",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           },
           "404": {
-            "description": "no such container"
+            "description": "no such container",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           },
           "500": {
-            "description": "server error"
+            "description": "server error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           }
         },
         "parameters": [{
@@ -2926,13 +3151,22 @@
             "description": "no error, no upgrade header found"
           },
           "400": {
-            "description": "bad parameter"
+            "description": "bad parameter",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           },
           "404": {
-            "description": "no such container"
+            "description": "no such container",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           },
           "500": {
-            "description": "server error"
+            "description": "server error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           }
         },
         "parameters": [{
@@ -2994,10 +3228,16 @@
             }
           },
           "404": {
-            "description": "no such container"
+            "description": "no such container",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           },
           "500": {
-            "description": "server error"
+            "description": "server error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           }
         },
         "parameters": [{
@@ -3022,13 +3262,22 @@
             "description": "no error"
           },
           "400": {
-            "description": "bad parameter"
+            "description": "bad parameter",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           },
           "404": {
-            "description": "no such container"
+            "description": "no such container",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           },
           "500": {
-            "description": "server error"
+            "description": "server error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           }
         },
         "parameters": [{
@@ -3065,13 +3314,22 @@
             "description": "no error"
           },
           "400": {
-            "description": "client error, bad parameter, details in JSON response body, one of: must specify path parameter (path cannot be empty) not a directory (path was asserted to be a directory but exists as a file)"
+            "description": "client error, bad parameter, details in JSON response body, one of: must specify path parameter (path cannot be empty) not a directory (path was asserted to be a directory but exists as a file)",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           },
           "404": {
-            "description": "client error, resource not found, one of: 1) no such container (container id does not exist) 2) no such file or directory (path resource does not exist)"
+            "description": "client error, resource not found, one of: 1) no such container (container id does not exist) 2) no such file or directory (path resource does not exist)",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           },
           "500": {
-            "description": "server error"
+            "description": "server error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           }
         },
         "parameters": [{
@@ -3103,13 +3361,22 @@
             "description": "no error"
           },
           "400": {
-            "description": "client error, bad parameter, details in JSON response body, one of: must specify path parameter (path cannot be empty) not a directory (path was asserted to be a directory but exists as a file)"
+            "description": "client error, bad parameter, details in JSON response body, one of: must specify path parameter (path cannot be empty) not a directory (path was asserted to be a directory but exists as a file)",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           },
          "404": {
-            "description": "client error, resource not found, one of: 1) no such container (container id does not exist) 2) no such file or directory (path resource does not exist)"
+            "description": "client error, resource not found, one of: 1) no such container (container id does not exist) 2) no such file or directory (path resource does not exist)",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           },
           "500": {
-            "description": "server error"
+            "description": "server error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           }
         },
         "parameters": [{
@@ -3142,16 +3409,28 @@
             "description": "The content was extracted successfully"
           },
           "400": {
-            "description": "Bad parameter"
+            "description": "Bad parameter",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           },
           "403": {
-            "description": "Permission denied, the volume or container rootfs is marked as read-only."
+            "description": "Permission denied, the volume or container rootfs is marked as read-only.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           },
           "404": {
-            "description": "No such container or path does not exist inside the container"
+            "description": "No such container or path does not exist inside the container",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           },
           "500": {
-            "description": "Server error"
+            "description": "Server error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           }
         },
         "parameters": [{
@@ -3204,7 +3483,10 @@
             }
           },
           "500": {
-            "description": "server error"
+            "description": "server error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           }
         },
         "parameters": [{
@@ -3349,7 +3631,10 @@
             "description": "no error"
           },
           "500": {
-            "description": "server error"
+            "description": "server error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           }
         },
         "tags": [
@@ -3374,7 +3659,10 @@
             "description": "no error"
           },
           "500": {
-            "description": "server error"
+            "description": "server error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           }
         },
         "parameters": [{
@@ -3432,10 +3720,16 @@
             }
           },
           "404": {
-            "description": "No such image"
+            "description": "No such image",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           },
           "500": {
-            "description": "Server error"
+            "description": "Server error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           }
         },
         "parameters": [{
@@ -3469,10 +3763,16 @@
             }
           },
           "404": {
-            "description": "No such image"
+            "description": "No such image",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           },
           "500": {
-            "description": "Server error"
+            "description": "Server error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           }
         },
         "parameters": [{
@@ -3500,10 +3800,16 @@
             "description": "No error"
           },
           "404": {
-            "description": "No such image"
+            "description": "No such image",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           },
           "500": {
-            "description": "Server error"
+            "description": "Server error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           }
         },
         "parameters": [{
@@ -3545,16 +3851,28 @@
             "description": "No error"
           },
           "400": {
-            "description": "Bad parameter"
+            "description": "Bad parameter",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           },
           "404": {
-            "description": "No such image"
+            "description": "No such image",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           },
           "409": {
-            "description": "Conflict"
+            "description": "Conflict",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           },
           "500": {
-            "description": "Server error"
+            "description": "Server error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           }
         },
         "parameters": [{
@@ -3598,13 +3916,22 @@
             "description": "No error"
           },
           "404": {
-            "description": "No such image"
+            "description": "No such image",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           },
           "409": {
-            "description": "Conflict"
+            "description": "Conflict",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           },
           "500": {
-            "description": "Server error"
+            "description": "Server error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           }
         },
         "parameters": [{
@@ -3650,7 +3977,10 @@
             }
           },
           "500": {
-            "description": "Server error"
+            "description": "Server error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           }
         },
         "parameters": [{
@@ -3684,7 +4014,10 @@
             "description": "No error"
           },
           "500": {
-            "description": "Server error"
+            "description": "Server error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           }
         },
         "parameters": [{
@@ -3716,7 +4049,10 @@
             }
           },
           "500": {
-            "description": "Server error"
+            "description": "Server error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           }
         },
         "tags": [
@@ -3740,7 +4076,10 @@
             }
           },
           "500": {
-            "description": "server error"
+            "description": "server error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           }
         },
         "tags": [
@@ -3764,7 +4103,10 @@
             }
           },
           "500": {
-            "description": "server error"
+            "description": "server error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           }
         },
         "tags": [
@@ -3792,10 +4134,16 @@
             }
           },
           "404": {
-            "description": "no such container"
+            "description": "no such container",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           },
           "500": {
-            "description": "server error"
+            "description": "server error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           }
         },
         "parameters": [{
@@ -3859,7 +4207,10 @@
             "description": "no error"
           },
           "500": {
-            "description": "server error"
+            "description": "server error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           }
         },
         "parameters": [{
@@ -3899,7 +4250,10 @@
             }
           },
           "500": {
-            "description": "server error"
+            "description": "server error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           }
         },
         "parameters": [{
@@ -3930,7 +4284,10 @@
             }
           },
           "500": {
-            "description": "server error"
+            "description": "server error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           }
         },
         "parameters": [{
@@ -3964,7 +4321,10 @@
             "description": "no error"
           },
           "500": {
-            "description": "server error"
+            "description": "server error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           }
         },
         "parameters": [{
@@ -4000,13 +4360,22 @@
             }
           },
           "404": {
-            "description": "no such container"
+            "description": "no such container",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           },
           "409": {
-            "description": "container is paused"
+            "description": "container is paused",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           },
           "500": {
-            "description": "Server error"
+            "description": "Server error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           }
         },
         "parameters": [{
@@ -4053,10 +4422,16 @@
             "description": "No error"
           },
           "404": {
-            "description": "No such exec instance"
+            "description": "No such exec instance",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           },
           "409": {
-            "description": "Container is stopped or paused"
+            "description": "Container is stopped or paused",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           }
         },
         "parameters": [{
@@ -4095,7 +4470,10 @@
             "description": "No error"
           },
           "404": {
-            "description": "No such exec instance"
+            "description": "No such exec instance",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           }
        },
         "parameters": [{
@@ -4136,10 +4514,16 @@
             }
           },
           "404": {
-            "description": "No such exec instance"
+            "description": "No such exec instance",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           },
           "500": {
-            "description": "Server error"
+            "description": "Server error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           }
         },
         "parameters": [{
@@ -4170,7 +4554,10 @@
             }
           },
           "500": {
-            "description": "Server error"
+            "description": "Server error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           }
         },
         "parameters": [{
@@ -4204,7 +4591,10 @@
             }
           },
           "500": {
-            "description": "Server error"
+            "description": "Server error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           }
         },
         "parameters": [{
@@ -4237,10 +4627,16 @@
             }
           },
           "404": {
-            "description": "No such volume"
+            "description": "No such volume",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           },
           "500": {
-            "description": "Server error"
+            "description": "Server error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           }
         },
         "parameters": [{
@@ -4263,13 +4659,22 @@
             "description": "No error"
           },
           "404": {
-            "description": "No such volume or volume driver"
+            "description": "No such volume or volume driver",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           },
           "409": {
-            "description": "Volume is in use and cannot be removed"
+            "description": "Volume is in use and cannot be removed",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           },
           "500": {
-            "description": "Server error"
+            "description": "Server error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           }
         },
         "parameters": [{
@@ -4300,7 +4705,10 @@
             }
           },
           "500": {
-            "description": "Server error"
+            "description": "Server error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           }
         },
         "parameters": [{
@@ -4330,7 +4738,10 @@
             }
           },
           "404": {
-            "description": "Network not found"
+            "description": "Network not found",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           }
         },
         "parameters": [{
@@ -4353,10 +4764,16 @@
             "description": "No error"
           },
           "404": {
-            "description": "no such network"
+            "description": "no such network",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           },
           "500": {
-            "description": "Server error"
+            "description": "Server error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           }
         },
         "parameters": [{
@@ -4391,10 +4808,16 @@
             }
           },
           "404": {
-            "description": "plugin not found"
+            "description": "plugin not found",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           },
           "500": {
-            "description": "Server error"
+            "description": "Server error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           }
         },
         "parameters": [{
@@ -4425,10 +4848,16 @@
             "description": "No error"
           },
           "404": {
-            "description": "Network or container not found"
+            "description": "Network or container not found",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           },
           "500": {
-            "description": "Server error"
+            "description": "Server error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           }
         },
         "parameters": [{
@@ -4465,10 +4894,16 @@
             "description": "No error"
           },
           "404": {
-            "description": "Network or container not found"
+            "description": "Network or container not found",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           },
           "500": {
-            "description": "Server error"
+            "description": "Server error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           }
         },
         "parameters": [{
