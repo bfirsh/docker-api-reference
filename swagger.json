@@ -432,101 +432,111 @@
         }
       },
       "example": {
-           "Hostname": "",
-           "Domainname": "",
-           "User": "",
-           "AttachStdin": false,
-           "AttachStdout": true,
-           "AttachStderr": true,
-           "Tty": false,
-           "OpenStdin": false,
-           "StdinOnce": false,
-           "Env": [
-                   "FOO=bar",
-                   "BAZ=quux"
-           ],
-           "Cmd": [
-                   "date"
-           ],
-           "Entrypoint": "",
-           "Image": "ubuntu",
-           "Labels": {
-                   "com.example.vendor": "Acme",
-                   "com.example.license": "GPL",
-                   "com.example.version": "1.0"
-           },
-           "Volumes": {
-             "/volumes/data": {}
-           },
-           "WorkingDir": "",
-           "NetworkDisabled": false,
-           "MacAddress": "12:34:56:78:9a:bc",
-           "ExposedPorts": {
-                   "22/tcp": {}
-           },
-           "StopSignal": "SIGTERM",
-           "HostConfig": {
-             "Binds": ["/tmp:/tmp"],
-             "Links": ["redis3:redis"],
-             "Memory": 0,
-             "MemorySwap": 0,
-             "MemoryReservation": 0,
-             "KernelMemory": 0,
-             "CpuPercent": 80,
-             "CpuShares": 512,
-             "CpuPeriod": 100000,
-             "CpuQuota": 50000,
-             "CpusetCpus": "0,1",
-             "CpusetMems": "0,1",
-             "MaximumIOps": 0,
-             "MaximumIOBps": 0,
-             "BlkioWeight": 300,
-             "BlkioWeightDevice": [{}],
-             "BlkioDeviceReadBps": [{}],
-             "BlkioDeviceReadIOps": [{}],
-             "BlkioDeviceWriteBps": [{}],
-             "BlkioDeviceWriteIOps": [{}],
-             "MemorySwappiness": 60,
-             "OomKillDisable": false,
-             "OomScoreAdj": 500,
-             "PidMode": "",
-             "PidsLimit": -1,
-             "PortBindings": { "22/tcp": [{ "HostPort": "11022" }] },
-             "PublishAllPorts": false,
-             "Privileged": false,
-             "ReadonlyRootfs": false,
-             "Dns": ["8.8.8.8"],
-             "DnsOptions": [""],
-             "DnsSearch": [""],
-             "VolumesFrom": ["parent", "other:ro"],
-             "CapAdd": ["NET_ADMIN"],
-             "CapDrop": ["MKNOD"],
-             "GroupAdd": ["newgroup"],
-             "RestartPolicy": { "Name": "", "MaximumRetryCount": 0 },
-             "AutoRemove": true,
-             "NetworkMode": "bridge",
-             "Devices": [],
-             "Ulimits": [{}],
-             "LogConfig": { "Type": "json-file", "Config": {} },
-             "SecurityOpt": [],
-             "StorageOpt": {},
-             "CgroupParent": "",
-             "VolumeDriver": "",
-             "ShmSize": 67108864
+        "Hostname": "",
+        "Domainname": "",
+        "User": "",
+        "AttachStdin": false,
+        "AttachStdout": true,
+        "AttachStderr": true,
+        "Tty": false,
+        "OpenStdin": false,
+        "StdinOnce": false,
+        "Env": [
+          "FOO=bar",
+          "BAZ=quux"
+        ],
+        "Cmd": [
+          "date"
+        ],
+        "Entrypoint": "",
+        "Image": "ubuntu",
+        "Labels": {
+          "com.example.vendor": "Acme",
+          "com.example.license": "GPL",
+          "com.example.version": "1.0"
+        },
+        "Volumes": {
+          "/volumes/data": {}
+        },
+        "WorkingDir": "",
+        "NetworkDisabled": false,
+        "MacAddress": "12:34:56:78:9a:bc",
+        "ExposedPorts": {
+          "22/tcp": {}
+        },
+        "StopSignal": "SIGTERM",
+        "HostConfig": {
+          "Binds": ["/tmp:/tmp"],
+          "Links": ["redis3:redis"],
+          "Memory": 0,
+          "MemorySwap": 0,
+          "MemoryReservation": 0,
+          "KernelMemory": 0,
+          "CpuPercent": 80,
+          "CpuShares": 512,
+          "CpuPeriod": 100000,
+          "CpuQuota": 50000,
+          "CpusetCpus": "0,1",
+          "CpusetMems": "0,1",
+          "MaximumIOps": 0,
+          "MaximumIOBps": 0,
+          "BlkioWeight": 300,
+          "BlkioWeightDevice": [{}],
+          "BlkioDeviceReadBps": [{}],
+          "BlkioDeviceReadIOps": [{}],
+          "BlkioDeviceWriteBps": [{}],
+          "BlkioDeviceWriteIOps": [{}],
+          "MemorySwappiness": 60,
+          "OomKillDisable": false,
+          "OomScoreAdj": 500,
+          "PidMode": "",
+          "PidsLimit": -1,
+          "PortBindings": {
+            "22/tcp": [{
+              "HostPort": "11022"
+            }]
           },
-          "NetworkingConfig": {
-              "EndpointsConfig": {
-                  "isolated_nw" : {
-                      "IPAMConfig": {
-                          "IPv4Address":"172.20.30.33",
-                          "IPv6Address":"2001:db8:abcd::3033",
-                          "LinkLocalIPs":["169.254.34.68", "fe80::3468"]
-                      },
-                      "Links":["container_1", "container_2"],
-                      "Aliases":["server_x", "server_y"]
-                  }
-              }
+          "PublishAllPorts": false,
+          "Privileged": false,
+          "ReadonlyRootfs": false,
+          "Dns": ["8.8.8.8"],
+          "DnsOptions": [""],
+          "DnsSearch": [""],
+          "VolumesFrom": ["parent", "other:ro"],
+          "CapAdd": ["NET_ADMIN"],
+          "CapDrop": ["MKNOD"],
+          "GroupAdd": ["newgroup"],
+          "RestartPolicy": {
+            "Name": "",
+            "MaximumRetryCount": 0
+          },
+          "AutoRemove": true,
+          "NetworkMode": "bridge",
+          "Devices": [],
+          "Ulimits": [{}],
+          "LogConfig": {
+            "Type": "json-file",
+            "Config": {}
+          },
+          "SecurityOpt": [],
+          "StorageOpt": {},
+          "CgroupParent": "",
+          "VolumeDriver": "",
+          "ShmSize": 67108864
+        },
+        "NetworkingConfig": {
+          "EndpointsConfig": {
+            "isolated_nw": {
+              "IPAMConfig": {
+                "IPv4Address": "172.20.30.33",
+                "IPv6Address": "2001:db8:abcd::3033",
+                "LinkLocalIPs": ["169.254.34.68", "fe80::3468"]
+              },
+              "Links": ["container_1", "container_2"],
+              "Aliases": ["server_x", "server_y"]
+            }
           }
+        }
       }
     },
     "ContainerConfig": {
@@ -855,7 +865,7 @@
           "enum": [0, 1, 2]
         }
       }
-     },
+    },
     "ContainerWait": {
       "type": "object",
       "properties": {
@@ -1807,166 +1817,165 @@
                 "$ref": "#/definitions/ContainerListSummary"
               }
             },
-            "examples": {"application/json": [
-         {
-                 "Id": "8dfafdbc3a40",
-                 "Names":["/boring_feynman"],
-                 "Image": "ubuntu:latest",
-                 "ImageID": "d74508fb6632491cea586a1fd7d748dfc5274cd6fdfedee309ecdcbc2bf5cb82",
-                 "Command": "echo 1",
-                 "Created": 1367854155,
-                 "State": "Exited",
-                 "Status": "Exit 0",
-                 "Ports": [{"PrivatePort": 2222, "PublicPort": 3333, "Type": "tcp"}],
-                 "Labels": {
-                         "com.example.vendor": "Acme",
-                         "com.example.license": "GPL",
-                         "com.example.version": "1.0"
-                 },
-                 "SizeRw": 12288,
-                 "SizeRootFs": 0,
-                 "HostConfig": {
-                         "NetworkMode": "default"
-                 },
-                 "NetworkSettings": {
-                         "Networks": {
-                                 "bridge": {
-                                          "IPAMConfig": null,
-                                          "Links": null,
-                                          "Aliases": null,
-                                          "NetworkID": "7ea29fc1412292a2d7bba362f9253545fecdfa8ce9a6e37dd10ba8bee7129812",
-                                          "EndpointID": "2cdc4edb1ded3631c81f57966563e5c8525b81121bb3706a9a9a3ae102711f3f",
-                                          "Gateway": "172.17.0.1",
-                                          "IPAddress": "172.17.0.2",
-                                          "IPPrefixLen": 16,
-                                          "IPv6Gateway": "",
-                                          "GlobalIPv6Address": "",
-                                          "GlobalIPv6PrefixLen": 0,
-                                          "MacAddress": "02:42:ac:11:00:02"
-                                  }
-                         }
-                 },
-                 "Mounts": [
-                         {
-                                  "Name": "fac362...80535",
-                                  "Source": "/data",
-                                  "Destination": "/data",
-                                  "Driver": "local",
-                                  "Mode": "ro,Z",
-                                  "RW": false,
-                                  "Propagation": ""
-                         }
-                 ]
-         },
-         {
-                 "Id": "9cd87474be90",
-                 "Names":["/coolName"],
-                 "Image": "ubuntu:latest",
-                 "ImageID": "d74508fb6632491cea586a1fd7d748dfc5274cd6fdfedee309ecdcbc2bf5cb82",
-                 "Command": "echo 222222",
-                 "Created": 1367854155,
-                 "State": "Exited",
-                 "Status": "Exit 0",
-                 "Ports": [],
-                 "Labels": {},
-                 "SizeRw": 12288,
-                 "SizeRootFs": 0,
-                 "HostConfig": {
-                         "NetworkMode": "default"
-                 },
-                 "NetworkSettings": {
-                         "Networks": {
-                                 "bridge": {
-                                          "IPAMConfig": null,
-                                          "Links": null,
-                                          "Aliases": null,
-                                          "NetworkID": "7ea29fc1412292a2d7bba362f9253545fecdfa8ce9a6e37dd10ba8bee7129812",
-                                          "EndpointID": "88eaed7b37b38c2a3f0c4bc796494fdf51b270c2d22656412a2ca5d559a64d7a",
-                                          "Gateway": "172.17.0.1",
-                                          "IPAddress": "172.17.0.8",
-                                          "IPPrefixLen": 16,
-                                          "IPv6Gateway": "",
-                                          "GlobalIPv6Address": "",
-                                          "GlobalIPv6PrefixLen": 0,
-                                          "MacAddress": "02:42:ac:11:00:08"
-                                  }
-                         }
-                 },
-                 "Mounts": []
-         },
-         {
-                 "Id": "3176a2479c92",
-                 "Names":["/sleepy_dog"],
-                 "Image": "ubuntu:latest",
-                 "ImageID": "d74508fb6632491cea586a1fd7d748dfc5274cd6fdfedee309ecdcbc2bf5cb82",
-                 "Command": "echo 3333333333333333",
-                 "Created": 1367854154,
-                 "State": "Exited",
-                 "Status": "Exit 0",
-                 "Ports":[],
-                 "Labels": {},
-                 "SizeRw":12288,
-                 "SizeRootFs":0,
-                 "HostConfig": {
-                         "NetworkMode": "default"
-                 },
-                 "NetworkSettings": {
-                         "Networks": {
-                                 "bridge": {
-                                          "IPAMConfig": null,
-                                          "Links": null,
-                                          "Aliases": null,
-                                          "NetworkID": "7ea29fc1412292a2d7bba362f9253545fecdfa8ce9a6e37dd10ba8bee7129812",
-                                          "EndpointID": "8b27c041c30326d59cd6e6f510d4f8d1d570a228466f956edf7815508f78e30d",
-                                          "Gateway": "172.17.0.1",
-                                          "IPAddress": "172.17.0.6",
-                                          "IPPrefixLen": 16,
-                                          "IPv6Gateway": "",
-                                          "GlobalIPv6Address": "",
-                                          "GlobalIPv6PrefixLen": 0,
-                                          "MacAddress": "02:42:ac:11:00:06"
-                                  }
-                         }
-                 },
-                 "Mounts": []
-         },
-         {
-                 "Id": "4cb07b47f9fb",
-                 "Names":["/running_cat"],
-                 "Image": "ubuntu:latest",
-                 "ImageID": "d74508fb6632491cea586a1fd7d748dfc5274cd6fdfedee309ecdcbc2bf5cb82",
-                 "Command": "echo 444444444444444444444444444444444",
-                 "Created": 1367854152,
-                 "State": "Exited",
-                 "Status": "Exit 0",
-                 "Ports": [],
-                 "Labels": {},
-                 "SizeRw": 12288,
-                 "SizeRootFs": 0,
-                 "HostConfig": {
-                         "NetworkMode": "default"
-                 },
-                 "NetworkSettings": {
-                         "Networks": {
-                                 "bridge": {
-                                          "IPAMConfig": null,
-                                          "Links": null,
-                                          "Aliases": null,
-                                          "NetworkID": "7ea29fc1412292a2d7bba362f9253545fecdfa8ce9a6e37dd10ba8bee7129812",
-                                          "EndpointID": "d91c7b2f0644403d7ef3095985ea0e2370325cd2332ff3a3225c4247328e66e9",
-                                          "Gateway": "172.17.0.1",
-                                          "IPAddress": "172.17.0.5",
-                                          "IPPrefixLen": 16,
-                                          "IPv6Gateway": "",
-                                          "GlobalIPv6Address": "",
-                                          "GlobalIPv6PrefixLen": 0,
-                                          "MacAddress": "02:42:ac:11:00:05"
-                                  }
-                         }
-                 },
-                 "Mounts": []
-         }
-    ]}
+            "examples": {
+              "application/json": [{
+                "Id": "8dfafdbc3a40",
+                "Names": ["/boring_feynman"],
+                "Image": "ubuntu:latest",
+                "ImageID": "d74508fb6632491cea586a1fd7d748dfc5274cd6fdfedee309ecdcbc2bf5cb82",
+                "Command": "echo 1",
+                "Created": 1367854155,
+                "State": "Exited",
+                "Status": "Exit 0",
+                "Ports": [{
+                  "PrivatePort": 2222,
+                  "PublicPort": 3333,
+                  "Type": "tcp"
+                }],
+                "Labels": {
+                  "com.example.vendor": "Acme",
+                  "com.example.license": "GPL",
+                  "com.example.version": "1.0"
+                },
+                "SizeRw": 12288,
+                "SizeRootFs": 0,
+                "HostConfig": {
+                  "NetworkMode": "default"
+                },
+                "NetworkSettings": {
+                  "Networks": {
+                    "bridge": {
+                      "IPAMConfig": null,
+                      "Links": null,
+                      "Aliases": null,
+                      "NetworkID": "7ea29fc1412292a2d7bba362f9253545fecdfa8ce9a6e37dd10ba8bee7129812",
+                      "EndpointID": "2cdc4edb1ded3631c81f57966563e5c8525b81121bb3706a9a9a3ae102711f3f",
+                      "Gateway": "172.17.0.1",
+                      "IPAddress": "172.17.0.2",
+                      "IPPrefixLen": 16,
+                      "IPv6Gateway": "",
+                      "GlobalIPv6Address": "",
+                      "GlobalIPv6PrefixLen": 0,
+                      "MacAddress": "02:42:ac:11:00:02"
+                    }
+                  }
+                },
+                "Mounts": [{
+                  "Name": "fac362...80535",
+                  "Source": "/data",
+                  "Destination": "/data",
+                  "Driver": "local",
+                  "Mode": "ro,Z",
+                  "RW": false,
+                  "Propagation": ""
+                }]
+              }, {
+                "Id": "9cd87474be90",
+                "Names": ["/coolName"],
+                "Image": "ubuntu:latest",
+                "ImageID": "d74508fb6632491cea586a1fd7d748dfc5274cd6fdfedee309ecdcbc2bf5cb82",
+                "Command": "echo 222222",
+                "Created": 1367854155,
+                "State": "Exited",
+                "Status": "Exit 0",
+                "Ports": [],
+                "Labels": {},
+                "SizeRw": 12288,
+                "SizeRootFs": 0,
+                "HostConfig": {
+                  "NetworkMode": "default"
+                },
+                "NetworkSettings": {
+                  "Networks": {
+                    "bridge": {
+                      "IPAMConfig": null,
+                      "Links": null,
+                      "Aliases": null,
+                      "NetworkID": "7ea29fc1412292a2d7bba362f9253545fecdfa8ce9a6e37dd10ba8bee7129812",
+                      "EndpointID": "88eaed7b37b38c2a3f0c4bc796494fdf51b270c2d22656412a2ca5d559a64d7a",
+                      "Gateway": "172.17.0.1",
+                      "IPAddress": "172.17.0.8",
+                      "IPPrefixLen": 16,
+                      "IPv6Gateway": "",
+                      "GlobalIPv6Address": "",
+                      "GlobalIPv6PrefixLen": 0,
+                      "MacAddress": "02:42:ac:11:00:08"
+                    }
+                  }
+                },
+                "Mounts": []
+              }, {
+                "Id": "3176a2479c92",
+                "Names": ["/sleepy_dog"],
+                "Image": "ubuntu:latest",
+                "ImageID": "d74508fb6632491cea586a1fd7d748dfc5274cd6fdfedee309ecdcbc2bf5cb82",
+                "Command": "echo 3333333333333333",
+                "Created": 1367854154,
+                "State": "Exited",
+                "Status": "Exit 0",
+                "Ports": [],
+                "Labels": {},
+                "SizeRw": 12288,
+                "SizeRootFs": 0,
+                "HostConfig": {
+                  "NetworkMode": "default"
+                },
+                "NetworkSettings": {
+                  "Networks": {
+                    "bridge": {
+                      "IPAMConfig": null,
+                      "Links": null,
+                      "Aliases": null,
+                      "NetworkID": "7ea29fc1412292a2d7bba362f9253545fecdfa8ce9a6e37dd10ba8bee7129812",
+                      "EndpointID": "8b27c041c30326d59cd6e6f510d4f8d1d570a228466f956edf7815508f78e30d",
+                      "Gateway": "172.17.0.1",
+                      "IPAddress": "172.17.0.6",
+                      "IPPrefixLen": 16,
+                      "IPv6Gateway": "",
+                      "GlobalIPv6Address": "",
+                      "GlobalIPv6PrefixLen": 0,
+                      "MacAddress": "02:42:ac:11:00:06"
+                    }
+                  }
+                },
+                "Mounts": []
+              }, {
+                "Id": "4cb07b47f9fb",
+                "Names": ["/running_cat"],
+                "Image": "ubuntu:latest",
+                "ImageID": "d74508fb6632491cea586a1fd7d748dfc5274cd6fdfedee309ecdcbc2bf5cb82",
+                "Command": "echo 444444444444444444444444444444444",
+                "Created": 1367854152,
+                "State": "Exited",
+                "Status": "Exit 0",
+                "Ports": [],
+                "Labels": {},
+                "SizeRw": 12288,
+                "SizeRootFs": 0,
+                "HostConfig": {
+                  "NetworkMode": "default"
+                },
+                "NetworkSettings": {
+                  "Networks": {
+                    "bridge": {
+                      "IPAMConfig": null,
+                      "Links": null,
+                      "Aliases": null,
+                      "NetworkID": "7ea29fc1412292a2d7bba362f9253545fecdfa8ce9a6e37dd10ba8bee7129812",
+                      "EndpointID": "d91c7b2f0644403d7ef3095985ea0e2370325cd2332ff3a3225c4247328e66e9",
+                      "Gateway": "172.17.0.1",
+                      "IPAddress": "172.17.0.5",
+                      "IPPrefixLen": 16,
+                      "IPv6Gateway": "",
+                      "GlobalIPv6Address": "",
+                      "GlobalIPv6PrefixLen": 0,
+                      "MacAddress": "02:42:ac:11:00:05"
+                    }
+                  }
+                },
+                "Mounts": []
+              }]
+            }
           },
           "400": {
             "description": "bad parameter",
@@ -2021,9 +2030,9 @@
             },
             "examples": {
               "application/json": {
-             "Id":"e90e34656806",
-             "Warnings":[]
-            }
+                "Id": "e90e34656806",
+                "Warnings": []
+              }
             }
           },
           "400": {
@@ -2078,173 +2087,171 @@
             },
             "examples": {
               "application/json": {
-    "AppArmorProfile": "",
-    "Args": [
-        "-c",
-        "exit 9"
-    ],
-    "Config": {
-        "AttachStderr": true,
-        "AttachStdin": false,
-        "AttachStdout": true,
-        "Cmd": [
-            "/bin/sh",
-            "-c",
-            "exit 9"
-        ],
-        "Domainname": "",
-        "Entrypoint": null,
-        "Env": [
-            "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
-        ],
-        "ExposedPorts": null,
-        "Hostname": "ba033ac44011",
-        "Image": "ubuntu",
-        "Labels": {
-            "com.example.vendor": "Acme",
-            "com.example.license": "GPL",
-            "com.example.version": "1.0"
-        },
-        "MacAddress": "",
-        "NetworkDisabled": false,
-        "OnBuild": null,
-        "OpenStdin": false,
-        "StdinOnce": false,
-        "Tty": false,
-        "User": "",
-        "Volumes": {
-            "/volumes/data": {}
-        },
-        "WorkingDir": "",
-        "StopSignal": "SIGTERM"
-    },
-    "Created": "2015-01-06T15:47:31.485331387Z",
-    "Driver": "devicemapper",
-    "ExecIDs": null,
-    "HostConfig": {
-        "Binds": null,
-        "MaximumIOps": 0,
-        "MaximumIOBps": 0,
-        "BlkioWeight": 0,
-        "BlkioWeightDevice": [{}],
-        "BlkioDeviceReadBps": [{}],
-        "BlkioDeviceWriteBps": [{}],
-        "BlkioDeviceReadIOps": [{}],
-        "BlkioDeviceWriteIOps": [{}],
-        "CapAdd": null,
-        "CapDrop": null,
-        "ContainerIDFile": "",
-        "CpusetCpus": "",
-        "CpusetMems": "",
-        "CpuPercent": 80,
-        "CpuShares": 0,
-        "CpuPeriod": 100000,
-        "Devices": [],
-        "Dns": null,
-        "DnsOptions": null,
-        "DnsSearch": null,
-        "ExtraHosts": null,
-        "IpcMode": "",
-        "Links": null,
-        "LxcConf": [],
-        "Memory": 0,
-        "MemorySwap": 0,
-        "MemoryReservation": 0,
-        "KernelMemory": 0,
-        "OomKillDisable": false,
-        "OomScoreAdj": 500,
-        "NetworkMode": "bridge",
-        "PidMode": "",
-        "PortBindings": {},
-        "Privileged": false,
-        "ReadonlyRootfs": false,
-        "PublishAllPorts": false,
-        "RestartPolicy": {
-            "MaximumRetryCount": 2,
-            "Name": "on-failure"
-        },
-        "LogConfig": {
-            "Config": null,
-            "Type": "json-file"
-        },
-        "SecurityOpt": null,
-        "Sysctls": {
-                "net.ipv4.ip_forward": "1"
-        },
-        "StorageOpt": null,
-        "VolumesFrom": null,
-        "Ulimits": [{}],
-        "VolumeDriver": "",
-        "ShmSize": 67108864
-    },
-    "HostnamePath": "/var/lib/docker/containers/ba033ac4401106a3b513bc9d639eee123ad78ca3616b921167cd74b20e25ed39/hostname",
-    "HostsPath": "/var/lib/docker/containers/ba033ac4401106a3b513bc9d639eee123ad78ca3616b921167cd74b20e25ed39/hosts",
-    "LogPath": "/var/lib/docker/containers/1eb5fabf5a03807136561b3c00adcd2992b535d624d5e18b6cdc6a6844d9767b/1eb5fabf5a03807136561b3c00adcd2992b535d624d5e18b6cdc6a6844d9767b-json.log",
-    "Id": "ba033ac4401106a3b513bc9d639eee123ad78ca3616b921167cd74b20e25ed39",
-    "Image": "04c5d3b7b0656168630d3ba35d8889bd0e9caafcaeb3004d2bfbc47e7c5d35d2",
-    "MountLabel": "",
-    "Name": "/boring_euclid",
-    "NetworkSettings": {
-        "Bridge": "",
-        "SandboxID": "",
-        "HairpinMode": false,
-        "LinkLocalIPv6Address": "",
-        "LinkLocalIPv6PrefixLen": 0,
-        "Ports": null,
-        "SandboxKey": "",
-        "SecondaryIPAddresses": null,
-        "SecondaryIPv6Addresses": null,
-        "EndpointID": "",
-        "Gateway": "",
-        "GlobalIPv6Address": "",
-        "GlobalIPv6PrefixLen": 0,
-        "IPAddress": "",
-        "IPPrefixLen": 0,
-        "IPv6Gateway": "",
-        "MacAddress": "",
-        "Networks": {
-            "bridge": {
-                "NetworkID": "7ea29fc1412292a2d7bba362f9253545fecdfa8ce9a6e37dd10ba8bee7129812",
-                "EndpointID": "7587b82f0dada3656fda26588aee72630c6fab1536d36e394b2bfbcf898c971d",
-                "Gateway": "172.17.0.1",
-                "IPAddress": "172.17.0.2",
-                "IPPrefixLen": 16,
-                "IPv6Gateway": "",
-                "GlobalIPv6Address": "",
-                "GlobalIPv6PrefixLen": 0,
-                "MacAddress": "02:42:ac:12:00:02"
-            }
-        }
-    },
-    "Path": "/bin/sh",
-    "ProcessLabel": "",
-    "ResolvConfPath": "/var/lib/docker/containers/ba033ac4401106a3b513bc9d639eee123ad78ca3616b921167cd74b20e25ed39/resolv.conf",
-    "RestartCount": 1,
-    "State": {
-        "Error": "",
-        "ExitCode": 9,
-        "FinishedAt": "2015-01-06T15:47:32.080254511Z",
-        "OOMKilled": false,
-        "Dead": false,
-        "Paused": false,
-        "Pid": 0,
-        "Restarting": false,
-        "Running": true,
-        "StartedAt": "2015-01-06T15:47:32.072697474Z",
-        "Status": "running"
-    },
-    "Mounts": [
-        {
-            "Name": "fac362...80535",
-            "Source": "/data",
-            "Destination": "/data",
-            "Driver": "local",
-            "Mode": "ro,Z",
-            "RW": false,
-            "Propagation": ""
-        }
-    ]
-}
+                "AppArmorProfile": "",
+                "Args": [
+                  "-c",
+                  "exit 9"
+                ],
+                "Config": {
+                  "AttachStderr": true,
+                  "AttachStdin": false,
+                  "AttachStdout": true,
+                  "Cmd": [
+                    "/bin/sh",
+                    "-c",
+                    "exit 9"
+                  ],
+                  "Domainname": "",
+                  "Entrypoint": null,
+                  "Env": [
+                    "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+                  ],
+                  "ExposedPorts": null,
+                  "Hostname": "ba033ac44011",
+                  "Image": "ubuntu",
+                  "Labels": {
+                    "com.example.vendor": "Acme",
+                    "com.example.license": "GPL",
+                    "com.example.version": "1.0"
+                  },
+                  "MacAddress": "",
+                  "NetworkDisabled": false,
+                  "OnBuild": null,
+                  "OpenStdin": false,
+                  "StdinOnce": false,
+                  "Tty": false,
+                  "User": "",
+                  "Volumes": {
+                    "/volumes/data": {}
+                  },
+                  "WorkingDir": "",
+                  "StopSignal": "SIGTERM"
+                },
+                "Created": "2015-01-06T15:47:31.485331387Z",
+                "Driver": "devicemapper",
+                "ExecIDs": null,
+                "HostConfig": {
+                  "Binds": null,
+                  "MaximumIOps": 0,
+                  "MaximumIOBps": 0,
+                  "BlkioWeight": 0,
+                  "BlkioWeightDevice": [{}],
+                  "BlkioDeviceReadBps": [{}],
+                  "BlkioDeviceWriteBps": [{}],
+                  "BlkioDeviceReadIOps": [{}],
+                  "BlkioDeviceWriteIOps": [{}],
+                  "CapAdd": null,
+                  "CapDrop": null,
+                  "ContainerIDFile": "",
+                  "CpusetCpus": "",
+                  "CpusetMems": "",
+                  "CpuPercent": 80,
+                  "CpuShares": 0,
+                  "CpuPeriod": 100000,
+                  "Devices": [],
+                  "Dns": null,
+                  "DnsOptions": null,
+                  "DnsSearch": null,
+                  "ExtraHosts": null,
+                  "IpcMode": "",
+                  "Links": null,
+                  "LxcConf": [],
+                  "Memory": 0,
+                  "MemorySwap": 0,
+                  "MemoryReservation": 0,
+                  "KernelMemory": 0,
+                  "OomKillDisable": false,
+                  "OomScoreAdj": 500,
+                  "NetworkMode": "bridge",
+                  "PidMode": "",
+                  "PortBindings": {},
+                  "Privileged": false,
+                  "ReadonlyRootfs": false,
+                  "PublishAllPorts": false,
+                  "RestartPolicy": {
+                    "MaximumRetryCount": 2,
+                    "Name": "on-failure"
+                  },
+                  "LogConfig": {
+                    "Config": null,
+                    "Type": "json-file"
+                  },
+                  "SecurityOpt": null,
+                  "Sysctls": {
+                    "net.ipv4.ip_forward": "1"
+                  },
+                  "StorageOpt": null,
+                  "VolumesFrom": null,
+                  "Ulimits": [{}],
+                  "VolumeDriver": "",
+                  "ShmSize": 67108864
+                },
+                "HostnamePath": "/var/lib/docker/containers/ba033ac4401106a3b513bc9d639eee123ad78ca3616b921167cd74b20e25ed39/hostname",
+                "HostsPath": "/var/lib/docker/containers/ba033ac4401106a3b513bc9d639eee123ad78ca3616b921167cd74b20e25ed39/hosts",
+                "LogPath": "/var/lib/docker/containers/1eb5fabf5a03807136561b3c00adcd2992b535d624d5e18b6cdc6a6844d9767b/1eb5fabf5a03807136561b3c00adcd2992b535d624d5e18b6cdc6a6844d9767b-json.log",
+                "Id": "ba033ac4401106a3b513bc9d639eee123ad78ca3616b921167cd74b20e25ed39",
+                "Image": "04c5d3b7b0656168630d3ba35d8889bd0e9caafcaeb3004d2bfbc47e7c5d35d2",
+                "MountLabel": "",
+                "Name": "/boring_euclid",
+                "NetworkSettings": {
+                  "Bridge": "",
+                  "SandboxID": "",
+                  "HairpinMode": false,
+                  "LinkLocalIPv6Address": "",
+                  "LinkLocalIPv6PrefixLen": 0,
+                  "Ports": null,
+                  "SandboxKey": "",
+                  "SecondaryIPAddresses": null,
+                  "SecondaryIPv6Addresses": null,
+                  "EndpointID": "",
+                  "Gateway": "",
+                  "GlobalIPv6Address": "",
+                  "GlobalIPv6PrefixLen": 0,
+                  "IPAddress": "",
+                  "IPPrefixLen": 0,
+                  "IPv6Gateway": "",
+                  "MacAddress": "",
+                  "Networks": {
+                    "bridge": {
+                      "NetworkID": "7ea29fc1412292a2d7bba362f9253545fecdfa8ce9a6e37dd10ba8bee7129812",
+                      "EndpointID": "7587b82f0dada3656fda26588aee72630c6fab1536d36e394b2bfbcf898c971d",
+                      "Gateway": "172.17.0.1",
+                      "IPAddress": "172.17.0.2",
+                      "IPPrefixLen": 16,
+                      "IPv6Gateway": "",
+                      "GlobalIPv6Address": "",
+                      "GlobalIPv6PrefixLen": 0,
+                      "MacAddress": "02:42:ac:12:00:02"
+                    }
+                  }
+                },
+                "Path": "/bin/sh",
+                "ProcessLabel": "",
+                "ResolvConfPath": "/var/lib/docker/containers/ba033ac4401106a3b513bc9d639eee123ad78ca3616b921167cd74b20e25ed39/resolv.conf",
+                "RestartCount": 1,
+                "State": {
+                  "Error": "",
+                  "ExitCode": 9,
+                  "FinishedAt": "2015-01-06T15:47:32.080254511Z",
+                  "OOMKilled": false,
+                  "Dead": false,
+                  "Paused": false,
+                  "Pid": 0,
+                  "Restarting": false,
+                  "Running": true,
+                  "StartedAt": "2015-01-06T15:47:32.072697474Z",
+                  "Status": "running"
+                },
+                "Mounts": [{
+                  "Name": "fac362...80535",
+                  "Source": "/data",
+                  "Destination": "/data",
+                  "Driver": "local",
+                  "Mode": "ro,Z",
+                  "RW": false,
+                  "Propagation": ""
+                }]
+              }
             }
           },
           "404": {
@@ -2260,22 +2267,19 @@
             }
           }
         },
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "description": "The container id or name",
-            "type": "string"
-          },
-          {
-            "name": "size",
-            "in": "query",
-            "type": "boolean",
-            "default": false,
-            "description": "Return the size of container as fields `SizeRw` and `SizeRootFs`"
-          }
-        ],
+        "parameters": [{
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "description": "The container id or name",
+          "type": "string"
+        }, {
+          "name": "size",
+          "in": "query",
+          "type": "boolean",
+          "default": false,
+          "description": "Return the size of container as fields `SizeRw` and `SizeRootFs`"
+        }],
         "tags": [
           "Container"
         ]
@@ -2294,18 +2298,18 @@
             },
             "examples": {
               "application/json": {
-   "Titles" : [
-     "UID", "PID", "PPID", "C", "STIME", "TTY", "TIME", "CMD"
-   ],
-   "Processes" : [
-     [
-       "root", "13642", "882", "0", "17:03", "pts/0", "00:00:00", "/bin/bash"
-     ],
-     [
-       "root", "13735", "13642", "0", "17:06", "pts/0", "00:00:00", "sleep 10"
-     ]
-   ]
-}
+                "Titles": [
+                  "UID", "PID", "PPID", "C", "STIME", "TTY", "TIME", "CMD"
+                ],
+                "Processes": [
+                  [
+                    "root", "13642", "882", "0", "17:03", "pts/0", "00:00:00", "/bin/bash"
+                  ],
+                  [
+                    "root", "13735", "13642", "0", "17:06", "pts/0", "00:00:00", "sleep 10"
+                  ]
+                ]
+              }
             }
           },
           "404": {
@@ -2437,20 +2441,16 @@
               }
             },
             "examples": {
-              "application/json": [
-     {
-             "Path": "/dev",
-             "Kind": 0
-     },
-     {
-             "Path": "/dev/kmsg",
-             "Kind": 1
-     },
-     {
-             "Path": "/test",
-             "Kind": 1
-     }
-]
+              "application/json": [{
+                "Path": "/dev",
+                "Kind": 0
+              }, {
+                "Path": "/dev/kmsg",
+                "Kind": 1
+              }, {
+                "Path": "/test",
+                "Kind": 1
+              }]
             }
           },
           "404": {
@@ -2530,102 +2530,110 @@
               "type": "object"
             },
             "examples": {
-              "application/json":   {
-     "read" : "2015-01-08T22:57:31.547920715Z",
-     "pids_stats": {
-        "current": 3
-     },
-     "networks": {
-             "eth0": {
-                 "rx_bytes": 5338,
-                 "rx_dropped": 0,
-                 "rx_errors": 0,
-                 "rx_packets": 36,
-                 "tx_bytes": 648,
-                 "tx_dropped": 0,
-                 "tx_errors": 0,
-                 "tx_packets": 8
-             },
-             "eth5": {
-                 "rx_bytes": 4641,
-                 "rx_dropped": 0,
-                 "rx_errors": 0,
-                 "rx_packets": 26,
-                 "tx_bytes": 690,
-                 "tx_dropped": 0,
-                 "tx_errors": 0,
-                 "tx_packets": 9
-             }
-     },
-     "memory_stats" : {
-        "stats" : {
-           "total_pgmajfault" : 0,
-           "cache" : 0,
-           "mapped_file" : 0,
-           "total_inactive_file" : 0,
-           "pgpgout" : 414,
-           "rss" : 6537216,
-           "total_mapped_file" : 0,
-           "writeback" : 0,
-           "unevictable" : 0,
-           "pgpgin" : 477,
-           "total_unevictable" : 0,
-           "pgmajfault" : 0,
-           "total_rss" : 6537216,
-           "total_rss_huge" : 6291456,
-           "total_writeback" : 0,
-           "total_inactive_anon" : 0,
-           "rss_huge" : 6291456,
-           "hierarchical_memory_limit" : 67108864,
-           "total_pgfault" : 964,
-           "total_active_file" : 0,
-           "active_anon" : 6537216,
-           "total_active_anon" : 6537216,
-           "total_pgpgout" : 414,
-           "total_cache" : 0,
-           "inactive_anon" : 0,
-           "active_file" : 0,
-           "pgfault" : 964,
-           "inactive_file" : 0,
-           "total_pgpgin" : 477
-        },
-        "max_usage" : 6651904,
-        "usage" : 6537216,
-        "failcnt" : 0,
-        "limit" : 67108864
-     },
-     "blkio_stats" : {},
-     "cpu_stats" : {
-        "cpu_usage" : {
-           "percpu_usage" : [
-              8646879,
-              24472255,
-              36438778,
-              30657443
-           ],
-           "usage_in_usermode" : 50000000,
-           "total_usage" : 100215355,
-           "usage_in_kernelmode" : 30000000
-        },
-        "system_cpu_usage" : 739306590000000,
-        "throttling_data" : {"periods":0,"throttled_periods":0,"throttled_time":0}
-     },
-     "precpu_stats" : {
-        "cpu_usage" : {
-           "percpu_usage" : [
-              8646879,
-              24350896,
-              36438778,
-              30657443
-           ],
-           "usage_in_usermode" : 50000000,
-           "total_usage" : 100093996,
-           "usage_in_kernelmode" : 30000000
-        },
-        "system_cpu_usage" : 9492140000000,
-        "throttling_data" : {"periods":0,"throttled_periods":0,"throttled_time":0}
-     }
-  }
+              "application/json": {
+                "read": "2015-01-08T22:57:31.547920715Z",
+                "pids_stats": {
+                  "current": 3
+                },
+                "networks": {
+                  "eth0": {
+                    "rx_bytes": 5338,
+                    "rx_dropped": 0,
+                    "rx_errors": 0,
+                    "rx_packets": 36,
+                    "tx_bytes": 648,
+                    "tx_dropped": 0,
+                    "tx_errors": 0,
+                    "tx_packets": 8
+                  },
+                  "eth5": {
+                    "rx_bytes": 4641,
+                    "rx_dropped": 0,
+                    "rx_errors": 0,
+                    "rx_packets": 26,
+                    "tx_bytes": 690,
+                    "tx_dropped": 0,
+                    "tx_errors": 0,
+                    "tx_packets": 9
+                  }
+                },
+                "memory_stats": {
+                  "stats": {
+                    "total_pgmajfault": 0,
+                    "cache": 0,
+                    "mapped_file": 0,
+                    "total_inactive_file": 0,
+                    "pgpgout": 414,
+                    "rss": 6537216,
+                    "total_mapped_file": 0,
+                    "writeback": 0,
+                    "unevictable": 0,
+                    "pgpgin": 477,
+                    "total_unevictable": 0,
+                    "pgmajfault": 0,
+                    "total_rss": 6537216,
+                    "total_rss_huge": 6291456,
+                    "total_writeback": 0,
+                    "total_inactive_anon": 0,
+                    "rss_huge": 6291456,
+                    "hierarchical_memory_limit": 67108864,
+                    "total_pgfault": 964,
+                    "total_active_file": 0,
+                    "active_anon": 6537216,
+                    "total_active_anon": 6537216,
+                    "total_pgpgout": 414,
+                    "total_cache": 0,
+                    "inactive_anon": 0,
+                    "active_file": 0,
+                    "pgfault": 964,
+                    "inactive_file": 0,
+                    "total_pgpgin": 477
+                  },
+                  "max_usage": 6651904,
+                  "usage": 6537216,
+                  "failcnt": 0,
+                  "limit": 67108864
+                },
+                "blkio_stats": {},
+                "cpu_stats": {
+                  "cpu_usage": {
+                    "percpu_usage": [
+                      8646879,
+                      24472255,
+                      36438778,
+                      30657443
+                    ],
+                    "usage_in_usermode": 50000000,
+                    "total_usage": 100215355,
+                    "usage_in_kernelmode": 30000000
+                  },
+                  "system_cpu_usage": 739306590000000,
+                  "throttling_data": {
+                    "periods": 0,
+                    "throttled_periods": 0,
+                    "throttled_time": 0
+                  }
+                },
+                "precpu_stats": {
+                  "cpu_usage": {
+                    "percpu_usage": [
+                      8646879,
+                      24350896,
+                      36438778,
+                      30657443
+                    ],
+                    "usage_in_usermode": 50000000,
+                    "total_usage": 100093996,
+                    "usage_in_kernelmode": 30000000
+                  },
+                  "system_cpu_usage": 9492140000000,
+                  "throttling_data": {
+                    "periods": 0,
+                    "throttled_periods": 0,
+                    "throttled_time": 0
+                  }
+                }
+              }
             }
           },
           "404": {
@@ -3366,7 +3374,7 @@
               "$ref": "#/definitions/Error"
             }
           },
-         "404": {
+          "404": {
             "description": "client error, resource not found, one of: 1) no such container (container id does not exist) 2) no such file or directory (path resource does not exist)",
             "schema": {
               "$ref": "#/definitions/Error"
@@ -3625,7 +3633,7 @@
           "in": "header",
           "description": "A base64-encoded AuthConfig object",
           "type": "string"
-       }],
+        }],
         "responses": {
           "200": {
             "description": "no error"
@@ -4098,8 +4106,8 @@
         "responses": {
           "200": {
             "description": "no error",
-            "schema" : {
-              "type" : "string"
+            "schema": {
+              "type": "string"
             }
           },
           "500": {
@@ -4475,7 +4483,7 @@
               "$ref": "#/definitions/Error"
             }
           }
-       },
+        },
         "parameters": [{
           "name": "id",
           "in": "path",
