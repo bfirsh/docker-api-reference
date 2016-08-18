@@ -693,15 +693,19 @@
       "type": "object",
       "properties": {
         "BlkioWeight": {
+          "description": "Block IO weight (relative weight vs. other containers) (UNIX only)",
           "type": "integer"
         },
         "CpuShares": {
+          "description": "CPU shares (relative weight vs. other containers)",
           "type": "integer"
         },
         "CpuPeriod": {
+          "description": "CPU Completely Fair Scheduler period (UNIX only)",
           "type": "integer"
         },
         "CpuQuota": {
+          "description": "CPU Completely Fair Scheduler quota (UNIX only)",
           "type": "integer"
         },
         "CpusetCpus": {
@@ -711,6 +715,7 @@
           "type": "string"
         },
         "Memory": {
+          "description": "Memory limit (in bytes)",
           "type": "integer"
         },
         "MemorySwap": {
@@ -721,6 +726,22 @@
         },
         "KernelMemory": {
           "type": "integer"
+        }
+      },
+      "example": {
+        "BlkioWeight": 300,
+        "CpuShares": 512,
+        "CpuPeriod": 100000,
+        "CpuQuota": 50000,
+        "CpusetCpus": "0,1",
+        "CpusetMems": "0",
+        "Memory": 314572800,
+        "MemorySwap": 514288000,
+        "MemoryReservation": 209715200,
+        "KernelMemory": 52428800,
+        "RestartPolicy": {
+          "MaximumRetryCount": 4,
+          "Name": "on-failure"
         }
       }
     },
@@ -1516,6 +1537,17 @@
         }
       }
     },
+    "ContainerUpdateResponse": {
+      "type": "object",
+      "properties": {
+        "Warnings": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
     "BuildInfo": {
       "type": "object",
       "properties": {
@@ -2045,6 +2077,11 @@
             "description": "no such container",
             "schema": {
               "$ref": "#/definitions/Error"
+            },
+            "examples": {
+              "application/json": {
+                "message": "No such container: c2ada9df5af8"
+              }
             }
           },
           "406": {
@@ -2258,6 +2295,11 @@
             "description": "no such container",
             "schema": {
               "$ref": "#/definitions/Error"
+            },
+            "examples": {
+              "application/json": {
+                "message": "No such container: c2ada9df5af8"
+              }
             }
           },
           "500": {
@@ -2271,7 +2313,7 @@
           "name": "id",
           "in": "path",
           "required": true,
-          "description": "The container id or name",
+          "description": "ID or name of the container",
           "type": "string"
         }, {
           "name": "size",
@@ -2316,6 +2358,11 @@
             "description": "no such container",
             "schema": {
               "$ref": "#/definitions/Error"
+            },
+            "examples": {
+              "application/json": {
+                "message": "No such container: c2ada9df5af8"
+              }
             }
           },
           "500": {
@@ -2329,7 +2376,7 @@
           "name": "id",
           "in": "path",
           "required": true,
-          "description": "The ID or name of the container",
+          "description": "ID or name of the container",
           "type": "string"
         }, {
           "name": "ps_args",
@@ -2366,6 +2413,11 @@
             "description": "no such container",
             "schema": {
               "$ref": "#/definitions/Error"
+            },
+            "examples": {
+              "application/json": {
+                "message": "No such container: c2ada9df5af8"
+              }
             }
           },
           "500": {
@@ -2379,7 +2431,7 @@
           "name": "id",
           "in": "path",
           "required": true,
-          "description": "The ID or name of the container",
+          "description": "ID or name of the container",
           "type": "string"
         }, {
           "name": "follow",
@@ -2457,6 +2509,11 @@
             "description": "no such container",
             "schema": {
               "$ref": "#/definitions/Error"
+            },
+            "examples": {
+              "application/json": {
+                "message": "No such container: c2ada9df5af8"
+              }
             }
           },
           "500": {
@@ -2470,7 +2527,7 @@
           "name": "id",
           "in": "path",
           "required": true,
-          "description": "The ID or name of the container",
+          "description": "ID or name of the container",
           "type": "string"
         }],
         "tags": [
@@ -2494,6 +2551,11 @@
             "description": "no such container",
             "schema": {
               "$ref": "#/definitions/Error"
+            },
+            "examples": {
+              "application/json": {
+                "message": "No such container: c2ada9df5af8"
+              }
             }
           },
           "500": {
@@ -2507,7 +2569,7 @@
           "name": "id",
           "in": "path",
           "required": true,
-          "description": "The ID or name of the container",
+          "description": "ID or name of the container",
           "type": "string"
         }],
         "tags": [
@@ -2640,6 +2702,11 @@
             "description": "no such container",
             "schema": {
               "$ref": "#/definitions/Error"
+            },
+            "examples": {
+              "application/json": {
+                "message": "No such container: c2ada9df5af8"
+              }
             }
           },
           "500": {
@@ -2653,7 +2720,7 @@
           "name": "id",
           "in": "path",
           "required": true,
-          "description": "The container id or name",
+          "description": "ID or name of the container",
           "type": "string"
         }, {
           "name": "stream",
@@ -2686,6 +2753,11 @@
             "description": "no such container",
             "schema": {
               "$ref": "#/definitions/Error"
+            },
+            "examples": {
+              "application/json": {
+                "message": "No such container: c2ada9df5af8"
+              }
             }
           },
           "500": {
@@ -2699,7 +2771,7 @@
           "name": "id",
           "in": "path",
           "required": true,
-          "description": "The ID or name of the container",
+          "description": "ID or name of the container",
           "type": "string"
         }, {
           "name": "h",
@@ -2720,7 +2792,6 @@
     "/containers/{id}/start": {
       "post": {
         "summary": "Start a container",
-        "description": "Start the container id",
         "operationId": "PostContainerStart",
         "responses": {
           "204": {
@@ -2736,6 +2807,11 @@
             "description": "no such container",
             "schema": {
               "$ref": "#/definitions/Error"
+            },
+            "examples": {
+              "application/json": {
+                "message": "No such container: c2ada9df5af8"
+              }
             }
           },
           "500": {
@@ -2749,7 +2825,7 @@
           "name": "id",
           "in": "path",
           "required": true,
-          "description": "The container id or name",
+          "description": "ID or name of the container",
           "type": "string"
         }, {
           "name": "detachKeys",
@@ -2765,7 +2841,6 @@
     "/containers/{id}/stop": {
       "post": {
         "summary": "Stop a container",
-        "description": "Stop a container.",
         "operationId": "PostContainerStop",
         "responses": {
           "204": {
@@ -2781,6 +2856,11 @@
             "description": "no such container",
             "schema": {
               "$ref": "#/definitions/Error"
+            },
+            "examples": {
+              "application/json": {
+                "message": "No such container: c2ada9df5af8"
+              }
             }
           },
           "500": {
@@ -2794,12 +2874,12 @@
           "name": "id",
           "in": "path",
           "required": true,
-          "description": "The ID or name of the container",
+          "description": "ID or name of the container",
           "type": "string"
         }, {
           "name": "t",
           "in": "query",
-          "description": "The number of seconds to wait before killing the container",
+          "description": "Number of seconds to wait before killing the container",
           "type": "integer"
         }],
         "tags": [
@@ -2810,7 +2890,6 @@
     "/containers/{id}/restart": {
       "post": {
         "summary": "Restart a container",
-        "description": "Restart the container id",
         "operationId": "PostContainerRestart",
         "consumes": [
           "application/octet-stream"
@@ -2823,6 +2902,11 @@
             "description": "no such container",
             "schema": {
               "$ref": "#/definitions/Error"
+            },
+            "examples": {
+              "application/json": {
+                "message": "No such container: c2ada9df5af8"
+              }
             }
           },
           "500": {
@@ -2836,12 +2920,12 @@
           "name": "id",
           "in": "path",
           "required": true,
-          "description": "The container id or name",
+          "description": "ID or name of the container",
           "type": "string"
         }, {
           "name": "t",
           "in": "query",
-          "description": "number of seconds to wait before killing the container",
+          "description": "Number of seconds to wait before killing the container",
           "type": "integer"
         }],
         "tags": [
@@ -2852,11 +2936,8 @@
     "/containers/{id}/kill": {
       "post": {
         "summary": "Kill a container",
-        "description": "Send a posix signal to a container",
+        "description": "Send a POSIX signal to a container, defaulting to killing to the container.",
         "operationId": "PostContainerKill",
-        "consumes": [
-          "application/octet-stream"
-        ],
         "responses": {
           "204": {
             "description": "no error"
@@ -2865,6 +2946,11 @@
             "description": "no such container",
             "schema": {
               "$ref": "#/definitions/Error"
+            },
+            "examples": {
+              "application/json": {
+                "message": "No such container: c2ada9df5af8"
+              }
             }
           },
           "500": {
@@ -2878,13 +2964,14 @@
           "name": "id",
           "in": "path",
           "required": true,
-          "description": "The container id or name",
+          "description": "ID or name of the container",
           "type": "string"
         }, {
           "name": "signal",
           "in": "query",
-          "description": "Signal to send to the container, integer or string like SIGINT, defaults to SIGKILL",
-          "type": "string"
+          "description": "Signal to send to the container as an integer or string (e.g. `SIGINT`)",
+          "type": "string",
+          "default": "SIGKILL"
         }],
         "tags": [
           "Container"
@@ -2894,22 +2981,30 @@
     "/containers/{id}/update": {
       "post": {
         "summary": "Update a container",
-        "description": "Update resource configs of one or more containers",
+        "description": "Change various configuration options of a container without having to recreate it.",
         "operationId": "PostContainerUpdate",
         "consumes": [
-          "application/octet-stream"
+          "application/json"
         ],
         "produces": [
           "application/json"
         ],
         "responses": {
-          "204": {
-            "description": "no error"
+          "200": {
+            "description": "no error",
+            "schema": {
+              "$ref": "#/definitions/ContainerUpdateResponse"
+            }
           },
           "404": {
             "description": "no such container",
             "schema": {
               "$ref": "#/definitions/Error"
+            },
+            "examples": {
+              "application/json": {
+                "message": "No such container: c2ada9df5af8"
+              }
             }
           },
           "500": {
@@ -2923,7 +3018,7 @@
           "name": "id",
           "in": "path",
           "required": true,
-          "description": "The container id or name",
+          "description": "ID or name of the container",
           "type": "string"
         }, {
           "name": "update",
@@ -2931,7 +3026,8 @@
           "description": "Update config json",
           "schema": {
             "$ref": "#/definitions/UpdateConfig"
-          }
+          },
+          "required": true
         }],
         "tags": [
           "Container"
@@ -2941,11 +3037,7 @@
     "/containers/{id}/rename": {
       "post": {
         "summary": "Rename a container",
-        "description": "Rename the container id to a new_name",
         "operationId": "PostContainerRename",
-        "consumes": [
-          "application/octet-stream"
-        ],
         "responses": {
           "204": {
             "description": "no error"
@@ -2954,10 +3046,15 @@
             "description": "no such container",
             "schema": {
               "$ref": "#/definitions/Error"
+            },
+            "examples": {
+              "application/json": {
+                "message": "No such container: c2ada9df5af8"
+              }
             }
           },
           "409": {
-            "description": "conflict, name already assigned",
+            "description": "name already in use",
             "schema": {
               "$ref": "#/definitions/Error"
             }
@@ -2973,7 +3070,7 @@
           "name": "id",
           "in": "path",
           "required": true,
-          "description": "The container id or name",
+          "description": "ID or name of the container",
           "type": "string"
         }, {
           "name": "name",
@@ -3003,6 +3100,11 @@
             "description": "no such container",
             "schema": {
               "$ref": "#/definitions/Error"
+            },
+            "examples": {
+              "application/json": {
+                "message": "No such container: c2ada9df5af8"
+              }
             }
           },
           "500": {
@@ -3016,7 +3118,7 @@
           "name": "id",
           "in": "path",
           "required": true,
-          "description": "The container id or name",
+          "description": "ID or name of the container",
           "type": "string"
         }],
         "tags": [
@@ -3040,6 +3142,11 @@
             "description": "no such container",
             "schema": {
               "$ref": "#/definitions/Error"
+            },
+            "examples": {
+              "application/json": {
+                "message": "No such container: c2ada9df5af8"
+              }
             }
           },
           "500": {
@@ -3053,7 +3160,7 @@
           "name": "id",
           "in": "path",
           "required": true,
-          "description": "The container id or name",
+          "description": "ID or name of the container",
           "type": "string"
         }],
         "tags": [
@@ -3090,6 +3197,11 @@
             "description": "no such container",
             "schema": {
               "$ref": "#/definitions/Error"
+            },
+            "examples": {
+              "application/json": {
+                "message": "No such container: c2ada9df5af8"
+              }
             }
           },
           "500": {
@@ -3103,7 +3215,7 @@
           "name": "id",
           "in": "path",
           "required": true,
-          "description": "The container id or name",
+          "description": "ID or name of the container",
           "type": "string"
         }, {
           "name": "detachKeys",
@@ -3168,6 +3280,11 @@
             "description": "no such container",
             "schema": {
               "$ref": "#/definitions/Error"
+            },
+            "examples": {
+              "application/json": {
+                "message": "No such container: c2ada9df5af8"
+              }
             }
           },
           "500": {
@@ -3181,7 +3298,7 @@
           "name": "id",
           "in": "path",
           "required": true,
-          "description": "The container id or name",
+          "description": "ID or name of the container",
           "type": "string"
         }, {
           "name": "logs",
@@ -3239,6 +3356,11 @@
             "description": "no such container",
             "schema": {
               "$ref": "#/definitions/Error"
+            },
+            "examples": {
+              "application/json": {
+                "message": "No such container: c2ada9df5af8"
+              }
             }
           },
           "500": {
@@ -3252,7 +3374,7 @@
           "name": "id",
           "in": "path",
           "required": true,
-          "description": "The container id or name",
+          "description": "ID or name of the container",
           "type": "string"
         }],
         "tags": [
@@ -3279,6 +3401,11 @@
             "description": "no such container",
             "schema": {
               "$ref": "#/definitions/Error"
+            },
+            "examples": {
+              "application/json": {
+                "message": "No such container: c2ada9df5af8"
+              }
             }
           },
           "500": {
@@ -3292,7 +3419,7 @@
           "name": "id",
           "in": "path",
           "required": true,
-          "description": "The container id or name",
+          "description": "ID or name of the container",
           "type": "string"
         }, {
           "name": "v",
@@ -3331,6 +3458,11 @@
             "description": "client error, resource not found, one of: 1) no such container (container id does not exist) 2) no such file or directory (path resource does not exist)",
             "schema": {
               "$ref": "#/definitions/Error"
+            },
+            "examples": {
+              "application/json": {
+                "message": "No such container: c2ada9df5af8"
+              }
             }
           },
           "500": {
@@ -3344,7 +3476,7 @@
           "name": "id",
           "in": "path",
           "required": true,
-          "description": "The container id or name",
+          "description": "ID or name of the container",
           "type": "string"
         }, {
           "name": "path",
@@ -3378,6 +3510,11 @@
             "description": "client error, resource not found, one of: 1) no such container (container id does not exist) 2) no such file or directory (path resource does not exist)",
             "schema": {
               "$ref": "#/definitions/Error"
+            },
+            "examples": {
+              "application/json": {
+                "message": "No such container: c2ada9df5af8"
+              }
             }
           },
           "500": {
@@ -3391,7 +3528,7 @@
           "name": "id",
           "in": "path",
           "required": true,
-          "description": "The container id or name",
+          "description": "ID or name of the container",
           "type": "string"
         }, {
           "name": "path",
@@ -3432,6 +3569,11 @@
             "description": "No such container or path does not exist inside the container",
             "schema": {
               "$ref": "#/definitions/Error"
+            },
+            "examples": {
+              "application/json": {
+                "message": "No such container: c2ada9df5af8"
+              }
             }
           },
           "500": {
@@ -3445,7 +3587,7 @@
           "name": "id",
           "in": "path",
           "required": true,
-          "description": "The container id or name",
+          "description": "ID or name of the container",
           "type": "string"
         }, {
           "name": "path",
@@ -4145,6 +4287,11 @@
             "description": "no such container",
             "schema": {
               "$ref": "#/definitions/Error"
+            },
+            "examples": {
+              "application/json": {
+                "message": "No such container: c2ada9df5af8"
+              }
             }
           },
           "500": {
@@ -4371,6 +4518,11 @@
             "description": "no such container",
             "schema": {
               "$ref": "#/definitions/Error"
+            },
+            "examples": {
+              "application/json": {
+                "message": "No such container: c2ada9df5af8"
+              }
             }
           },
           "409": {
