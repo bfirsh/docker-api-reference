@@ -7,7 +7,7 @@
       "name": "Docker",
       "url": "https://www.docker.com"
     },
-    "version": "v1.25"
+    "version": "1.25"
   },
   "basePath": "/v1.25",
   "schemes": [
@@ -891,6 +891,7 @@
       "type": "object",
       "properties": {
         "StatusCode": {
+          "description": "Exit code of the container",
           "type": "integer"
         }
       }
@@ -1661,7 +1662,7 @@
         }
       },
       "example": {
-        "message": "something went wrong"
+        "message": "Something went wrong."
       }
     },
     "ContainerListSummary": {
@@ -1812,7 +1813,6 @@
     "/containers/json": {
       "get": {
         "summary": "List containers",
-        "description": "List containers",
         "operationId": "GetContainerList",
         "produces": [
           "application/json"
@@ -2030,7 +2030,6 @@
     "/containers/create": {
       "post": {
         "summary": "Create a container",
-        "description": "Create a container",
         "operationId": "PostContainerCreate",
         "consumes": [
           "application/json",
@@ -2330,7 +2329,7 @@
     "/containers/{id}/top": {
       "get": {
         "summary": "List processes running inside a container",
-        "description": "List processes running inside a container. On Unix systems, this is done by running the `ps` command. This endpoint is not supported on Windows.",
+        "description": "On Unix systems, this is done by running the `ps` command. This endpoint is not supported on Windows.",
         "operationId": "GetContainerTop",
         "responses": {
           "200": {
@@ -3087,11 +3086,8 @@
     "/containers/{id}/pause": {
       "post": {
         "summary": "Pause a container",
-        "description": "Pause the container id",
+        "description": "Use the cgroups freezer to suspend all processes in a container.\n\nTraditionally, when suspending a process the `SIGSTOP` signal is used, which is observable by the process being suspended. With the cgroups freezer the process is unaware, and unable to capture, that it is being suspended, and subsequently resumed.",
         "operationId": "PostContainerPause",
-        "consumes": [
-          "application/octet-stream"
-        ],
         "responses": {
           "204": {
             "description": "no error"
@@ -3129,11 +3125,8 @@
     "/containers/{id}/unpause": {
       "post": {
         "summary": "Unpause a container",
-        "description": "Unpause the container id",
+        "description": "Resume a container which has been paused.",
         "operationId": "PostContainerUnpause",
-        "consumes": [
-          "application/octet-stream"
-        ],
         "responses": {
           "204": {
             "description": "no error"
@@ -3171,12 +3164,8 @@
     "/containers/{id}/attach": {
       "post": {
         "summary": "Attach to a container",
-        "description": "Attach to the container id",
+        "description": "Attach to a container to read its output or send it input. You can attach to the same container multiple times and you can reattach to containers that have been detached.\n\nSee [the documentation for the `docker attach` command](https://docs.docker.com/engine/reference/commandline/attach/) for more details.",
         "operationId": "PostContainerAttach",
-        "consumes": [
-          "text/plain",
-          "application/octet-stream"
-        ],
         "produces": [
           "application/vnd.docker.raw-stream"
         ],
@@ -3220,36 +3209,46 @@
         }, {
           "name": "detachKeys",
           "in": "query",
-          "description": "Override the key sequence for detaching a container. Format is a single character [a-Z] or ctrl-<value> where <value> is one of: a-z, @, ^, [, , or _.",
+          "description": "Override the key sequence for detaching a
+          container.Format is a single character `[a-Z]`
+          or `ctrl-<value>`
+          where `<value>`
+          is one of: `a-z`,
+          `@`,
+          `^`,
+          `[`,
+          `,`
+          or `_`.
+          ",
           "type": "string"
         }, {
           "name": "logs",
           "in": "query",
-          "description": "1/True/true or 0/False/false, return logs. Default false",
+          "description": "Return logs",
           "type": "boolean",
           "default": false
         }, {
           "name": "stream",
           "in": "query",
-          "description": "1/True/true or 0/False/false, return stream. Default false",
+          "description": "Return stream",
           "type": "boolean",
           "default": false
         }, {
           "name": "stdin",
           "in": "query",
-          "description": "1/True/true or 0/False/false, if stream=true, attach to stdin. Default false.",
+          "description": "Attach to stdin",
           "type": "boolean",
           "default": false
         }, {
           "name": "stdout",
           "in": "query",
-          "description": "1/True/true or 0/False/false, if logs=true, return stdout log, if stream=true, attach to stdout. Default false.",
+          "description": "Attach to stdout",
           "type": "boolean",
           "default": false
         }, {
           "name": "stderr",
           "in": "query",
-          "description": "1/True/true or 0/False/false, if logs=true, return stderr log, if stream=true, attach to stderr. Default false.",
+          "description": "Attach to stderr",
           "type": "boolean",
           "default": false
         }],
@@ -3260,8 +3259,7 @@
     },
     "/containers/{id}/attach/ws": {
       "get": {
-        "summary": "Attach to a container (websocket)",
-        "description": "Attach to the container id with a websocket.",
+        "summary": "Attach to a container via a websocket",
         "operationId": "PostContainerAttachWebsocket",
         "responses": {
           "101": {
@@ -3301,33 +3299,48 @@
           "description": "ID or name of the container",
           "type": "string"
         }, {
+          "name": "detachKeys",
+          "in": "query",
+          "description": "Override the key sequence for detaching a
+          container.Format is a single character `[a-Z]`
+          or `ctrl-<value>`
+          where `<value>`
+          is one of: `a-z`,
+          `@`,
+          `^`,
+          `[`,
+          `,`
+          or `_`.
+          ",
+          "type": "string"
+        }, {
           "name": "logs",
           "in": "query",
-          "description": "1/True/true or 0/False/false, return logs. Default false",
+          "description": "Return logs",
           "type": "boolean",
           "default": false
         }, {
           "name": "stream",
           "in": "query",
-          "description": "1/True/true or 0/False/false, return stream. Default false",
+          "description": "Return stream",
           "type": "boolean",
           "default": false
         }, {
           "name": "stdin",
           "in": "query",
-          "description": "1/True/true or 0/False/false, if stream=true, attach to stdin. Default false.",
+          "description": "Attach to stdin",
           "type": "boolean",
           "default": false
         }, {
           "name": "stdout",
           "in": "query",
-          "description": "1/True/true or 0/False/false, if logs=true, return stdout log, if stream=true, attach to stdout. Default false.",
+          "description": "Attach to stdout",
           "type": "boolean",
           "default": false
         }, {
           "name": "stderr",
           "in": "query",
-          "description": "1/True/true or 0/False/false, if logs=true, return stderr log, if stream=true, attach to stderr. Default false.",
+          "description": "Attach to stderr",
           "type": "boolean",
           "default": false
         }],
@@ -3338,12 +3351,11 @@
     },
     "/containers/{id}/wait": {
       "post": {
-        "summary": "Wait a container",
-        "description": "Block until container id stops, then returns the exit code",
+        "summary": "Wait for a container",
+        "description": "Block until a container stops, then returns the exit code.",
         "operationId": "PostContainerWait",
-        "consumes": [
+        "produces": [
           "application/json",
-          "application/octet-stream"
         ],
         "responses": {
           "200": {
@@ -3385,7 +3397,6 @@
     "/containers/{id}": {
       "delete": {
         "summary": "Remove a container",
-        "description": "Remove the container id from the filesystem",
         "operationId": "DeleteContainer",
         "responses": {
           "204": {
@@ -3424,13 +3435,13 @@
         }, {
           "name": "v",
           "in": "query",
-          "description": "1/True/true or 0/False/false, Remove the volumes associated to the container. Default false.",
+          "description": "Remove the volumes associated with the container.",
           "type": "boolean",
           "default": false
         }, {
           "name": "force",
           "in": "query",
-          "description": "1/True/true or 0/False/false, Kill then remove the container. Default false.",
+          "description": "If the container is running, kill it before removing it.",
           "type": "boolean",
           "default": false
         }],
@@ -3441,12 +3452,23 @@
     },
     "/containers/{id}/archive": {
       "head": {
-        "summary": "Retrieving information about files and folders in a container",
-        "description": "Get an tar archive of a resource in the filesystem of container",
+        "summary": "Get information about files in a container",
+        "description": "A response header `X-Docker-Container-Path-Stat` is return containing a
+        base64 - encoded JSON object with some filesystem header information about
+        the path.
+        ",
         "operationId": "HeadContainerArchive",
         "responses": {
           "200": {
-            "description": "no error"
+            "description": "no error",
+            "schema": {
+              "headers": {
+                "X-Docker-Container-Path-Stat": {
+                  "type": "string",
+                  "description": "TODO"
+                }
+              }
+            }
           },
           "400": {
             "description": "client error, bad parameter, details in JSON response body, one of: must specify path parameter (path cannot be empty) not a directory (path was asserted to be a directory but exists as a file)",
@@ -4185,8 +4207,7 @@
     },
     "/info": {
       "get": {
-        "summary": "Display system-wide information",
-        "description": "Display system-wide information.",
+        "summary": "Get system information",
         "operationId": "getSystemInformation",
         "produces": [
           "application/json"
@@ -4212,8 +4233,8 @@
     },
     "/version": {
       "get": {
-        "summary": "Show the docker version information",
-        "description": "Show the docker version information",
+        "summary": "Get version",
+        "description": "Returns the version of Docker that is running and various information about the system that Docker is running on.",
         "operationId": "getVersion",
         "produces": [
           "application/json"
@@ -4223,6 +4244,19 @@
             "description": "no error",
             "schema": {
               "$ref": "#/definitions/Version"
+            },
+            "examples": {
+              "application/json": {
+                "Version": "1.13.0",
+                "Os": "linux",
+                "KernelVersion": "3.19.0-23-generic",
+                "GoVersion": "go1.6.3",
+                "GitCommit": "deadbee",
+                "Arch": "amd64",
+                "ApiVersion": "1.25",
+                "BuildTime": "2016-06-14T07:09:13.444803460+00:00",
+                "Experimental": true
+              }
             }
           },
           "500": {
@@ -4239,8 +4273,8 @@
     },
     "/_ping": {
       "get": {
-        "summary": "Ping the docker server",
-        "description": "Ping the docker server",
+        "summary": "Ping",
+        "description": "This is a dummy endpoint you can use to test if the server is accessible.",
         "operationId": "ping",
         "produces": [
           "text/plain"
@@ -4250,6 +4284,9 @@
             "description": "no error",
             "schema": {
               "type": "string"
+            },
+            "examples": {
+              "text/plain": "OK"
             }
           },
           "500": {
@@ -4497,12 +4534,11 @@
     },
     "/containers/{id}/exec": {
       "post": {
-        "summary": "Exec Create",
-        "description": "Sets up an exec instance in a running container id",
+        "summary": "Create an exec instance",
+        "description": "",
         "operationId": "PostContainerExec",
         "consumes": [
           "application/json",
-          "application/octet-stream"
         ],
         "produces": [
           "application/json"
@@ -4547,21 +4583,14 @@
           },
           "required": true
         }, {
-          "name": "Content-Type",
-          "in": "header",
-          "description": "Content Type Header",
-          "required": true,
-          "type": "string",
-          "default": "application/json"
-        }, {
           "name": "id",
           "in": "path",
-          "description": "Container name or id",
+          "description": "ID or name of container",
           "type": "string",
           "required": true
         }],
         "tags": [
-          "Container"
+          "Exec"
         ]
       }
     },
@@ -4572,7 +4601,6 @@
         "operationId": "PostExecStart",
         "consumes": [
           "application/json",
-          "application/octet-stream"
         ],
         "produces": [
           "application/json"
