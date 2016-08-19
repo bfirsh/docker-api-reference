@@ -2,11 +2,7 @@
   "swagger": "2.0",
   "info": {
     "title": "Docker Remote API",
-    "description": "The Docker API is an HTTP REST API served by Docker Engine. It is the API the Docker client uses to communicate with the Engine, so everything the Docker client can do can be done with the API.",
-    "contact": {
-      "name": "Docker",
-      "url": "https://www.docker.com"
-    },
+    "description": "The Docker API is an HTTP REST API served by Docker Engine. It is the API the Docker client uses to communicate with the Engine, so everything the Docker client can do can be done with the API.\n\nTODO: More general details.\n\n# Errors\n\nThe Remote API uses standard HTTP status codes to indicate the success or failure of the API call. The body of the response will be JSON in the following format:\n\n```\n{\n  \"message\": \"page not found\"\n}\n```\n\n# Authentication\n\nAuthentication configuration is handled client side, so the client has to send the `authConfig` to various endpoints, such as `POST /images/(name)/push`. The `authConfig`, set as the `X-Registry-Auth` header, is currently a Base64 encoded (JSON) string with the following structure:\n\n```\n{\n  \"username\": \"string\", \n  \"password\": \"string\",\n  \"email\": \"string\",\n  \"serveraddress\": \"string\",\n  \"auth\": \"\"\n}\n```\n\nCallers should leave the `auth` empty. The `serveraddress` is a domain/IP without a protocol. Throughout this structure, double quotes are required.",
     "version": "1.25"
   },
   "basePath": "/v1.25",
