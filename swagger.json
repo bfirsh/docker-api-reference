@@ -3198,17 +3198,7 @@
         }, {
           "name": "detachKeys",
           "in": "query",
-          "description": "Override the key sequence for detaching a
-          container.Format is a single character `[a-Z]`
-          or `ctrl-<value>`
-          where `<value>`
-          is one of: `a-z`,
-          `@`,
-          `^`,
-          `[`,
-          `,`
-          or `_`.
-          ",
+          "description": "Override the key sequence for detaching a container.Format is a single character `[a-Z]` or `ctrl-<value>` where `<value>` is one of: `a-z`, `@`, `^`, `[`, `,` or `_`.",
           "type": "string"
         }, {
           "name": "logs",
@@ -3290,17 +3280,7 @@
         }, {
           "name": "detachKeys",
           "in": "query",
-          "description": "Override the key sequence for detaching a
-          container.Format is a single character `[a-Z]`
-          or `ctrl-<value>`
-          where `<value>`
-          is one of: `a-z`,
-          `@`,
-          `^`,
-          `[`,
-          `,`
-          or `_`.
-          ",
+          "description": "Override the key sequence for detaching a container.Format is a single character `[a-Z]` or `ctrl-<value>` where `<value>` is one of: `a-z`, `@`, `^`, `[`, `,`, or `_`.",
           "type": "string"
         }, {
           "name": "logs",
@@ -3344,7 +3324,7 @@
         "description": "Block until a container stops, then returns the exit code.",
         "operationId": "PostContainerWait",
         "produces": [
-          "application/json",
+          "application/json"
         ],
         "responses": {
           "200": {
@@ -3442,10 +3422,7 @@
     "/containers/{id}/archive": {
       "head": {
         "summary": "Get information about files in a container",
-        "description": "A response header `X-Docker-Container-Path-Stat` is return containing a
-        base64 - encoded JSON object with some filesystem header information about
-        the path.
-        ",
+        "description": "A response header `X-Docker-Container-Path-Stat` is return containing a base64 - encoded JSON object with some filesystem header information about the path.",
         "operationId": "HeadContainerArchive",
         "responses": {
           "200": {
@@ -4319,7 +4296,7 @@
               "type": "array",
               "items": {
                 "$ref": "#/definitions/ImageSearchResult"
-              },
+              }
             },
             "examples": {
               "application/json": [{
@@ -4378,7 +4355,7 @@
         "description": "Validate credentials for a registry and, if available, get an identity token for accessing the registry without password.",
         "operationId": "checkAuthentication",
         "consumes": [
-          "application/json",
+          "application/json"
         ],
         "produces": [
           "application/json"
@@ -4851,7 +4828,7 @@
         "description": "",
         "operationId": "PostContainerExec",
         "consumes": [
-          "application/json",
+          "application/json"
         ],
         "produces": [
           "application/json"
@@ -4913,7 +4890,7 @@
         "description": "Starts a previously set up exec instance id. If detach is true, this API returns after starting the exec command. Otherwise, this API sets up an interactive session with the exec command.",
         "operationId": "PostExecStart",
         "consumes": [
-          "application/json",
+          "application/json"
         ],
         "produces": [
           "application/json"
