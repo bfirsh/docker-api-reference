@@ -1260,14 +1260,7 @@
         }
       }
     },
-    "CommitResult": {
-      "type": "object",
-      "properties": {
-        "Id": {
-          "type": "string"
-        }
-      }
-    },
+
     "ExecCreateResult": {
       "type": "object",
       "properties": {
@@ -3635,7 +3628,7 @@
     "/images/json": {
       "get": {
         "summary": "List Images",
-        "description": "List Images",
+        "description": "Returns a list of images on the server. Note that it uses a different, smaller representation of an image than inspecting a single image.",
         "operationId": "GetImageList",
         "produces": [
           "application/json"
@@ -3648,6 +3641,33 @@
               "items": {
                 "$ref": "#/definitions/ImageItem"
               }
+            },
+            "examples": {
+              "application/json": [{
+                "RepoTags": [
+                  "ubuntu:12.04",
+                  "ubuntu:precise",
+                  "ubuntu:latest"
+                ],
+                "Id": "8dbd9e392a964056420e5d58ca5cc376ef18e2de93b5cc90e868a1bbc8318c1c",
+                "Created": 1365714795,
+                "Size": 131506275,
+                "VirtualSize": 131506275,
+                "Labels": {}
+              }, {
+                "RepoTags": [
+                  "ubuntu:12.10",
+                  "ubuntu:quantal"
+                ],
+                "ParentId": "27cf784147099545",
+                "Id": "b750fe79269d2ec9a3c593ef05b4332b1d1a02a62b4accb2c21d589ff2f5f2dc",
+                "Created": 1364102658,
+                "Size": 24653,
+                "VirtualSize": 180116135,
+                "Labels": {
+                  "com.example.version": "v1"
+                }
+              }]
             }
           },
           "500": {
@@ -3666,7 +3686,7 @@
         }, {
           "name": "filters",
           "in": "query",
-          "description": "A JSON encoded value of the filters (a map[string][]string) to process on the containers list",
+          "description": "A JSON encoded value of the filters (a `map[string][]string`) to process on the containers list",
           "type": "string"
         }, {
           "name": "filter",
@@ -3676,8 +3696,9 @@
         }, {
           "name": "digests",
           "in": "query",
-          "description": "Show digest information, default to false",
-          "type": "boolean"
+          "description": "Show digest information as a `RepoDigests` field on each image.",
+          "type": "boolean",
+          "default": false
         }],
         "tags": [
           "Image"
@@ -3686,8 +3707,8 @@
     },
     "/build": {
       "post": {
-        "summary": "Build an image from Dockerfile via stdin",
-        "description": "Build an image from Dockerfile via stdin",
+        "summary": "Build an image",
+        "description": "Build an image from a tar achive with a Dockerfile in it.\n\nThe Dockerfile specifies how the image is built from the tar archive. It is typically in the archive's root, but can be at a different path or have a different name by specifying the `dockerfile` parameter. [See the Dockerfile reference for more information](https://docs.docker.com/engine/reference/builder/).\n\nThe build is canceled if the client drops the connection by quitting or being killed.",
         "operationId": "PostImageBuild",
         "consumes": [
           "application/octet-stream"
@@ -3698,24 +3719,26 @@
         "parameters": [{
           "name": "inputStream",
           "in": "body",
-          "description": "The input stream must be a tar archive compressed with one of the following algorithms: identity (no compression), gzip, bzip2, xz.",
+          "description": "A tar archive compressed with one of the following algorithms: identity (no compression), gzip, bzip2, xz.",
           "schema": {
-            "type": "string"
+            "type": "string",
+            "format": "binary"
           }
         }, {
           "name": "dockerfile",
           "in": "query",
-          "description": "Path within the build context to the Dockerfile. This is ignored if remote is specified and points to an individual filename.",
-          "type": "string"
+          "description": "Path within the build context to the `Dockerfile`. This is ignored if `remote` is specified and points to an individual filename.",
+          "type": "string",
+          "default": "Dockerfile"
         }, {
           "name": "t",
           "in": "query",
-          "description": "A repository name (and optionally a tag) to apply to the resulting image in case of success.",
+          "description": "A name and optional tag to apply to the image in the `name:tag` format. If you omit the tag the default `latest` value is assumed. You can provide several `t` parameters.",
           "type": "string"
         }, {
           "name": "remote",
           "in": "query",
-          "description": "A Git repository URI or HTTP/HTTPS URI build source. If the URI specifies a filename, the file’s contents are placed into a file called Dockerfile.",
+          "description": "A Git repository URI or HTTP/HTTPS context URI. If the URI points to a single text file, the file’s contents are placed into a file called `Dockerfile` and the image is built from that file. If the URI points to a tarball, the file is downloaded by the daemon and the contents therein used as the context for the build. If the URI points to a tarball and the `dockerfile` parameter is also specified, there must be a file with the corresponding path inside the tarball.",
           "type": "string"
         }, {
           "name": "q",
@@ -3732,18 +3755,18 @@
         }, {
           "name": "pull",
           "in": "query",
-          "description": "Attempt to pull the image even if an older image exists locally",
+          "description": "Attempt to pull the image even if an older image exists locally.",
           "type": "string"
         }, {
           "name": "rm",
           "in": "query",
-          "description": "Remove intermediate containers after a successful build (default behavior).",
+          "description": "Remove intermediate containers after a successful build.",
           "type": "boolean",
           "default": true
         }, {
           "name": "forcerm",
           "in": "query",
-          "description": "always remove intermediate containers (includes rm)",
+          "description": "Always remove intermediate containers, even upon failure.",
           "type": "boolean",
           "default": false
         }, {
@@ -3754,7 +3777,7 @@
         }, {
           "name": "memswap",
           "in": "query",
-          "description": "Total memory (memory + swap), -1 to disable swap.",
+          "description": "Total memory (memory + swap). Set as `-1` to disable swap.",
           "type": "integer"
         }, {
           "name": "cpushares",
@@ -3764,7 +3787,7 @@
         }, {
           "name": "cpusetcpus",
           "in": "query",
-          "description": "CPUs in which to allow execution (e.g., 0-3, 0,1).",
+          "description": "CPUs in which to allow execution (e.g., `0-3`, `0,1`).",
           "type": "string"
         }, {
           "name": "cpuperiod",
@@ -3779,19 +3802,28 @@
         }, {
           "name": "buildargs",
           "in": "query",
-          "description": "Total memory (memory + swap), -1 to disable swap.",
+          "description": "JSON map of string pairs for build-time variables. Users pass these values at build-time. Docker uses the buildargs as the environment context for commands run via the Dockerfile’s RUN instruction, or for variable expansion in other Dockerfile instructions. This is not meant for passing secret values. [Read more about the buildargs instruction.](https://docs.docker.com/engine/reference/builder/#arg)",
           "type": "integer"
+        }, {
+          "name": "shmsize",
+          "in": "query",
+          "description": "Size of `/dev/shm` in bytes. The size must be greater than 0. If omitted the system uses 64MB.",
+          "type": "integer"
+        }, {
+          "name": "labels",
+          "in": "query",
+          "description": "Arbitrary key/value labels to set on the image, as a JSON map of string pairs.",
+          "type": "string"
         }, {
           "name": "Content-type",
           "in": "header",
-          "description": " Set to 'application/tar'.",
           "type": "string",
           "enum": ["application/tar"],
           "default": "application/tar"
         }, {
           "name": "X-Registry-Auth",
           "in": "header",
-          "description": "A base64-encoded AuthConfig object",
+          "description": "A base64-encoded auth config object with the following structure: TODO",
           "type": "string"
         }],
         "responses": {
@@ -3813,7 +3845,7 @@
     "/images/create": {
       "post": {
         "summary": "Create an image",
-        "description": "Create an image either by pulling it from the registry or by importing it",
+        "description": "Create an image by either pulling it from a registry or importing it.",
         "operationId": "PostImageCreate",
         "consumes": [
           "text/plain",
@@ -3836,12 +3868,12 @@
         "parameters": [{
           "name": "fromImage",
           "in": "query",
-          "description": "Name of the image to pull. The name may include a tag or digest. This parameter may only be used when pulling an image.",
+          "description": "Name of the image to pull. The name may include a tag or digest. This parameter may only be used when pulling an image. The pull is cancelled if the HTTP connection is closed.",
           "type": "string"
         }, {
           "name": "fromSrc",
           "in": "query",
-          "description": "Source to import. The value may be a URL from which the image can be retrieved or - to read the image from the request body. This parameter may only be used when importing an image.",
+          "description": "Source to import. The value may be a URL from which the image can be retrieved or `-` to read the image from the request body. This parameter may only be used when importing an image.",
           "type": "string"
         }, {
           "name": "repo",
@@ -3856,7 +3888,7 @@
         }, {
           "name": "inputImage",
           "in": "body",
-          "description": "Image content if the value - has been specified in fromSrc query parameter",
+          "description": "Image content if the value `-` has been specified in fromSrc query parameter",
           "schema": {
             "type": "string"
           },
@@ -3864,7 +3896,7 @@
         }, {
           "name": "X-Registry-Auth",
           "in": "header",
-          "description": "A base64-encoded AuthConfig object",
+          "description": "A base64-encoded auth config object in the format: TODO",
           "type": "string"
         }],
         "tags": [
@@ -3875,7 +3907,7 @@
     "/images/{name}/json": {
       "get": {
         "summary": "Inspect an image",
-        "description": "Return low-level information on the image name",
+        "description": "Return low-level information about an image.",
         "operationId": "GetImageInspect",
         "produces": [
           "application/json"
@@ -3885,12 +3917,115 @@
             "description": "No error",
             "schema": {
               "$ref": "#/definitions/Image"
+            },
+            "examples": {
+              "application/json": {
+                "Id": "sha256:85f05633ddc1c50679be2b16a0479ab6f7637f8884e0cfe0f4d20e1ebb3d6e7c",
+                "Container": "cb91e48a60d01f1e27028b4fc6819f4f290b3cf12496c8176ec714d0d390984a",
+                "Comment": "",
+                "Os": "linux",
+                "Architecture": "amd64",
+                "Parent": "sha256:91e54dfb11794fad694460162bf0cb0a4fa710cfa3f60979c177d920813e267c",
+                "ContainerConfig": {
+                  "Tty": false,
+                  "Hostname": "e611e15f9c9d",
+                  "Volumes": null,
+                  "Domainname": "",
+                  "AttachStdout": false,
+                  "PublishService": "",
+                  "AttachStdin": false,
+                  "OpenStdin": false,
+                  "StdinOnce": false,
+                  "NetworkDisabled": false,
+                  "OnBuild": [],
+                  "Image": "91e54dfb11794fad694460162bf0cb0a4fa710cfa3f60979c177d920813e267c",
+                  "User": "",
+                  "WorkingDir": "",
+                  "Entrypoint": null,
+                  "MacAddress": "",
+                  "AttachStderr": false,
+                  "Labels": {
+                    "com.example.license": "GPL",
+                    "com.example.version": "1.0",
+                    "com.example.vendor": "Acme"
+                  },
+                  "Env": [
+                    "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+                  ],
+                  "ExposedPorts": null,
+                  "Cmd": [
+                    "/bin/sh",
+                    "-c",
+                    "#(nop) LABEL com.example.vendor=Acme com.example.license=GPL com.example.version=1.0"
+                  ]
+                },
+                "DockerVersion": "1.9.0-dev",
+                "VirtualSize": 188359297,
+                "Size": 0,
+                "Author": "",
+                "Created": "2015-09-10T08:30:53.26995814Z",
+                "GraphDriver": {
+                  "Name": "aufs",
+                  "Data": null
+                },
+                "RepoDigests": [
+                  "localhost:5000/test/busybox/example@sha256:cbbf2f9a99b47fc460d422812b6a5adff7dfee951d8fa2e4a98caa0382cfbdbf"
+                ],
+                "RepoTags": [
+                  "example:1.0",
+                  "example:latest",
+                  "example:stable"
+                ],
+                "Config": {
+                  "Image": "91e54dfb11794fad694460162bf0cb0a4fa710cfa3f60979c177d920813e267c",
+                  "NetworkDisabled": false,
+                  "OnBuild": [],
+                  "StdinOnce": false,
+                  "PublishService": "",
+                  "AttachStdin": false,
+                  "OpenStdin": false,
+                  "Domainname": "",
+                  "AttachStdout": false,
+                  "Tty": false,
+                  "Hostname": "e611e15f9c9d",
+                  "Volumes": null,
+                  "Cmd": [
+                    "/bin/bash"
+                  ],
+                  "ExposedPorts": null,
+                  "Env": [
+                    "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+                  ],
+                  "Labels": {
+                    "com.example.vendor": "Acme",
+                    "com.example.version": "1.0",
+                    "com.example.license": "GPL"
+                  },
+                  "Entrypoint": null,
+                  "MacAddress": "",
+                  "AttachStderr": false,
+                  "WorkingDir": "",
+                  "User": ""
+                },
+                "RootFS": {
+                  "Type": "layers",
+                  "Layers": [
+                    "sha256:1834950e52ce4d5a88a1bbd131c537f4d0e56d10ff0dd69e66be3b7dfa9df7e6",
+                    "sha256:5f70bf18a086007016e948b04aed3b82103a36bea41755b6cddfaf10ace3c6ef"
+                  ]
+                }
+              }
             }
           },
           "404": {
             "description": "No such image",
             "schema": {
               "$ref": "#/definitions/Error"
+            },
+            "examples": {
+              "application/json": {
+                "message": "No such image: someimage (tag: latest)"
+              }
             }
           },
           "500": {
@@ -3915,7 +4050,7 @@
     "/images/{name}/history": {
       "get": {
         "summary": "Get the history of an image",
-        "description": "Return the history of the image name",
+        "description": "Return parent layers of an image.",
         "operationId": "GetImageHistory",
         "produces": [
           "application/json"
@@ -3928,6 +4063,36 @@
               "items": {
                 "$ref": "#/definitions/ImageHistoryItem"
               }
+            },
+            "examples": {
+              "application/json": [{
+                "Id": "3db9c44f45209632d6050b35958829c3a2aa256d81b9a7be45b362ff85c54710",
+                "Created": 1398108230,
+                "CreatedBy": "/bin/sh -c #(nop) ADD file:eb15dbd63394e063b805a3c32ca7bf0266ef64676d5a6fab4801f2e81e2a5148 in /",
+                "Tags": [
+                  "ubuntu:lucid",
+                  "ubuntu:10.04"
+                ],
+                "Size": 182964289,
+                "Comment": ""
+              }, {
+                "Id": "6cfa4d1f33fb861d4d114f43b25abd0ac737509268065cdfd69d544a59c85ab8",
+                "Created": 1398108222,
+                "CreatedBy": "/bin/sh -c #(nop) MAINTAINER Tianon Gravi <admwiggin@gmail.com> - mkimage-debootstrap.sh -i iproute,iputils-ping,ubuntu-minimal -t lucid.tar.xz lucid http://archive.ubuntu.com/ubuntu/",
+                "Tags": null,
+                "Size": 0,
+                "Comment": ""
+              }, {
+                "Id": "511136ea3c5a64f264b78b5433614aec563103b4d4702f3ba7d4d2698e22c158",
+                "Created": 1371157430,
+                "CreatedBy": "",
+                "Tags": [
+                  "scratch12:latest",
+                  "scratch:latest"
+                ],
+                "Size": 0,
+                "Comment": "Imported from -"
+              }]
             }
           },
           "404": {
@@ -3946,7 +4111,7 @@
         "parameters": [{
           "name": "name",
           "in": "path",
-          "description": "Image name or id",
+          "description": "Image name or ID",
           "type": "string",
           "required": true
         }],
@@ -3957,8 +4122,8 @@
     },
     "/images/{name}/push": {
       "post": {
-        "summary": "Push an image to the registry",
-        "description": "Push the image name on the registry",
+        "summary": "Push an image",
+        "description": "Push an image to a registry.\n\nIf you wish to push an image on to a private registry, that image must already have a tag which references the registry. For example, `registry.example.com/myimage:latest`.\n\nThe push is cancelled if the HTTP connection is closed.",
         "operationId": "PostImagePush",
         "consumes": [
           "application/octet-stream"
@@ -3983,7 +4148,7 @@
         "parameters": [{
           "name": "name",
           "in": "path",
-          "description": "Image name or id",
+          "description": "Image name or ID.",
           "type": "string",
           "required": true
         }, {
@@ -3994,7 +4159,7 @@
         }, {
           "name": "X-Registry-Auth",
           "in": "header",
-          "description": "A base64-encoded AuthConfig object",
+          "description": "A base64-encoded auth config object.",
           "type": "string",
           "required": true
         }],
@@ -4005,15 +4170,9 @@
     },
     "/images/{name}/tag": {
       "post": {
-        "summary": "Tag an image into a repository",
-        "description": "Tag the image name into a repository",
+        "summary": "Tag an image",
+        "description": "Tag an image so that it becomes part of a repository.",
         "operationId": "PostImageTag",
-        "consumes": [
-          "application/octet-stream"
-        ],
-        "produces": [
-          "text/plain"
-        ],
         "responses": {
           "201": {
             "description": "No error"
@@ -4046,24 +4205,18 @@
         "parameters": [{
           "name": "name",
           "in": "path",
-          "description": "Image name or id",
+          "description": "Image name or ID to tag.",
           "type": "string",
           "required": true
         }, {
           "name": "repo",
           "in": "query",
-          "description": "The repository to tag in.",
+          "description": "The repository to tag in. For example, `someuser/someimage`.",
           "type": "string"
-        }, {
-          "name": "force",
-          "in": "query",
-          "description": "1/True/true or 0/False/false, default false",
-          "type": "boolean",
-          "default": false
         }, {
           "name": "tag",
           "in": "query",
-          "description": "The new tag name.",
+          "description": "The name of the new tag.",
           "type": "string"
         }],
         "tags": [
@@ -4074,14 +4227,39 @@
     "/images/{name}": {
       "delete": {
         "summary": "Remove an image",
-        "description": "Remove the image name from the filesystem",
+        "description": "Remove an image, along with any untagged parent images that were referenced by that image.\n\nImages can't be removed if they have descendant images, are being used by a running container or are being used by a build.",
         "operationId": "DeleteImage",
         "produces": [
           "application/json"
         ],
         "responses": {
           "200": {
-            "description": "No error"
+            "description": "No error",
+            "examples": {
+              "application/json": [{
+                "Untagged": "3e2f21a89f"
+              }, {
+                "Deleted": "3e2f21a89f"
+              }, {
+                "Deleted": "53b4f83ac9"
+              }]
+            },
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "Untagged": {
+                    "type": "string",
+                    "description": "The image ID of an image that was untagged"
+                  },
+                  "Deleted": {
+                    "type": "string",
+                    "description": "The image ID of an image that was deleted"
+                  }
+                }
+              }
+            }
           },
           "404": {
             "description": "No such image",
@@ -4105,19 +4283,19 @@
         "parameters": [{
           "name": "name",
           "in": "path",
-          "description": "Image name or id",
+          "description": "Image name or ID",
           "type": "string",
           "required": true
         }, {
           "name": "force",
           "in": "query",
-          "description": "1/True/true or 0/False/false, default false",
+          "description": "Remove the image even if it is being used by stopped containers or has other tags",
           "type": "boolean",
           "default": false
         }, {
           "name": "noprune",
           "in": "query",
-          "description": "1/True/true or 0/False/false, default false.",
+          "description": "Do not delete untagged parent images",
           "type": "boolean",
           "default": false
         }],
@@ -4141,7 +4319,28 @@
               "type": "array",
               "items": {
                 "$ref": "#/definitions/ImageSearchResult"
-              }
+              },
+            },
+            "examples": {
+              "application/json": [{
+                "description": "",
+                "is_official": false,
+                "is_automated": false,
+                "name": "wma55/u1210sshd",
+                "star_count": 0
+              }, {
+                "description": "",
+                "is_official": false,
+                "is_automated": false,
+                "name": "jdswinbank/sshd",
+                "star_count": 0
+              }, {
+                "description": "",
+                "is_official": false,
+                "is_automated": false,
+                "name": "vgauthier/sshd",
+                "star_count": 0
+              }]
             }
           },
           "500": {
@@ -4155,6 +4354,17 @@
           "name": "term",
           "in": "query",
           "description": "Term to search",
+          "type": "string",
+          "required": true
+        }, {
+          "name": "limit",
+          "in": "query",
+          "description": "Maximum number of results to return",
+          "type": "integer"
+        }, {
+          "name": "filters",
+          "in": "query",
+          "description": "A JSON encoded value of the filters (a `map[string][]string`) to process on the images list. Available filters:\n\n- `stars=<number>`\n- `is-automated=(true|false)`\n- `is-official=(true|false)`",
           "type": "string"
         }],
         "tags": [
@@ -4165,18 +4375,36 @@
     "/auth": {
       "post": {
         "summary": "Check auth configuration",
-        "description": "Check auth configuration.",
+        "description": "Validate credentials for a registry and, if available, get an identity token for accessing the registry without password.",
         "operationId": "checkAuthentication",
         "consumes": [
           "application/json",
-          "application/octet-stream"
         ],
         "produces": [
-          "text/plain"
+          "application/json"
         ],
         "responses": {
           "200": {
-            "description": "No error"
+            "description": "No error",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "Status": {
+                  "type": "string",
+                  "description": "The status of the authentication"
+                },
+                "IdentityToken": {
+                  "type": "string",
+                  "description": "An opaque token used to authenticate a user after a successful login"
+                }
+              }
+            },
+            "examples": {
+              "application/json": {
+                "Status": "Login Succeeded",
+                "IdentityToken": "9cbaf023786cd7..."
+              }
+            }
           },
           "204": {
             "description": "No error"
@@ -4213,6 +4441,84 @@
             "description": "No error",
             "schema": {
               "$ref": "#/definitions/SystemInformation"
+            },
+            "examples": {
+              "application/json": {
+                "Architecture": "x86_64",
+                "ClusterStore": "etcd://localhost:2379",
+                "CgroupDriver": "cgroupfs",
+                "Containers": 11,
+                "ContainersRunning": 7,
+                "ContainersStopped": 3,
+                "ContainersPaused": 1,
+                "CpuCfsPeriod": true,
+                "CpuCfsQuota": true,
+                "Debug": false,
+                "DockerRootDir": "/var/lib/docker",
+                "Driver": "btrfs",
+                "DriverStatus": [
+                  [""]
+                ],
+                "ExperimentalBuild": false,
+                "HttpProxy": "http://test:test@localhost:8080",
+                "HttpsProxy": "https://test:test@localhost:8080",
+                "ID": "7TRN:IPZB:QYBB:VPBQ:UMPP:KARE:6ZNR:XE6T:7EWV:PKF4:ZOJD:TPYS",
+                "IPv4Forwarding": true,
+                "Images": 16,
+                "IndexServerAddress": "https://index.docker.io/v1/",
+                "InitPath": "/usr/bin/docker",
+                "InitSha1": "",
+                "KernelMemory": true,
+                "KernelVersion": "3.12.0-1-amd64",
+                "Labels": [
+                  "storage=ssd"
+                ],
+                "MemTotal": 2099236864,
+                "MemoryLimit": true,
+                "NCPU": 1,
+                "NEventsListener": 0,
+                "NFd": 11,
+                "NGoroutines": 21,
+                "Name": "prod-server-42",
+                "NoProxy": "9.81.1.160",
+                "OomKillDisable": true,
+                "OSType": "linux",
+                "OperatingSystem": "Boot2Docker",
+                "Plugins": {
+                  "Volume": [
+                    "local"
+                  ],
+                  "Network": [
+                    "null",
+                    "host",
+                    "bridge"
+                  ]
+                },
+                "RegistryConfig": {
+                  "IndexConfigs": {
+                    "docker.io": {
+                      "Mirrors": null,
+                      "Name": "docker.io",
+                      "Official": true,
+                      "Secure": true
+                    }
+                  },
+                  "InsecureRegistryCIDRs": [
+                    "127.0.0.0/8"
+                  ]
+                },
+                "SecurityOptions": [
+                  "apparmor",
+                  "seccomp",
+                  "selinux"
+                ],
+                "ServerVersion": "1.9.0",
+                "SwapLimit": false,
+                "SystemStatus": [
+                  ["State", "Healthy"]
+                ],
+                "SystemTime": "2015-03-10T11:11:23.730591467-07:00"
+              }
             }
           },
           "500": {
@@ -4299,8 +4605,7 @@
     },
     "/commit": {
       "post": {
-        "summary": "Create a new image from a container’s changes",
-        "description": "Create a new image from a container’s changes",
+        "summary": "Create a new image from a container",
         "operationId": "PostImageCommit",
         "consumes": [
           "application/json",
@@ -4313,7 +4618,18 @@
           "201": {
             "description": "no error",
             "schema": {
-              "$ref": "#/definitions/CommitResult"
+              "type": "object",
+              "properties": {
+                "Id": {
+                  "type": "string",
+                  "description": "The ID of the image created"
+                }
+              }
+            },
+            "examples": {
+              "application/json": {
+                "Id": "596069db4bf5"
+              }
             }
           },
           "404": {
@@ -4344,7 +4660,7 @@
         }, {
           "name": "container",
           "in": "query",
-          "description": "Container id or name to commit",
+          "description": "The ID or name of the container to commit",
           "type": "string"
         }, {
           "name": "repo",
@@ -4364,13 +4680,14 @@
         }, {
           "name": "author",
           "in": "query",
-          "description": "author (e.g., “John Hannibal Smith <hannibal@a-team.com>“)",
+          "description": "Author of the image (e.g., `John Hannibal Smith <hannibal@a-team.com>`)",
           "type": "string"
         }, {
           "name": "pause",
           "in": "query",
-          "description": "1/True/true or 0/False/false, whether to pause the container before committing",
-          "type": "string"
+          "description": "Whether to pause the container before committing",
+          "type": "boolean",
+          "default": true
         }, {
           "name": "changes",
           "in": "query",
