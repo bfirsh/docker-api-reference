@@ -398,8 +398,7 @@ definitions:
         PidsLimit: -1
         PortBindings:
           22/tcp:
-            -
-              HostPort: "11022"
+            - HostPort: "11022"
         PublishAllPorts: false
         Privileged: false
         ReadonlyRootfs: false
@@ -1307,25 +1306,21 @@ paths:
       produces:
         - "application/json"
       parameters:
-        -
-          name: "all"
+        - name: "all"
           in: "query"
           description: "Return all containers. By default, only running containers are shown"
           type: "boolean"
           default: false
-        -
-          name: "limit"
+        - name: "limit"
           in: "query"
           description: "Return this number of most recently created containers, including non-running ones."
           type: "integer"
-        -
-          name: "size"
+        - name: "size"
           in: "query"
           description: "Return the size of container as fields `SizeRw` and `SizeRootFs`."
           type: "boolean"
           default: false
-        -
-          name: "filters"
+        - name: "filters"
           in: "query"
           description: |
             Filters to process on the container list, encoded as JSON (a `map[string][]string`). For example, `{"status": ["paused"]}` will only return paused containers.
@@ -1350,8 +1345,7 @@ paths:
               $ref: "#/definitions/ContainerListSummary"
           examples:
             application/json:
-              -
-                Id: "8dfafdbc3a40"
+              - Id: "8dfafdbc3a40"
                 Names:
                   - "/boring_feynman"
                 Image: "ubuntu:latest"
@@ -1361,8 +1355,7 @@ paths:
                 State: "Exited"
                 Status: "Exit 0"
                 Ports:
-                  -
-                    PrivatePort: 2222
+                  - PrivatePort: 2222
                     PublicPort: 3333
                     Type: "tcp"
                 Labels:
@@ -1389,16 +1382,14 @@ paths:
                       GlobalIPv6PrefixLen: 0
                       MacAddress: "02:42:ac:11:00:02"
                 Mounts:
-                  -
-                    Name: "fac362...80535"
+                  - Name: "fac362...80535"
                     Source: "/data"
                     Destination: "/data"
                     Driver: "local"
                     Mode: "ro,Z"
                     RW: false
                     Propagation: ""
-              -
-                Id: "9cd87474be90"
+              - Id: "9cd87474be90"
                 Names:
                   - "/coolName"
                 Image: "ubuntu:latest"
@@ -1429,8 +1420,7 @@ paths:
                       GlobalIPv6PrefixLen: 0
                       MacAddress: "02:42:ac:11:00:08"
                 Mounts: []
-              -
-                Id: "3176a2479c92"
+              - Id: "3176a2479c92"
                 Names:
                   - "/sleepy_dog"
                 Image: "ubuntu:latest"
@@ -1461,8 +1451,7 @@ paths:
                       GlobalIPv6PrefixLen: 0
                       MacAddress: "02:42:ac:11:00:06"
                 Mounts: []
-              -
-                Id: "4cb07b47f9fb"
+              - Id: "4cb07b47f9fb"
                 Names:
                   - "/running_cat"
                 Image: "ubuntu:latest"
@@ -1513,14 +1502,12 @@ paths:
       produces:
         - "application/json"
       parameters:
-        -
-          name: "name"
+        - name: "name"
           in: "query"
           description: "Assign the specified name to the container. Must match `/?[a-zA-Z0-9_-]+`."
           type: "string"
           pattern: "/?[a-zA-Z0-9_-]+"
-        -
-          name: "body"
+        - name: "body"
           in: "body"
           description: "Container to create"
           schema:
@@ -1722,8 +1709,7 @@ paths:
                 StartedAt: "2015-01-06T15:47:32.072697474Z"
                 Status: "running"
               Mounts:
-                -
-                  Name: "fac362...80535"
+                - Name: "fac362...80535"
                   Source: "/data"
                   Destination: "/data"
                   Driver: "local"
@@ -1742,14 +1728,12 @@ paths:
           schema:
             $ref: "#/definitions/Error"
       parameters:
-        -
-          name: "id"
+        - name: "id"
           in: "path"
           required: true
           description: "ID or name of the container"
           type: "string"
-        -
-          name: "size"
+        - name: "size"
           in: "query"
           type: "boolean"
           default: false
@@ -1808,14 +1792,12 @@ paths:
           schema:
             $ref: "#/definitions/Error"
       parameters:
-        -
-          name: "id"
+        - name: "id"
           in: "path"
           required: true
           description: "ID or name of the container"
           type: "string"
-        -
-          name: "ps_args"
+        - name: "ps_args"
           in: "query"
           description: "The arguments to pass to `ps`. For example, `aux`"
           type: "string"
@@ -1852,44 +1834,37 @@ paths:
           schema:
             $ref: "#/definitions/Error"
       parameters:
-        -
-          name: "id"
+        - name: "id"
           in: "path"
           required: true
           description: "ID or name of the container"
           type: "string"
-        -
-          name: "follow"
+        - name: "follow"
           in: "query"
           description: "Return the logs as a stream. This will return a `101` HTTP response with a `Connection: upgrade` header, then hijack the HTTP connection to send raw output."
           type: "boolean"
           default: false
-        -
-          name: "stdout"
+        - name: "stdout"
           in: "query"
           description: "Return logs from stdout"
           type: "boolean"
           default: false
-        -
-          name: "stderr"
+        - name: "stderr"
           in: "query"
           description: "Return logs from stderr"
           type: "boolean"
           default: false
-        -
-          name: "since"
+        - name: "since"
           in: "query"
           description: "Only return logs since this time, as a UNIX timestamp"
           type: "integer"
           default: 0
-        -
-          name: "timestamps"
+        - name: "timestamps"
           in: "query"
           description: "Add timestamps to every log line"
           type: "boolean"
           default: false
-        -
-          name: "tail"
+        - name: "tail"
           in: "query"
           description: "Only return this number of log lines from the end of the logs. Specify as an integer or `all` to output all log lines."
           type: "string"
@@ -1917,14 +1892,11 @@ paths:
               $ref: "#/definitions/ContainerChange"
           examples:
             application/json:
-              -
-                Path: "/dev"
+              - Path: "/dev"
                 Kind: 0
-              -
-                Path: "/dev/kmsg"
+              - Path: "/dev/kmsg"
                 Kind: 1
-              -
-                Path: "/test"
+              - Path: "/test"
                 Kind: 1
         404:
           description: "no such container"
@@ -1938,8 +1910,7 @@ paths:
           schema:
             $ref: "#/definitions/Error"
       parameters:
-        -
-          name: "id"
+        - name: "id"
           in: "path"
           required: true
           description: "ID or name of the container"
@@ -1968,8 +1939,7 @@ paths:
           schema:
             $ref: "#/definitions/Error"
       parameters:
-        -
-          name: "id"
+        - name: "id"
           in: "path"
           required: true
           description: "ID or name of the container"
@@ -2093,14 +2063,12 @@ paths:
           schema:
             $ref: "#/definitions/Error"
       parameters:
-        -
-          name: "id"
+        - name: "id"
           in: "path"
           required: true
           description: "ID or name of the container"
           type: "string"
-        -
-          name: "stream"
+        - name: "stream"
           in: "query"
           description: "Stream the output. If false, the stats will be output once and then it will disconnect."
           type: "boolean"
@@ -2131,19 +2099,16 @@ paths:
           schema:
             $ref: "#/definitions/Error"
       parameters:
-        -
-          name: "id"
+        - name: "id"
           in: "path"
           required: true
           description: "ID or name of the container"
           type: "string"
-        -
-          name: "h"
+        - name: "h"
           in: "query"
           description: "Height of the tty session in characters"
           type: "integer"
-        -
-          name: "w"
+        - name: "w"
           in: "query"
           description: "Width of the tty session in characters"
           type: "integer"
@@ -2172,14 +2137,12 @@ paths:
           schema:
             $ref: "#/definitions/Error"
       parameters:
-        -
-          name: "id"
+        - name: "id"
           in: "path"
           required: true
           description: "ID or name of the container"
           type: "string"
-        -
-          name: "detachKeys"
+        - name: "detachKeys"
           in: "query"
           description: "Override the key sequence for detaching a container. Format is a single character `[a-Z]` or `ctrl-<value>` where `<value>` is one of: `a-z`, `@`, `^`, `[`, `,` or `_`."
           type: "string"
@@ -2208,14 +2171,12 @@ paths:
           schema:
             $ref: "#/definitions/Error"
       parameters:
-        -
-          name: "id"
+        - name: "id"
           in: "path"
           required: true
           description: "ID or name of the container"
           type: "string"
-        -
-          name: "t"
+        - name: "t"
           in: "query"
           description: "Number of seconds to wait before killing the container"
           type: "integer"
@@ -2242,14 +2203,12 @@ paths:
           schema:
             $ref: "#/definitions/Error"
       parameters:
-        -
-          name: "id"
+        - name: "id"
           in: "path"
           required: true
           description: "ID or name of the container"
           type: "string"
-        -
-          name: "t"
+        - name: "t"
           in: "query"
           description: "Number of seconds to wait before killing the container"
           type: "integer"
@@ -2275,14 +2234,12 @@ paths:
           schema:
             $ref: "#/definitions/Error"
       parameters:
-        -
-          name: "id"
+        - name: "id"
           in: "path"
           required: true
           description: "ID or name of the container"
           type: "string"
-        -
-          name: "signal"
+        - name: "signal"
           in: "query"
           description: "Signal to send to the container as an integer or string (e.g. `SIGINT`)"
           type: "string"
@@ -2315,14 +2272,12 @@ paths:
           schema:
             $ref: "#/definitions/Error"
       parameters:
-        -
-          name: "id"
+        - name: "id"
           in: "path"
           required: true
           description: "ID or name of the container"
           type: "string"
-        -
-          name: "update"
+        - name: "update"
           in: "body"
           description: "Update config json"
           schema:
@@ -2353,14 +2308,12 @@ paths:
           schema:
             $ref: "#/definitions/Error"
       parameters:
-        -
-          name: "id"
+        - name: "id"
           in: "path"
           required: true
           description: "ID or name of the container"
           type: "string"
-        -
-          name: "name"
+        - name: "name"
           in: "query"
           required: true
           description: "New name for the container"
@@ -2390,8 +2343,7 @@ paths:
           schema:
             $ref: "#/definitions/Error"
       parameters:
-        -
-          name: "id"
+        - name: "id"
           in: "path"
           required: true
           description: "ID or name of the container"
@@ -2418,8 +2370,7 @@ paths:
           schema:
             $ref: "#/definitions/Error"
       parameters:
-        -
-          name: "id"
+        - name: "id"
           in: "path"
           required: true
           description: "ID or name of the container"
@@ -2457,43 +2408,36 @@ paths:
           schema:
             $ref: "#/definitions/Error"
       parameters:
-        -
-          name: "id"
+        - name: "id"
           in: "path"
           required: true
           description: "ID or name of the container"
           type: "string"
-        -
-          name: "detachKeys"
+        - name: "detachKeys"
           in: "query"
           description: "Override the key sequence for detaching a container.Format is a single character `[a-Z]` or `ctrl-<value>` where `<value>` is one of: `a-z`, `@`, `^`, `[`, `,` or `_`."
           type: "string"
-        -
-          name: "logs"
+        - name: "logs"
           in: "query"
           description: "Return logs"
           type: "boolean"
           default: false
-        -
-          name: "stream"
+        - name: "stream"
           in: "query"
           description: "Return stream"
           type: "boolean"
           default: false
-        -
-          name: "stdin"
+        - name: "stdin"
           in: "query"
           description: "Attach to stdin"
           type: "boolean"
           default: false
-        -
-          name: "stdout"
+        - name: "stdout"
           in: "query"
           description: "Attach to stdout"
           type: "boolean"
           default: false
-        -
-          name: "stderr"
+        - name: "stderr"
           in: "query"
           description: "Attach to stderr"
           type: "boolean"
@@ -2525,43 +2469,36 @@ paths:
           schema:
             $ref: "#/definitions/Error"
       parameters:
-        -
-          name: "id"
+        - name: "id"
           in: "path"
           required: true
           description: "ID or name of the container"
           type: "string"
-        -
-          name: "detachKeys"
+        - name: "detachKeys"
           in: "query"
           description: "Override the key sequence for detaching a container.Format is a single character `[a-Z]` or `ctrl-<value>` where `<value>` is one of: `a-z`, `@`, `^`, `[`, `,`, or `_`."
           type: "string"
-        -
-          name: "logs"
+        - name: "logs"
           in: "query"
           description: "Return logs"
           type: "boolean"
           default: false
-        -
-          name: "stream"
+        - name: "stream"
           in: "query"
           description: "Return stream"
           type: "boolean"
           default: false
-        -
-          name: "stdin"
+        - name: "stdin"
           in: "query"
           description: "Attach to stdin"
           type: "boolean"
           default: false
-        -
-          name: "stdout"
+        - name: "stdout"
           in: "query"
           description: "Attach to stdout"
           type: "boolean"
           default: false
-        -
-          name: "stderr"
+        - name: "stderr"
           in: "query"
           description: "Attach to stderr"
           type: "boolean"
@@ -2592,8 +2529,7 @@ paths:
           schema:
             $ref: "#/definitions/Error"
       parameters:
-        -
-          name: "id"
+        - name: "id"
           in: "path"
           required: true
           description: "ID or name of the container"
@@ -2623,20 +2559,17 @@ paths:
           schema:
             $ref: "#/definitions/Error"
       parameters:
-        -
-          name: "id"
+        - name: "id"
           in: "path"
           required: true
           description: "ID or name of the container"
           type: "string"
-        -
-          name: "v"
+        - name: "v"
           in: "query"
           description: "Remove the volumes associated with the container."
           type: "boolean"
           default: false
-        -
-          name: "force"
+        - name: "force"
           in: "query"
           description: "If the container is running, kill it before removing it."
           type: "boolean"
@@ -2672,14 +2605,12 @@ paths:
           schema:
             $ref: "#/definitions/Error"
       parameters:
-        -
-          name: "id"
+        - name: "id"
           in: "path"
           required: true
           description: "ID or name of the container"
           type: "string"
-        -
-          name: "path"
+        - name: "path"
           in: "query"
           required: true
           description: "Resource in the container’s filesystem to archive."
@@ -2711,14 +2642,12 @@ paths:
           schema:
             $ref: "#/definitions/Error"
       parameters:
-        -
-          name: "id"
+        - name: "id"
           in: "path"
           required: true
           description: "ID or name of the container"
           type: "string"
-        -
-          name: "path"
+        - name: "path"
           in: "query"
           required: true
           description: "Resource in the container’s filesystem to archive."
@@ -2755,25 +2684,21 @@ paths:
           schema:
             $ref: "#/definitions/Error"
       parameters:
-        -
-          name: "id"
+        - name: "id"
           in: "path"
           required: true
           description: "ID or name of the container"
           type: "string"
-        -
-          name: "path"
+        - name: "path"
           in: "query"
           required: true
           description: "Path to a directory in the container to extract the archive’s contents into. "
           type: "string"
-        -
-          name: "noOverwriteDirNonDir"
+        - name: "noOverwriteDirNonDir"
           in: "query"
           description: "If “1”, “true”, or “True” then it will be an error if unpacking the given content would cause an existing directory to be replaced with a non-directory and vice versa."
           type: "string"
-        -
-          name: "inputStream"
+        - name: "inputStream"
           in: "body"
           required: true
           description: "The input stream must be a tar archive compressed with one of the following algorithms: identity (no compression), gzip, bzip2, xz."
@@ -2797,8 +2722,7 @@ paths:
               $ref: "#/definitions/ImageItem"
           examples:
             application/json:
-              -
-                RepoTags:
+              - RepoTags:
                   - "ubuntu:12.04"
                   - "ubuntu:precise"
                   - "ubuntu:latest"
@@ -2807,8 +2731,7 @@ paths:
                 Size: 131506275
                 VirtualSize: 131506275
                 Labels: {}
-              -
-                RepoTags:
+              - RepoTags:
                   - "ubuntu:12.10"
                   - "ubuntu:quantal"
                 ParentId: "27cf784147099545"
@@ -2823,24 +2746,20 @@ paths:
           schema:
             $ref: "#/definitions/Error"
       parameters:
-        -
-          name: "all"
+        - name: "all"
           in: "query"
           description: "Show all images. Only images from a final layer (no children) are shown by default."
           type: "boolean"
           default: false
-        -
-          name: "filters"
+        - name: "filters"
           in: "query"
           description: "A JSON encoded value of the filters (a `map[string][]string`) to process on the containers list"
           type: "string"
-        -
-          name: "filter"
+        - name: "filter"
           in: "query"
           description: "Only return images with the specified name."
           type: "string"
-        -
-          name: "digests"
+        - name: "digests"
           in: "query"
           description: "Show digest information as a `RepoDigests` field on each image."
           type: "boolean"
@@ -2862,112 +2781,92 @@ paths:
       produces:
         - "application/json"
       parameters:
-        -
-          name: "inputStream"
+        - name: "inputStream"
           in: "body"
           description: "A tar archive compressed with one of the following algorithms: identity (no compression), gzip, bzip2, xz."
           schema:
             type: "string"
             format: "binary"
-        -
-          name: "dockerfile"
+        - name: "dockerfile"
           in: "query"
           description: "Path within the build context to the `Dockerfile`. This is ignored if `remote` is specified and points to an individual filename."
           type: "string"
           default: "Dockerfile"
-        -
-          name: "t"
+        - name: "t"
           in: "query"
           description: "A name and optional tag to apply to the image in the `name:tag` format. If you omit the tag the default `latest` value is assumed. You can provide several `t` parameters."
           type: "string"
-        -
-          name: "remote"
+        - name: "remote"
           in: "query"
           description: "A Git repository URI or HTTP/HTTPS context URI. If the URI points to a single text file, the file’s contents are placed into a file called `Dockerfile` and the image is built from that file. If the URI points to a tarball, the file is downloaded by the daemon and the contents therein used as the context for the build. If the URI points to a tarball and the `dockerfile` parameter is also specified, there must be a file with the corresponding path inside the tarball."
           type: "string"
-        -
-          name: "q"
+        - name: "q"
           in: "query"
           description: "Suppress verbose build output."
           type: "boolean"
           default: false
-        -
-          name: "nocache"
+        - name: "nocache"
           in: "query"
           description: "Do not use the cache when building the image."
           type: "boolean"
           default: false
-        -
-          name: "pull"
+        - name: "pull"
           in: "query"
           description: "Attempt to pull the image even if an older image exists locally."
           type: "string"
-        -
-          name: "rm"
+        - name: "rm"
           in: "query"
           description: "Remove intermediate containers after a successful build."
           type: "boolean"
           default: true
-        -
-          name: "forcerm"
+        - name: "forcerm"
           in: "query"
           description: "Always remove intermediate containers, even upon failure."
           type: "boolean"
           default: false
-        -
-          name: "memory"
+        - name: "memory"
           in: "query"
           description: "Set memory limit for build."
           type: "integer"
-        -
-          name: "memswap"
+        - name: "memswap"
           in: "query"
           description: "Total memory (memory + swap). Set as `-1` to disable swap."
           type: "integer"
-        -
-          name: "cpushares"
+        - name: "cpushares"
           in: "query"
           description: "CPU shares (relative weight)."
           type: "integer"
-        -
-          name: "cpusetcpus"
+        - name: "cpusetcpus"
           in: "query"
           description: "CPUs in which to allow execution (e.g., `0-3`, `0,1`)."
           type: "string"
-        -
-          name: "cpuperiod"
+        - name: "cpuperiod"
           in: "query"
           description: "The length of a CPU period in microseconds."
           type: "integer"
-        -
-          name: "cpuquota"
+        - name: "cpuquota"
           in: "query"
           description: "Microseconds of CPU time that the container can get in a CPU period."
           type: "integer"
-        -
-          name: "buildargs"
+        - name: "buildargs"
           in: "query"
           description: "JSON map of string pairs for build-time variables. Users pass these values at build-time. Docker uses the buildargs as the environment context for commands run via the Dockerfile’s RUN instruction, or for variable expansion in other Dockerfile instructions. This is not meant for passing secret values. [Read more about the buildargs instruction.](https://docs.docker.com/engine/reference/builder/#arg)"
           type: "integer"
-        -
-          name: "shmsize"
+        - name: "shmsize"
           in: "query"
           description: "Size of `/dev/shm` in bytes. The size must be greater than 0. If omitted the system uses 64MB."
           type: "integer"
-        -
-          name: "labels"
+        - name: "labels"
           in: "query"
           description: "Arbitrary key/value labels to set on the image, as a JSON map of string pairs."
           type: "string"
-        -
-          name: "Content-type"
+        - name: "Content-type"
           in: "header"
           type: "string"
           enum:
             - "application/tar"
           default: "application/tar"
-        -
-          name: "X-Registry-Auth"
+        - name: "X-Registry-Auth"
           in: "header"
           description: |
             This is a base64-encoded JSON object with auth configurations for multiple registries that a build may refer to.
@@ -3016,35 +2915,29 @@ paths:
           schema:
             $ref: "#/definitions/Error"
       parameters:
-        -
-          name: "fromImage"
+        - name: "fromImage"
           in: "query"
           description: "Name of the image to pull. The name may include a tag or digest. This parameter may only be used when pulling an image. The pull is cancelled if the HTTP connection is closed."
           type: "string"
-        -
-          name: "fromSrc"
+        - name: "fromSrc"
           in: "query"
           description: "Source to import. The value may be a URL from which the image can be retrieved or `-` to read the image from the request body. This parameter may only be used when importing an image."
           type: "string"
-        -
-          name: "repo"
+        - name: "repo"
           in: "query"
           description: "Repository name given to an image when it is imported. The repo may include a tag. This parameter may only be used when importing an image."
           type: "string"
-        -
-          name: "tag"
+        - name: "tag"
           in: "query"
           description: "Tag or digest."
           type: "string"
-        -
-          name: "inputImage"
+        - name: "inputImage"
           in: "body"
           description: "Image content if the value `-` has been specified in fromSrc query parameter"
           schema:
             type: "string"
           required: false
-        -
-          name: "X-Registry-Auth"
+        - name: "X-Registry-Auth"
           in: "header"
           description: "A base64-encoded auth configuration. [See the authentication section for details.](#section/Authentication)"
           type: "string"
@@ -3157,8 +3050,7 @@ paths:
           schema:
             $ref: "#/definitions/Error"
       parameters:
-        -
-          name: "name"
+        - name: "name"
           in: "path"
           description: "Image name or id"
           type: "string"
@@ -3181,8 +3073,7 @@ paths:
               $ref: "#/definitions/ImageHistoryItem"
           examples:
             application/json:
-              -
-                Id: "3db9c44f45209632d6050b35958829c3a2aa256d81b9a7be45b362ff85c54710"
+              - Id: "3db9c44f45209632d6050b35958829c3a2aa256d81b9a7be45b362ff85c54710"
                 Created: 1398108230
                 CreatedBy: "/bin/sh -c #(nop) ADD file:eb15dbd63394e063b805a3c32ca7bf0266ef64676d5a6fab4801f2e81e2a5148 in /"
                 Tags:
@@ -3190,15 +3081,13 @@ paths:
                   - "ubuntu:10.04"
                 Size: 182964289
                 Comment: ""
-              -
-                Id: "6cfa4d1f33fb861d4d114f43b25abd0ac737509268065cdfd69d544a59c85ab8"
+              - Id: "6cfa4d1f33fb861d4d114f43b25abd0ac737509268065cdfd69d544a59c85ab8"
                 Created: 1398108222
                 CreatedBy: "/bin/sh -c #(nop) MAINTAINER Tianon Gravi <admwiggin@gmail.com> - mkimage-debootstrap.sh -i iproute,iputils-ping,ubuntu-minimal -t lucid.tar.xz lucid http://archive.ubuntu.com/ubuntu/"
                 Tags: null
                 Size: 0
                 Comment: ""
-              -
-                Id: "511136ea3c5a64f264b78b5433614aec563103b4d4702f3ba7d4d2698e22c158"
+              - Id: "511136ea3c5a64f264b78b5433614aec563103b4d4702f3ba7d4d2698e22c158"
                 Created: 1371157430
                 CreatedBy: ""
                 Tags:
@@ -3215,8 +3104,7 @@ paths:
           schema:
             $ref: "#/definitions/Error"
       parameters:
-        -
-          name: "name"
+        - name: "name"
           in: "path"
           description: "Image name or ID"
           type: "string"
@@ -3247,19 +3135,16 @@ paths:
           schema:
             $ref: "#/definitions/Error"
       parameters:
-        -
-          name: "name"
+        - name: "name"
           in: "path"
           description: "Image name or ID."
           type: "string"
           required: true
-        -
-          name: "tag"
+        - name: "tag"
           in: "query"
           description: "The tag to associate with the image on the registry."
           type: "string"
-        -
-          name: "X-Registry-Auth"
+        - name: "X-Registry-Auth"
           in: "header"
           description: "A base64-encoded auth configuration. [See the authentication section for details.](#section/Authentication)"
           type: "string"
@@ -3291,19 +3176,16 @@ paths:
           schema:
             $ref: "#/definitions/Error"
       parameters:
-        -
-          name: "name"
+        - name: "name"
           in: "path"
           description: "Image name or ID to tag."
           type: "string"
           required: true
-        -
-          name: "repo"
+        - name: "repo"
           in: "query"
           description: "The repository to tag in. For example, `someuser/someimage`."
           type: "string"
-        -
-          name: "tag"
+        - name: "tag"
           in: "query"
           description: "The name of the new tag."
           type: "string"
@@ -3324,12 +3206,9 @@ paths:
           description: "No error"
           examples:
             application/json:
-              -
-                Untagged: "3e2f21a89f"
-              -
-                Deleted: "3e2f21a89f"
-              -
-                Deleted: "53b4f83ac9"
+              - Untagged: "3e2f21a89f"
+              - Deleted: "3e2f21a89f"
+              - Deleted: "53b4f83ac9"
           schema:
             type: "array"
             items:
@@ -3354,20 +3233,17 @@ paths:
           schema:
             $ref: "#/definitions/Error"
       parameters:
-        -
-          name: "name"
+        - name: "name"
           in: "path"
           description: "Image name or ID"
           type: "string"
           required: true
-        -
-          name: "force"
+        - name: "force"
           in: "query"
           description: "Remove the image even if it is being used by stopped containers or has other tags"
           type: "boolean"
           default: false
-        -
-          name: "noprune"
+        - name: "noprune"
           in: "query"
           description: "Do not delete untagged parent images"
           type: "boolean"
@@ -3390,20 +3266,17 @@ paths:
               $ref: "#/definitions/ImageSearchResult"
           examples:
             application/json:
-              -
-                description: ""
+              - description: ""
                 is_official: false
                 is_automated: false
                 name: "wma55/u1210sshd"
                 star_count: 0
-              -
-                description: ""
+              - description: ""
                 is_official: false
                 is_automated: false
                 name: "jdswinbank/sshd"
                 star_count: 0
-              -
-                description: ""
+              - description: ""
                 is_official: false
                 is_automated: false
                 name: "vgauthier/sshd"
@@ -3413,19 +3286,16 @@ paths:
           schema:
             $ref: "#/definitions/Error"
       parameters:
-        -
-          name: "term"
+        - name: "term"
           in: "query"
           description: "Term to search"
           type: "string"
           required: true
-        -
-          name: "limit"
+        - name: "limit"
           in: "query"
           description: "Maximum number of results to return"
           type: "integer"
-        -
-          name: "filters"
+        - name: "filters"
           in: "query"
           description: |
             A JSON encoded value of the filters (a `map[string][]string`) to process on the images list. Available filters:
@@ -3468,8 +3338,7 @@ paths:
           schema:
             $ref: "#/definitions/Error"
       parameters:
-        -
-          name: "authConfig"
+        - name: "authConfig"
           in: "body"
           description: "Authentication to check"
           schema:
@@ -3643,45 +3512,37 @@ paths:
           schema:
             $ref: "#/definitions/Error"
       parameters:
-        -
-          name: "containerConfig"
+        - name: "containerConfig"
           in: "body"
           description: "The container configuration"
           schema:
             $ref: "#/definitions/ContainerConfig"
-        -
-          name: "container"
+        - name: "container"
           in: "query"
           description: "The ID or name of the container to commit"
           type: "string"
-        -
-          name: "repo"
+        - name: "repo"
           in: "query"
           description: "Repository name for the created image"
           type: "string"
-        -
-          name: "tag"
+        - name: "tag"
           in: "query"
           description: "Tag name for the create image"
           type: "string"
-        -
-          name: "comment"
+        - name: "comment"
           in: "query"
           description: "Commit message"
           type: "string"
-        -
-          name: "author"
+        - name: "author"
           in: "query"
           description: "Author of the image (e.g., `John Hannibal Smith <hannibal@a-team.com>`)"
           type: "string"
-        -
-          name: "pause"
+        - name: "pause"
           in: "query"
           description: "Whether to pause the container before committing"
           type: "boolean"
           default: true
-        -
-          name: "changes"
+        - name: "changes"
           in: "query"
           description: "Dockerfile instructions to apply while committing"
           type: "string"
@@ -3702,18 +3563,15 @@ paths:
           schema:
             $ref: "#/definitions/Error"
       parameters:
-        -
-          name: "since"
+        - name: "since"
           in: "query"
           description: "Timestamp used for polling"
           type: "string"
-        -
-          name: "until"
+        - name: "until"
           in: "query"
           description: "Timestamp used for polling"
           type: "string"
-        -
-          name: "filters"
+        - name: "filters"
           in: "query"
           description: "A json encoded value of the filters (a map[string][]string) to process on the event list."
           type: "string"
@@ -3736,8 +3594,7 @@ paths:
           schema:
             $ref: "#/definitions/Error"
       parameters:
-        -
-          name: "name"
+        - name: "name"
           in: "path"
           description: "Image name or id"
           type: "string"
@@ -3761,8 +3618,7 @@ paths:
           schema:
             $ref: "#/definitions/Error"
       parameters:
-        -
-          name: "names"
+        - name: "names"
           in: "query"
           description: "Image names to filter"
           type: "array"
@@ -3788,8 +3644,7 @@ paths:
           schema:
             $ref: "#/definitions/Error"
       parameters:
-        -
-          name: "imagesTarball"
+        - name: "imagesTarball"
           in: "body"
           description: "Tar archive containing images"
           schema:
@@ -3826,15 +3681,13 @@ paths:
           schema:
             $ref: "#/definitions/Error"
       parameters:
-        -
-          name: "execConfig"
+        - name: "execConfig"
           in: "body"
           description: "Exec configuration"
           schema:
             $ref: "#/definitions/ExecConfig"
           required: true
-        -
-          name: "id"
+        - name: "id"
           in: "path"
           description: "ID or name of container"
           type: "string"
@@ -3862,14 +3715,12 @@ paths:
           schema:
             $ref: "#/definitions/Error"
       parameters:
-        -
-          name: "execStartConfig"
+        - name: "execStartConfig"
           in: "body"
           description: "Exec configuration"
           schema:
             $ref: "#/definitions/ExecStartConfig"
-        -
-          name: "id"
+        - name: "id"
           in: "path"
           description: "Exec instance id"
           required: true
@@ -3894,19 +3745,16 @@ paths:
           schema:
             $ref: "#/definitions/Error"
       parameters:
-        -
-          name: "id"
+        - name: "id"
           in: "path"
           description: "Exec instance id"
           required: true
           type: "string"
-        -
-          name: "h"
+        - name: "h"
           in: "query"
           description: "Height of the tty session"
           type: "integer"
-        -
-          name: "w"
+        - name: "w"
           in: "query"
           description: "Width of the tty session"
           type: "integer"
@@ -3933,8 +3781,7 @@ paths:
           schema:
             $ref: "#/definitions/Error"
       parameters:
-        -
-          name: "id"
+        - name: "id"
           in: "path"
           description: "Exec instance id"
           required: true
@@ -3958,8 +3805,7 @@ paths:
           schema:
             $ref: "#/definitions/Error"
       parameters:
-        -
-          name: "filters"
+        - name: "filters"
           in: "query"
           description: "JSON encoded value of the filters (a map[string][]string) to process on the volumes list"
           type: "string"
@@ -3985,8 +3831,7 @@ paths:
           schema:
             $ref: "#/definitions/Error"
       parameters:
-        -
-          name: "volumeConfig"
+        - name: "volumeConfig"
           in: "body"
           required: true
           description: "Volume configuration"
@@ -4015,8 +3860,7 @@ paths:
           schema:
             $ref: "#/definitions/Error"
       parameters:
-        -
-          name: "name"
+        - name: "name"
           in: "path"
           required: true
           description: "Volume name or id"
@@ -4043,8 +3887,7 @@ paths:
           schema:
             $ref: "#/definitions/Error"
       parameters:
-        -
-          name: "name"
+        - name: "name"
           in: "path"
           required: true
           description: "Volume name or id"
@@ -4068,8 +3911,7 @@ paths:
           schema:
             $ref: "#/definitions/Error"
       parameters:
-        -
-          name: "filters"
+        - name: "filters"
           in: "query"
           description: "JSON encoded value of the filters (a map[string][]string) to process on the networks list."
           type: "string"
@@ -4092,8 +3934,7 @@ paths:
           schema:
             $ref: "#/definitions/Error"
       parameters:
-        -
-          name: "id"
+        - name: "id"
           in: "path"
           description: "Network id or name"
           required: true
@@ -4116,8 +3957,7 @@ paths:
           schema:
             $ref: "#/definitions/Error"
       parameters:
-        -
-          name: "id"
+        - name: "id"
           in: "path"
           description: "Network id or name"
           required: true
@@ -4148,8 +3988,7 @@ paths:
           schema:
             $ref: "#/definitions/Error"
       parameters:
-        -
-          name: "networkConfig"
+        - name: "networkConfig"
           in: "body"
           description: "Network configuration"
           required: true
@@ -4177,14 +4016,12 @@ paths:
           schema:
             $ref: "#/definitions/Error"
       parameters:
-        -
-          name: "id"
+        - name: "id"
           in: "path"
           description: "Network id or name"
           required: true
           type: "string"
-        -
-          name: "container"
+        - name: "container"
           in: "body"
           description: "Container"
           required: true
@@ -4212,14 +4049,12 @@ paths:
           schema:
             $ref: "#/definitions/Error"
       parameters:
-        -
-          name: "id"
+        - name: "id"
           in: "path"
           description: "Network id or name"
           required: true
           type: "string"
-        -
-          name: "container"
+        - name: "container"
           in: "body"
           description: "Container"
           required: true
