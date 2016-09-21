@@ -29,19 +29,27 @@ info:
 
     # Authentication
 
-    Authentication configuration is handled client side, so the client has to send the `authConfig` to various endpoints, such as `POST /images/(name)/push`. The `authConfig`, set as the `X-Registry-Auth` header, is currently a Base64 encoded (JSON) string with the following structure:
+    Authentication for registries is handled client side. The client has to send authentication details to various endpoints that need to communicate with registries, such as `POST /images/(name)/push`. These are sent as `X-Registry-Auth` header as a Base64 encoded (JSON) string with the following structure:
 
     ```
     {
       "username": "string",
       "password": "string",
       "email": "string",
-      "serveraddress": "string",
-      "auth": ""
+      "serveraddress": "string"
     }
     ```
 
-    Callers should leave the `auth` empty. The `serveraddress` is a domain/IP without a protocol. Throughout this structure, double quotes are required.
+    The `serveraddress` is a domain/IP without a protocol. Throughout this structure, double quotes are required.
+
+    If you have already got an identity token from the [`/auth` endpoint](#operation/checkAuthentication), you can just pass this instead of credentials:
+
+    ```
+    {
+      "identitytoken": "9cbaf023786cd7..."
+    }
+    ```
+
 definitions:
   Version:
     type: "object"
@@ -2961,7 +2969,25 @@ paths:
         -
           name: "X-Registry-Auth"
           in: "header"
-          description: "A base64-encoded auth config object with the following structure: TODO"
+          description: |
+            This is a base64-encoded JSON object with auth configurations for multiple registries that a build may refer to.
+
+            The key is a registry URL, and the value is an auth configuration object, [as described in the authentication section](#section/Authentication). For example:
+
+            ```
+            {
+              "docker.example.com": {
+                "username": "janedoe",
+                "password": "hunter2"
+              },
+              "https://index.docker.io/v1/": {
+                "username": "mobydock",
+                "password": "conta1n3rize14"
+              }
+            }
+            ```
+
+            Only the registry domain name (and port if not the default 443) are required. However, for legacy reasons, the Docker Hub registry must be specified with both a `https://` prefix and a `/v1/` suffix even though Docker will prefer to use the v2 registry API.
           type: "string"
       responses:
         200:
@@ -3020,7 +3046,7 @@ paths:
         -
           name: "X-Registry-Auth"
           in: "header"
-          description: "A base64-encoded auth config object in the format: TODO"
+          description: "A base64-encoded auth configuration. [See the authentication section for details.](#section/Authentication)"
           type: "string"
       tags:
         - "Image"
@@ -3235,7 +3261,7 @@ paths:
         -
           name: "X-Registry-Auth"
           in: "header"
-          description: "A base64-encoded auth config object."
+          description: "A base64-encoded auth configuration. [See the authentication section for details.](#section/Authentication)"
           type: "string"
           required: true
       tags:
