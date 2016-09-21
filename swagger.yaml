@@ -957,33 +957,48 @@ definitions:
         type: "array"
         items:
           type: "string"
-  VolumeList:
-    type: "object"
-    properties:
-      Volumes:
-        type: "array"
-        items:
-          $ref: "#/definitions/Volume"
   Volume:
     type: "object"
     properties:
       Name:
         type: "string"
+        description: "Name of the volume."
       Driver:
         type: "string"
+        description: "Name of the volume driver used by the volume."
       Mountpoint:
         type: "string"
-  VolumeConfig:
-    type: "object"
-    properties:
-      Name:
-        type: "string"
-      Driver:
-        type: "string"
-      DriverOpts:
+        description: "Mount path of the volume on the host."
+      Status:
         type: "object"
+        description: |
+          Low-level details about the volume, provided by the volume driver. Details are returned as a map with key/value pairs: `{"key":"value","key2":"value2"}`.
+
+          The `Status` field is optional, and is omitted if the volume driver does not support this feature.
         additionalProperties:
           type: "string"
+      Labels:
+        type: "object"
+        description: "A mapping of abitrary key/value data set on this volume."
+        additionalProperties:
+          type: "string"
+      Scope:
+        type: "string"
+        description: "The level at which the volume exists. Either `global` for cluster-wide, or `local` for machine level."
+        default: "local"
+        enum:
+          - "local"
+          - "global"
+    example:
+      Name: "tardis"
+      Driver: "custom"
+      Mountpoint: "/var/lib/docker/volumes/tardis"
+      Status:
+        hello: "world"
+      Labels:
+        com.example.some-label: "some-value"
+        com.example.some-other-label: "some-other-value"
+      Scope: "local"
   Network:
     type: "object"
     properties:
@@ -995,8 +1010,12 @@ definitions:
         type: "string"
       Driver:
         type: "string"
+      EnableIPv6:
+        type: "boolean"
       IPAM:
         $ref: "#/definitions/IPAM"
+      Internal:
+        type: "boolean"
       Containers:
         type: "object"
         additionalProperties:
@@ -1005,6 +1024,41 @@ definitions:
         type: "object"
         additionalProperties:
           type: "string"
+      Labels:
+        type: "object"
+        additionalProperties:
+          type: "string"
+    example:
+        Name: "net01"
+        Id: "7d86d31b1478e7cca9ebed7e73aa0fdeec46c5ca29497431d3007d2d9e15ed99"
+        Scope: "local"
+        Driver: "bridge"
+        EnableIPv6: false
+        IPAM:
+          Driver: "default"
+          Config:
+            - Subnet: "172.19.0.0/16"
+              Gateway: "172.19.0.1"
+          Options:
+            foo: "bar"
+        Internal: false
+        Containers:
+          19a4d5d687db25203351ed79d478946f861258f018fe384f229f2efa4b23513c:
+            Name: "test"
+            EndpointID: "628cadb8bcb92de107b2a1e516cbffe463e321f548feb37697cce00ad694f21a"
+            MacAddress: "02:42:ac:13:00:02"
+            IPv4Address: "172.19.0.2/16"
+            IPv6Address: ""
+        Options:
+          com.docker.network.bridge.default_bridge: "true"
+          com.docker.network.bridge.enable_icc: "true"
+          com.docker.network.bridge.enable_ip_masquerade: "true"
+          com.docker.network.bridge.host_binding_ipv4: "0.0.0.0"
+          com.docker.network.bridge.name: "docker0"
+          com.docker.network.driver.mtu: "1500"
+        Labels:
+          com.example.some-label: "some-value"
+          com.example.some-other-label: "some-other-value"
   IPAM:
     type: "object"
     properties:
@@ -1025,34 +1079,6 @@ definitions:
         type: "string"
       IPv6Address:
         type: "string"
-  NetworkCreateResult:
-    type: "object"
-    properties:
-      Id:
-        type: "string"
-      Warning:
-        type: "string"
-  NetworkCreateConfig:
-    type: "object"
-    properties:
-      Name:
-        type: "string"
-      Driver:
-        type: "string"
-      IPAM:
-        $ref: "#/definitions/IPAM"
-  ContainerConnect:
-    type: "object"
-    properties:
-      Container:
-        type: "string"
-  ContainerDisconnect:
-    type: "object"
-    properties:
-      Container:
-        type: "string"
-      Force:
-        type: "boolean"
   ContainerCreateResult:
     type: "object"
     properties:
@@ -3902,7 +3928,6 @@ paths:
   /volumes:
     get:
       summary: "List volumes"
-      description: "List volumes."
       operationId: "GetVolumesList"
       produces:
         - "application/json"
@@ -3910,7 +3935,27 @@ paths:
         200:
           description: "No error"
           schema:
-            $ref: "#/definitions/VolumeList"
+            type: "object"
+            properties:
+              Volumes:
+                type: "array"
+                items:
+                  $ref: "#/definitions/Volume"
+              Warnings:
+                type: "array"
+                items:
+                  type: "string"
+          examples:
+            application/json:
+              Volumes:
+                - Name: "tardis"
+                  Driver: "local"
+                  Mountpoint: "/var/lib/docker/volumes/tardis"
+                  Labels:
+                    com.example.some-label: "some-value"
+                    com.example.some-other-label: "some-other-value"
+                  Scope: "local"
+              Warnings: []
         500:
           description: "Server error"
           schema:
@@ -3918,18 +3963,21 @@ paths:
       parameters:
         - name: "filters"
           in: "query"
-          description: "JSON encoded value of the filters (a map[string][]string) to process on the volumes list"
+          description: |
+            JSON encoded value of the filters (a `map[string][]string`) to process on the volumes list. Available filters:
+
+            - `name=<volume-name>` Matches all or part of a volume name.
+            - `dangling=<boolean>` When set to `true` (or `1`), returns all volumes that are not in use by a container. When set to `false` (or `0`), only volumes that are in use by one or more containers are returned.
+            - `driver=<volume-driver-name>` Matches all or part of a volume driver name.
           type: "string"
       tags:
         - "Volume"
   /volumes/create:
     post:
       summary: "Create a volume"
-      description: "Create a volume."
       operationId: "PostVolumesCreate"
       consumes:
         - "application/json"
-        - "application/octet-stream"
       produces:
         - "application/json"
       responses:
@@ -3947,13 +3995,36 @@ paths:
           required: true
           description: "Volume configuration"
           schema:
-            $ref: "#/definitions/VolumeConfig"
+            type: "object"
+            properties:
+              Name:
+                type: "string"
+                description: "The new volume's name. If not specified, Docker generates a name."
+              Driver:
+                type: "string"
+                description: "Name of the volume driver to use."
+                default: "local"
+              DriverOpts:
+                type: "object"
+                description: "A mapping of driver options and values. These options are passed directly to the driver and are driver specific."
+                additionalProperties:
+                  type: "string"
+              Labels:
+                type: "object"
+                description: "A mapping of arbitrary key/value data to set on the volume."
+                additionalProperties:
+                  type: "string"
+            example:
+              Name: "tardis"
+              Labels:
+                com.example.some-label: "some-value"
+                com.example.some-other-label: "some-other-value"
+              Driver: "custom"
       tags:
         - "Volume"
   /volumes/{name}:
     get:
       summary: "Inspect a volume"
-      description: "Inspect a volume."
       operationId: "GetVolumesInspect"
       produces:
         - "application/json"
@@ -3974,7 +4045,7 @@ paths:
         - name: "name"
           in: "path"
           required: true
-          description: "Volume name or id"
+          description: "Volume name or ID"
           type: "string"
       tags:
         - "Volume"
@@ -4001,15 +4072,16 @@ paths:
         - name: "name"
           in: "path"
           required: true
-          description: "Volume name or id"
+          description: "Volume name or ID"
           type: "string"
       tags:
         - "Volume"
   /networks:
     get:
       summary: "List networks"
-      description: "List networks."
       operationId: "GetNetworksList"
+      produces:
+        - "application/json"
       responses:
         200:
           description: "No error"
@@ -4017,6 +4089,54 @@ paths:
             type: "array"
             items:
               $ref: "#/definitions/Network"
+          examples:
+            application/json:
+              - Name: "bridge"
+                Id: "f2de39df4171b0dc801e8002d1d999b77256983dfc63041c0f34030aa3977566"
+                Scope: "local"
+                Driver: "bridge"
+                EnableIPv6: false
+                Internal: false
+                IPAM:
+                  Driver: "default"
+                  Config:
+                    -
+                      Subnet: "172.17.0.0/16"
+                Containers:
+                  39b69226f9d79f5634485fb236a23b2fe4e96a0a94128390a7fbbcc167065867:
+                    EndpointID: "ed2419a97c1d9954d05b46e462e7002ea552f216e9b136b80a7db8d98b442eda"
+                    MacAddress: "02:42:ac:11:00:02"
+                    IPv4Address: "172.17.0.2/16"
+                    IPv6Address: ""
+                Options:
+                  com.docker.network.bridge.default_bridge: "true"
+                  com.docker.network.bridge.enable_icc: "true"
+                  com.docker.network.bridge.enable_ip_masquerade: "true"
+                  com.docker.network.bridge.host_binding_ipv4: "0.0.0.0"
+                  com.docker.network.bridge.name: "docker0"
+                  com.docker.network.driver.mtu: "1500"
+              - Name: "none"
+                Id: "e086a3893b05ab69242d3c44e49483a3bbbd3a26b46baa8f61ab797c1088d794"
+                Scope: "local"
+                Driver: "null"
+                EnableIPv6: false
+                Internal: false
+                IPAM:
+                  Driver: "default"
+                  Config: []
+                Containers: {}
+                Options: {}
+              - Name: "host"
+                Id: "13e871235c677f196c4e1ecebb9dc733b9b2d2ab589e30c539efeda84a24215e"
+                Scope: "local"
+                Driver: "host"
+                EnableIPv6: false
+                Internal: false
+                IPAM:
+                  Driver: "default"
+                  Config: []
+                Containers: {}
+                Options: {}
         500:
           description: "Server error"
           schema:
@@ -4024,14 +4144,20 @@ paths:
       parameters:
         - name: "filters"
           in: "query"
-          description: "JSON encoded value of the filters (a map[string][]string) to process on the networks list."
+          description: |
+            JSON encoded value of the filters (a `map[string][]string`) to process on the networks list. Available filters:
+
+            - `driver=<driver-name>` Matches a network's driver.
+            - `id=<network-id>` Matches all or part of a network ID.
+            - `label=<key>` or `label=<key>=<value>` of a network label.
+            - `name=<network-name>` Matches all or part of a network name.
+            - `type=["custom"|"builtin"]` Filters networks by type. The `custom` keyword returns all user-defined networks.
           type: "string"
       tags:
         - "Network"
   /networks/{id}:
     get:
-      summary: "Inspect network"
-      description: "Inspect network."
+      summary: "Inspect a network"
       operationId: "GetNetworksInspect"
       produces:
         - "application/json"
@@ -4047,14 +4173,13 @@ paths:
       parameters:
         - name: "id"
           in: "path"
-          description: "Network id or name"
+          description: "Network ID or name"
           required: true
           type: "string"
       tags:
         - "Network"
     delete:
       summary: "Remove a network"
-      description: "Remove a network"
       operationId: "DeleteNetworks"
       responses:
         204:
@@ -4070,26 +4195,33 @@ paths:
       parameters:
         - name: "id"
           in: "path"
-          description: "Network id or name"
+          description: "Network ID or name"
           required: true
           type: "string"
       tags:
         - "Network"
   /networks/create:
     post:
-      summary: "Create network"
-      description: "Create network."
+      summary: "Create a network"
       operationId: "PostNetworksCreate"
       consumes:
         - "application/json"
-        - "application/octet-stream"
       produces:
         - "application/json"
       responses:
         201:
           description: "No error"
           schema:
-            $ref: "#/definitions/NetworkCreateResult"
+            type: "object"
+            properties:
+              Id:
+                type: "string"
+                description: "The ID of the created network."
+              Warning:
+                type: "string"
+            example:
+              Id: "22be93d5babb089c5aab8dbc369042fad48ff791584ca2da2100db837a1c7c30"
+              Warning: ""
         404:
           description: "plugin not found"
           schema:
@@ -4104,20 +4236,78 @@ paths:
           description: "Network configuration"
           required: true
           schema:
-            $ref: "#/definitions/NetworkCreateConfig"
+            type: "object"
+            properties:
+              Name:
+                type: "string"
+                description: "The network's name."
+                required: true
+              CheckDuplicate:
+                type: "boolean"
+                description: "Check for networks with duplicate names."
+              Driver:
+                type: "string"
+                description: "Name of the network driver plugin to use."
+                default: "bridge"
+              Internal:
+                type: "boolean"
+                description: "Restrict external access to the network."
+              IPAM:
+                $ref: "#/definitions/IPAM"
+                description: "Optional custom IP scheme for the network."
+              EnableIPv6:
+                type: "boolean"
+                description: "Enable IPv6 on the network."
+              Options:
+                type: "object"
+                description: "Network specific options to be used by the drivers."
+                additionalProperties:
+                  type: "string"
+              Labels:
+                type: "object"
+                description: "Arbitrary key/value metadata to attach to the network."
+                additionalProperties:
+                  type: "string"
+            example:
+                Name: "isolated_nw"
+                CheckDuplicate: false
+                Driver: "bridge"
+                EnableIPv6: true
+                IPAM:
+                  Config:
+                    - Subnet: "172.20.0.0/16"
+                      IPRange: "172.20.10.0/24"
+                      Gateway: "172.20.10.11"
+                    - Subnet: "2001:db8:abcd::/64"
+                      Gateway: "2001:db8:abcd::1011"
+                  Options:
+                    foo: "bar"
+                Internal: true
+                Options:
+                  com.docker.network.bridge.default_bridge: "true"
+                  com.docker.network.bridge.enable_icc: "true"
+                  com.docker.network.bridge.enable_ip_masquerade: "true"
+                  com.docker.network.bridge.host_binding_ipv4: "0.0.0.0"
+                  com.docker.network.bridge.name: "docker0"
+                  com.docker.network.driver.mtu: "1500"
+                Labels:
+                  com.example.some-label: "some-value"
+                  com.example.some-other-label: "some-other-value"
       tags:
         - "Network"
   /networks/{id}/connect:
     post:
       summary: "Connect a container to a network"
-      description: "Connect a container to a network."
       operationId: "PostNetworksConnect"
       consumes:
-        - "application/json"
         - "application/octet-stream"
       responses:
-        201:
+        200:
           description: "No error"
+        403:
+          description: "Operation not supported for swarm scoped networks"
+          schema:
+            $ref: "#/definitions/Error"
         404:
           description: "Network or container not found"
           schema:
@@ -4129,28 +4319,39 @@ paths:
       parameters:
         - name: "id"
           in: "path"
-          description: "Network id or name"
+          description: "Network ID or name"
           required: true
           type: "string"
         - name: "container"
           in: "body"
-          description: "Container"
           required: true
           schema:
-            $ref: "#/definitions/ContainerConnect"
+            type: "object"
+            properties:
+              Container:
+                type: "string"
+                description: "The ID or name of the container to connect to the network."
+            example:
+              Container: "3613f73ba0e4"
+              EndpointConfig:
+                IPAMConfig:
+                  IPv4Address: "172.24.56.89"
+                  IPv6Address: "2001:db8::5689"
       tags:
         - "Network"
   /networks/{id}/disconnect:
     post:
-      summary: "Disconnect a container to a network"
-      description: "Disconnect a container to a network."
+      summary: "Disconnect a container from a network"
       operationId: "PostNetworksDisconnect"
       consumes:
         - "application/json"
-        - "application/octet-stream"
       responses:
-        201:
+        200:
           description: "No error"
+        403:
+          description: "Operation not supported for swarm scoped networks"
+          schema:
+            $ref: "#/definitions/Error"
         404:
           description: "Network or container not found"
           schema:
@@ -4162,14 +4363,20 @@ paths:
       parameters:
         - name: "id"
           in: "path"
-          description: "Network id or name"
+          description: "Network ID or name"
           required: true
           type: "string"
         - name: "container"
           in: "body"
-          description: "Container"
           required: true
           schema:
-            $ref: "#/definitions/ContainerDisconnect"
+            type: "object"
+            properties:
+              Container:
+                type: "string"
+                description: "The ID or name of the container to disconnect from the network."
+              Force:
+                type: "boolean"
+                description: "Force the container to disconnect from the network."
       tags:
         - "Network"
