@@ -942,58 +942,6 @@ definitions:
         type: "boolean"
       Secure:
         type: "boolean"
-  ExecCreateResult:
-    type: "object"
-    properties:
-      Id:
-        type: "string"
-      Warnings:
-        type: "array"
-        items:
-          type: "string"
-  ExecConfig:
-    type: "object"
-    properties:
-      AttachStdin:
-        type: "boolean"
-      AttachStdout:
-        type: "boolean"
-      AttachStderr:
-        type: "boolean"
-      DetachKeys:
-        type: "string"
-      Tty:
-        type: "boolean"
-      Cmd:
-        type: "array"
-        items:
-          type: "string"
-  ExecStartConfig:
-    type: "object"
-    properties:
-      Detach:
-        type: "boolean"
-      Tty:
-        type: "boolean"
-  ExecCommand:
-    type: "object"
-    properties:
-      ID:
-        type: "string"
-      Running:
-        type: "boolean"
-      ExitCode:
-        type: "integer"
-      ProcessConfig:
-        $ref: "#/definitions/ProcessConfig"
-      OpenStdin:
-        type: "boolean"
-      OpenStderr:
-        type: "boolean"
-      OpenStdout:
-        type: "boolean"
-      Container:
-        $ref: "#/definitions/Container"
   ProcessConfig:
     type: "object"
     properties:
@@ -3577,6 +3525,8 @@ paths:
                   Attributes:
                     type: "object"
                     description: "Various key/value attributes of the object, depending on its type"
+                    additionalProperties:
+                      type: "string"
               time:
                 type: "integer"
                 description: "Timestamp of event"
@@ -3734,7 +3684,7 @@ paths:
   /containers/{id}/exec:
     post:
       summary: "Create an exec instance"
-      description: ""
+      description: "Run a command inside a running container."
       operationId: "PostContainerExec"
       consumes:
         - "application/json"
@@ -3744,7 +3694,19 @@ paths:
         201:
           description: "no error"
           schema:
-            $ref: "#/definitions/ExecCreateResult"
+            type: "object"
+            properties:
+              Id:
+                type: "string"
+                description: "The ID of the exec instance created."
+              Warnings:
+                type: "array"
+                items:
+                  type: "string"
+          examples:
+            application/json:
+             Id: "f90e34656806"
+             Warnings: []
         404:
           description: "no such container"
           schema:
@@ -3765,7 +3727,36 @@ paths:
           in: "body"
           description: "Exec configuration"
           schema:
-            $ref: "#/definitions/ExecConfig"
+            type: "object"
+            properties:
+              AttachStdin:
+                type: "boolean"
+                description: "Attach to `stdin` of the exec command."
+              AttachStdout:
+                type: "boolean"
+                description: "Attach to `stdout` of the exec command."
+              AttachStderr:
+                type: "boolean"
+                description: "Attach to `stderr` of the exec command."
+              DetachKeys:
+                type: "string"
+                description: "Override the key sequence for detaching a container. Format is a single character `[a-Z]` or `ctrl-<value>` where `<value>` is one of: `a-z`, `@`, `^`, `[`, `,` or `_`."
+              Tty:
+                type: "boolean"
+                description: "Allocate a pseudo-TTY."
+              Cmd:
+                type: "array"
+                description: "Command to run, as a string or array of strings."
+                items:
+                  type: "string"
+            example:
+              AttachStdin: false
+              AttachStdout: true
+              AttachStderr: true
+              DetachKeys: "ctrl-p,ctrl-q"
+              Tty: false
+              Cmd:
+                - "date"
           required: true
         - name: "id"
           in: "path"
@@ -3776,13 +3767,13 @@ paths:
         - "Exec"
   /exec/{id}/start:
     post:
-      summary: "Exec Start"
-      description: "Starts a previously set up exec instance id. If detach is true, this API returns after starting the exec command. Otherwise, this API sets up an interactive session with the exec command."
+      summary: "Start an exec instance"
+      description: "Starts a previously set up exec instance. If detach is true, this endpoint returns immediately after starting the command. Otherwise, it sets up an interactive session with the command."
       operationId: "PostExecStart"
       consumes:
         - "application/json"
       produces:
-        - "application/json"
+        - "application/vnd.docker.raw-stream"
       responses:
         200:
           description: "No error"
@@ -3797,26 +3788,30 @@ paths:
       parameters:
         - name: "execStartConfig"
           in: "body"
-          description: "Exec configuration"
           schema:
-            $ref: "#/definitions/ExecStartConfig"
+            type: "object"
+            properties:
+              Detach:
+                type: "boolean"
+                description: "Detach from the command."
+              Tty:
+                type: "boolean"
+                description: "Allocate a pseudo-TTY."
+            example:
+             Detach: false
+             Tty: false
         - name: "id"
           in: "path"
-          description: "Exec instance id"
+          description: "Exec instance ID"
           required: true
           type: "string"
       tags:
         - "Exec"
   /exec/{id}/resize:
     post:
-      summary: "Exec Resize"
-      description: "Resize the tty session used by the exec command id."
+      summary: "Resize an exec instance"
+      description: "Resize the TTY session used by an exec instance. This endpoint only works if `tty` was specified as part of creating and starting the exec instance."
       operationId: "PostExecResize"
-      consumes:
-        - "text/plain"
-        - "application/octet-stream"
-      produces:
-        - "text/plain"
       responses:
         201:
           description: "No error"
@@ -3827,23 +3822,23 @@ paths:
       parameters:
         - name: "id"
           in: "path"
-          description: "Exec instance id"
+          description: "Exec instance ID"
           required: true
           type: "string"
         - name: "h"
           in: "query"
-          description: "Height of the tty session"
+          description: "Height of the TTY session in characters"
           type: "integer"
         - name: "w"
           in: "query"
-          description: "Width of the tty session"
+          description: "Width of the TTY session in characters"
           type: "integer"
       tags:
         - "Exec"
   /exec/{id}/json:
     get:
-      summary: "Exec Inspect"
-      description: "Return low-level information about the exec command id."
+      summary: "Inspect an exec instance"
+      description: "Return low-level information about an exec instance."
       operationId: "PostExecInspect"
       produces:
         - "application/json"
@@ -3851,7 +3846,43 @@ paths:
         200:
           description: "No error"
           schema:
-            $ref: "#/definitions/ExecCommand"
+            type: "object"
+            properties:
+              ID:
+                type: "string"
+              Running:
+                type: "boolean"
+              ExitCode:
+                type: "integer"
+              ProcessConfig:
+                $ref: "#/definitions/ProcessConfig"
+              OpenStdin:
+                type: "boolean"
+              OpenStderr:
+                type: "boolean"
+              OpenStdout:
+                type: "boolean"
+              Container:
+                $ref: "#/definitions/Container"
+          examples:
+            application/json:
+              CanRemove: false
+              ContainerID: "b53ee82b53a40c7dca428523e34f741f3abc51d9f297a14ff874bf761b995126"
+              DetachKeys: ""
+              ExitCode: 2
+              ID: "f33bbfb39f5b142420f4759b2348913bd4a8d1a6d7fd56499cb41a1bb91d7b3b"
+              OpenStderr: true
+              OpenStdin: true
+              OpenStdout: true
+              ProcessConfig:
+                arguments:
+                  - "-c"
+                  - "exit 2"
+                entrypoint: "sh"
+                privileged: false
+                tty: true
+                user: "1000"
+              Running: false
         404:
           description: "No such exec instance"
           schema:
@@ -3863,7 +3894,7 @@ paths:
       parameters:
         - name: "id"
           in: "path"
-          description: "Exec instance id"
+          description: "Exec instance ID"
           required: true
           type: "string"
       tags:
