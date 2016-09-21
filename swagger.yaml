@@ -3626,8 +3626,31 @@ paths:
         - "Misc"
   /images/{name}/get:
     get:
-      summary: "Get a tarball containing all images in a repository"
-      description: "Get a tarball containing all images and metadata for the repository specified by name."
+      summary: "Export an image"
+      description: |
+        Get a tarball containing all images and metadata for a repository.
+
+        If `name` is a specific name and tag (e.g. `ubuntu:latest`), then only that image (and its parents) are returned. If `name` is an image ID, similarly only that image (and its parents) are returned, but with the exclusion of the `repositories` file in the tarball, as there were no image names referenced.
+
+        ### Image tarball format
+
+        An image tarball contains one directory per image layer (named using its long ID), each containing these files:
+
+        - `VERSION`: currently `1.0` - the file format version
+        - `json`: detailed layer information, similar to `docker inspect layer_id`
+        - `layer.tar`: A tarfile containing the filesystem changes in this layer
+
+        The `layer.tar` file contains `aufs` style `.wh..wh.aufs` files and directories for storing attribute changes and deletions.
+
+        If the tarball defines a repository, the tarball should also include a `repositories` file at the root that contains a list of repository and tag names mapped to layer IDs.
+
+        ```json
+        {
+          "hello-world": {
+            "latest": "565a9d68a73f6706862bfe8409a7f659776d4d60a8d096eb4a3cbce6999cc2a1"
+          }
+        }
+        ```
       operationId: "GetImage"
       produces:
         - "application/x-tar"
@@ -3636,6 +3659,7 @@ paths:
           description: "no error"
           schema:
             type: "string"
+            format: "binary"
         500:
           description: "server error"
           schema:
@@ -3643,15 +3667,20 @@ paths:
       parameters:
         - name: "name"
           in: "path"
-          description: "Image name or id"
+          description: "Image name or ID"
           type: "string"
           required: true
       tags:
         - "Image"
   /images/get:
     get:
-      summary: "Get a tarball containing all images."
-      description: "Get a tarball containing all images and metadata for one or more repositories."
+      summary: "Export several images"
+      description: |
+        Get a tarball containing all images and metadata for several image repositories.
+
+        For each value of the `names` parameter: if it is a specific name and tag (e.g. `ubuntu:latest`), then only that image (and its parents) are returned; if it is an image ID, similarly only that image (and its parents) are returned and there would be no names referenced in the 'repositories' file for this image ID.
+
+        For details on the format, see [the export image endpoint](#operation/GetImage).
       operationId: "GetImageSaveAll"
       produces:
         - "application/x-tar"
@@ -3660,6 +3689,7 @@ paths:
           description: "no error"
           schema:
             type: "string"
+            format: "binary"
         500:
           description: "server error"
           schema:
@@ -3667,7 +3697,7 @@ paths:
       parameters:
         - name: "names"
           in: "query"
-          description: "Image names to filter"
+          description: "Image names to filter by"
           type: "array"
           items:
             type: "string"
@@ -3675,14 +3705,16 @@ paths:
         - "Image"
   /images/load:
     post:
-      summary: "Load a tarball with a set of images and tags into docker."
-      description: "Load a set of images and tags into a Docker repository. See the image tarball format for more details."
+      summary: "Import images"
+      description: |
+        Load a set of images and tags into a repository.
+
+        For details on the format, see [the export image endpoint](#operation/GetImage).
       operationId: "PostImageLoad"
       consumes:
         - "application/x-tar"
-        - "application/octet-stream"
       produces:
-        - "text/plain"
+        - "application/json"
       responses:
         200:
           description: "no error"
@@ -3696,6 +3728,7 @@ paths:
           description: "Tar archive containing images"
           schema:
             type: "string"
+            format: "binary"
       tags:
         - "Image"
   /containers/{id}/exec:
