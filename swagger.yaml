@@ -2866,7 +2866,7 @@ paths:
           enum:
             - "application/tar"
           default: "application/tar"
-        - name: "X-Registry-Auth"
+        - name: "X-Registry-Config"
           in: "header"
           description: |
             This is a base64-encoded JSON object with auth configurations for multiple registries that a build may refer to.
