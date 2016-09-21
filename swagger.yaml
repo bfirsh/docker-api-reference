@@ -1817,7 +1817,10 @@ paths:
   /containers/{id}/logs:
     get:
       summary: "Get container logs"
-      description: "Get stdout and stderr logs from a container.\n\nNote: This endpoint works only for containers with the `json-file` or `journald` logging driver."
+      description: |
+        Get stdout and stderr logs from a container.
+
+        Note: This endpoint works only for containers with the `json-file` or `journald` logging driver.
       operationId: "GetContainerLogs"
       responses:
         101:
@@ -1888,7 +1891,12 @@ paths:
   /containers/{id}/changes:
     get:
       summary: "Get changes on a container’s filesystem"
-      description: "Returns which files in a container's filesystem have been added, deleted, or modified. The `Kind` of modification can be one of:\n - `0`: Modified\n - `1`: Added\n - `2`: Deleted"
+      description: |
+        Returns which files in a container's filesystem have been added, deleted, or modified. The `Kind` of modification can be one of:
+
+        - `0`: Modified
+        - `1`: Added
+        - `2`: Deleted
       operationId: "GetContainerChanges"
       produces:
         - "application/json"
@@ -1963,7 +1971,10 @@ paths:
   /containers/{id}/stats:
     get:
       summary: "Get container stats based on resource usage"
-      description: "This endpoint returns a live stream of a container’s resource usage statistics.\n\nThe `precpu_stats` is the CPU statistic of last read, which is used for calculating the CPU usage percentage. It is not the same as the `cpu_stats` field."
+      description: |
+        This endpoint returns a live stream of a container’s resource usage statistics.
+
+        The `precpu_stats` is the CPU statistic of last read, which is used for calculating the CPU usage percentage. It is not the same as the `cpu_stats` field.
       operationId: "GetContainerStats"
       produces:
         - "application/json"
@@ -2351,7 +2362,10 @@ paths:
   /containers/{id}/pause:
     post:
       summary: "Pause a container"
-      description: "Use the cgroups freezer to suspend all processes in a container.\n\nTraditionally, when suspending a process the `SIGSTOP` signal is used, which is observable by the process being suspended. With the cgroups freezer the process is unaware, and unable to capture, that it is being suspended, and subsequently resumed."
+      description: |
+        Use the cgroups freezer to suspend all processes in a container.
+
+        Traditionally, when suspending a process the `SIGSTOP` signal is used, which is observable by the process being suspended. With the cgroups freezer the process is unaware, and unable to capture, that it is being suspended, and subsequently resumed.
       operationId: "PostContainerPause"
       responses:
         204:
@@ -2407,7 +2421,10 @@ paths:
   /containers/{id}/attach:
     post:
       summary: "Attach to a container"
-      description: "Attach to a container to read its output or send it input. You can attach to the same container multiple times and you can reattach to containers that have been detached.\n\nSee [the documentation for the `docker attach` command](https://docs.docker.com/engine/reference/commandline/attach/) for more details."
+      description: |
+        Attach to a container to read its output or send it input. You can attach to the same container multiple times and you can reattach to containers that have been detached.
+
+        See [the documentation for the `docker attach` command](https://docs.docker.com/engine/reference/commandline/attach/) for more details.
       operationId: "PostContainerAttach"
       produces:
         - "application/vnd.docker.raw-stream"
@@ -2825,7 +2842,12 @@ paths:
   /build:
     post:
       summary: "Build an image"
-      description: "Build an image from a tar achive with a Dockerfile in it.\n\nThe Dockerfile specifies how the image is built from the tar archive. It is typically in the archive's root, but can be at a different path or have a different name by specifying the `dockerfile` parameter. [See the Dockerfile reference for more information](https://docs.docker.com/engine/reference/builder/).\n\nThe build is canceled if the client drops the connection by quitting or being killed."
+      description: |
+        Build an image from a tar achive with a Dockerfile in it.
+
+        The Dockerfile specifies how the image is built from the tar archive. It is typically in the archive's root, but can be at a different path or have a different name by specifying the `dockerfile` parameter. [See the Dockerfile reference for more information](https://docs.docker.com/engine/reference/builder/).
+
+        The build is canceled if the client drops the connection by quitting or being killed.
       operationId: "PostImageBuild"
       consumes:
         - "application/octet-stream"
@@ -3178,7 +3200,12 @@ paths:
   /images/{name}/push:
     post:
       summary: "Push an image"
-      description: "Push an image to a registry.\n\nIf you wish to push an image on to a private registry, that image must already have a tag which references the registry. For example, `registry.example.com/myimage:latest`.\n\nThe push is cancelled if the HTTP connection is closed."
+      description: |
+        Push an image to a registry.
+
+        If you wish to push an image on to a private registry, that image must already have a tag which references the registry. For example, `registry.example.com/myimage:latest`.
+
+        The push is cancelled if the HTTP connection is closed.
       operationId: "PostImagePush"
       consumes:
         - "application/octet-stream"
@@ -3259,7 +3286,10 @@ paths:
   /images/{name}:
     delete:
       summary: "Remove an image"
-      description: "Remove an image, along with any untagged parent images that were referenced by that image.\n\nImages can't be removed if they have descendant images, are being used by a running container or are being used by a build."
+      description: |
+        Remove an image, along with any untagged parent images that were referenced by that image.
+
+        Images can't be removed if they have descendant images, are being used by a running container or are being used by a build.
       operationId: "DeleteImage"
       produces:
         - "application/json"
@@ -3371,7 +3401,12 @@ paths:
         -
           name: "filters"
           in: "query"
-          description: "A JSON encoded value of the filters (a `map[string][]string`) to process on the images list. Available filters:\n\n- `stars=<number>`\n- `is-automated=(true|false)`\n- `is-official=(true|false)`"
+          description: |
+            A JSON encoded value of the filters (a `map[string][]string`) to process on the images list. Available filters:
+
+            - `stars=<number>`
+            - `is-automated=(true|false)`
+            - `is-official=(true|false)`
           type: "string"
       tags:
         - "Image"
