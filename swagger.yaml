@@ -1174,19 +1174,6 @@ definitions:
         type: "integer"
       message:
         type: "integer"
-  Event:
-    type: "object"
-    properties:
-      status:
-        type: "string"
-      id:
-        type: "string"
-      from:
-        type: "string"
-      time:
-        type: "integer"
-      timeNano:
-        type: "integer"
   Error:
     type: "object"
     description: "Represents an error."
@@ -3550,14 +3537,64 @@ paths:
         - "Image"
   /events:
     get:
-      summary: "Monitor Docker’s events"
-      description: "Get container events from docker, either in real time via streaming, or via polling (using since)."
+      summary: "Monitor events"
+      description: |
+        Stream real-time events from the server.
+
+        Various objects within Docker report events when something happens to them.
+
+        Containers report these events: `attach, commit, copy, create, destroy, detach, die, exec_create, exec_detach, exec_start, export, kill, oom, pause, rename, resize, restart, start, stop, top, unpause, update`
+
+        Images report these events: `delete, import, load, pull, push, save, tag, untag`
+
+        Volumes report these events: `create, mount, unmount, destroy`
+
+        Networks report these events: `create, connect, disconnect, destroy`
+
+        The Docker daemon reports these events: `reload`
+
       operationId: "getEvents"
       produces:
         - "application/json"
       responses:
         200:
           description: "no error"
+          schema:
+            type: "object"
+            properties:
+              Type:
+                type: "string"
+                description: "The type of object emitting the event"
+              Action:
+                type: "string"
+                description: "The type of event"
+              Actor:
+                type: "object"
+                properties:
+                  ID:
+                    type: "string"
+                    description: "The ID of the object emitting the event"
+                  Attributes:
+                    type: "object"
+                    description: "Various key/value attributes of the object, depending on its type"
+              time:
+                type: "integer"
+                description: "Timestamp of event"
+              timeNano:
+                type: "integer"
+                description: "Timestamp of event, with nanosecond accuracy"
+          examples:
+            application/json:
+              Type: "container"
+              Action: "create"
+              Actor:
+                ID: "ede54ee1afda366ab42f824e8a5ffd195155d853ceaec74a927f249ea270c743"
+                Attributes:
+                  com.example.some-label: "some-label-value"
+                  image: "alpine"
+                  name: "my-container"
+              time: 1461943101
+              timeNano: 1461943101381709551
         500:
           description: "server error"
           schema:
@@ -3565,15 +3602,25 @@ paths:
       parameters:
         - name: "since"
           in: "query"
-          description: "Timestamp used for polling"
+          description: "Show events created since this timestamp then stream new events"
           type: "string"
         - name: "until"
           in: "query"
-          description: "Timestamp used for polling"
+          description: "Show events created until this timestamp then stop streaming"
           type: "string"
         - name: "filters"
           in: "query"
-          description: "A json encoded value of the filters (a map[string][]string) to process on the event list."
+          description: |
+            A JSON encoded value of filters (a `map[string][]string`) to process on the event list. Available filters:
+
+            - `container=<string>` container name or ID
+            - `event=<string>` event type
+            - `image=<string>` image name or ID
+            - `label=<string>` image or container label
+            - `type=<string>` object to filter by, one of `container`, `image`, `volume`, `network`, or `daemon`
+            - `volume=<string>` volume name or ID
+            - `network=<string>` network name or ID
+            - `daemon=<string>` daemon name or ID
           type: "string"
       tags:
         - "Misc"
