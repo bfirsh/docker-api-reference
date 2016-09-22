@@ -1151,11 +1151,11 @@ definitions:
   Error:
     type: "object"
     description: "Represents an error."
+    required: [message]
     properties:
       message:
         description: "The error message."
         type: "string"
-        required: true
     example:
       message: "Something went wrong."
   ContainerListSummary:
@@ -2545,11 +2545,10 @@ paths:
       responses:
         200:
           description: "no error"
-          schema:
-            headers:
-              X-Docker-Container-Path-Stat:
-                type: "string"
-                description: "TODO"
+          headers:
+            X-Docker-Container-Path-Stat:
+              type: "string"
+              description: "TODO"
         400:
           description: "client error, bad parameter, details in JSON response body, one of: must specify path parameter (path cannot be empty) not a directory (path was asserted to be a directory but exists as a file)"
           schema:
@@ -4237,11 +4236,11 @@ paths:
           required: true
           schema:
             type: "object"
+            required: ["Name"]
             properties:
               Name:
                 type: "string"
                 description: "The network's name."
-                required: true
               CheckDuplicate:
                 type: "boolean"
                 description: "Check for networks with duplicate names."
