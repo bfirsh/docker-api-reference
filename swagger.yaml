@@ -727,37 +727,6 @@ definitions:
       RestartPolicy:
         MaximumRetryCount: 4
         Name: "on-failure"
-  ContainerTop:
-    type: "object"
-    properties:
-      Titles:
-        type: "array"
-        items:
-          type: "string"
-      Processes:
-        type: "array"
-        items:
-          type: "array"
-          items:
-            type: "string"
-  ContainerChange:
-    type: "object"
-    properties:
-      Path:
-        type: "string"
-      Kind:
-        type: "integer"
-        description: "Kind of changes"
-        enum:
-          - 0
-          - 1
-          - 2
-  ContainerWait:
-    type: "object"
-    properties:
-      StatusCode:
-        description: "Exit code of the container"
-        type: "integer"
   GraphDriver:
     type: "object"
     properties:
@@ -765,31 +734,6 @@ definitions:
         type: "string"
       Data:
         type: "object"
-  ImageItem:
-    type: "object"
-    properties:
-      RepoTags:
-        type: "array"
-        items:
-          type: "string"
-      Id:
-        type: "string"
-      ParentId:
-        type: "string"
-      Created:
-        type: "integer"
-      Size:
-        type: "integer"
-      VirtualSize:
-        type: "integer"
-      Labels:
-        type: "object"
-        additionalProperties:
-          type: "string"
-      RepoDigests:
-        type: "array"
-        items:
-          type: "string"
   Image:
     type: "object"
     properties:
@@ -829,36 +773,6 @@ definitions:
           type: "string"
       Config:
         $ref: "#/definitions/Config"
-  ImageHistoryItem:
-    type: "object"
-    properties:
-      Id:
-        type: "string"
-      Created:
-        type: "integer"
-      CreatedBy:
-        type: "string"
-      Tags:
-        type: "array"
-        items:
-          type: "string"
-      Size:
-        type: "integer"
-      Comment:
-        type: "string"
-  ImageSearchResult:
-    type: "object"
-    properties:
-      description:
-        type: "string"
-      is_official:
-        type: "boolean"
-      is_automated:
-        type: "boolean"
-      name:
-        type: "string"
-      star_count:
-        type: "integer"
   AuthConfig:
     type: "object"
     properties:
@@ -870,136 +784,6 @@ definitions:
         type: "string"
       serveraddress:
         type: "string"
-  SystemInformation:
-    type: "object"
-    properties:
-      Architecture:
-        type: "string"
-      Containers:
-        type: "integer"
-      ContainersRunning:
-        type: "integer"
-      ContainersStopped:
-        type: "integer"
-      ContainersPaused:
-        type: "integer"
-      CpuCfsPeriod:
-        type: "boolean"
-      CpuCfsQuota:
-        type: "boolean"
-      Debug:
-        type: "boolean"
-      DiscoveryBackend:
-        type: "string"
-      DockerRootDir:
-        type: "string"
-      Driver:
-        type: "string"
-      DriverStatus:
-        type: "array"
-        items:
-          type: "array"
-          items:
-            type: "string"
-      SystemStatus:
-        type: "array"
-        items:
-          type: "array"
-          items:
-            type: "string"
-      Plugins:
-        type: "object"
-        properties:
-          Volume:
-            type: "array"
-            items:
-              type: "string"
-          Network:
-            type: "array"
-            items:
-              type: "string"
-      ExecutionDriver:
-        type: "string"
-      ExperimentalBuild:
-        type: "boolean"
-      HttpProxy:
-        type: "string"
-      HttpsProxy:
-        type: "string"
-      ID:
-        type: "string"
-      IPv4Forwarding:
-        type: "boolean"
-      Images:
-        type: "integer"
-      IndexServerAddress:
-        type: "string"
-      InitPath:
-        type: "string"
-      InitSha1:
-        type: "string"
-      KernelVersion:
-        type: "string"
-      Labels:
-        type: "array"
-        items:
-          type: "string"
-      MemTotal:
-        type: "integer"
-      MemoryLimit:
-        type: "boolean"
-      NCPU:
-        type: "integer"
-      NEventsListener:
-        type: "integer"
-      NFd:
-        type: "integer"
-      NGoroutines:
-        type: "integer"
-      Name:
-        type: "string"
-      NoProxy:
-        type: "string"
-      OomKillDisable:
-        type: "boolean"
-      OSType:
-        type: "string"
-      OomScoreAdj:
-        type: "integer"
-      OperatingSystem:
-        type: "string"
-      RegistryConfig:
-        $ref: "#/definitions/RegistryConfig"
-      SwapLimit:
-        type: "boolean"
-      SystemTime:
-        type: "string"
-      ServerVersion:
-        type: "string"
-  RegistryConfig:
-    type: "object"
-    properties:
-      IndexConfigs:
-        type: "object"
-        additionalProperties:
-          $ref: "#/definitions/Registry"
-      InsecureRegistryCIDRs:
-        type: "array"
-        items:
-          type: "string"
-  Registry:
-    type: "object"
-    properties:
-      Mirrors:
-        type: "array"
-        items:
-          type: "string"
-      Name:
-        type: "string"
-      Official:
-        type: "boolean"
-      Secure:
-        type: "boolean"
   ProcessConfig:
     type: "object"
     properties:
@@ -1137,22 +921,6 @@ definitions:
         type: "string"
       IPv6Address:
         type: "string"
-  ContainerCreateResult:
-    type: "object"
-    properties:
-      Id:
-        type: "string"
-      Warnings:
-        type: "array"
-        items:
-          type: "string"
-  ContainerUpdateResponse:
-    type: "object"
-    properties:
-      Warnings:
-        type: "array"
-        items:
-          type: "string"
   BuildInfo:
     type: "object"
     properties:
@@ -1207,8 +975,8 @@ definitions:
       message:
         type: "integer"
   Error:
-    type: "object"
     description: "Represents an error."
+    type: "object"
     required: ["message"]
     properties:
       message:
@@ -1674,7 +1442,15 @@ paths:
         201:
           description: "no error"
           schema:
-            $ref: "#/definitions/ContainerCreateResult"
+            type: "object"
+            properties:
+              Id:
+                description: "The ID of the created container"
+                type: "string"
+              Warnings:
+                type: "array"
+                items:
+                  type: "string"
           examples:
             application/json:
               Id: "e90e34656806"
@@ -2012,7 +1788,20 @@ paths:
         200:
           description: "no error"
           schema:
-            $ref: "#/definitions/ContainerTop"
+            type: "object"
+            properties:
+              Titles:
+                description: "The ps column titles"
+                type: "array"
+                items:
+                  type: "string"
+              Processes:
+                description: "Each process running in the container, where each is process is an array of values corresponding to the titles"
+                type: "array"
+                items:
+                  type: "array"
+                  items:
+                    type: "string"
           examples:
             application/json:
               Titles:
@@ -2152,7 +1941,18 @@ paths:
           schema:
             type: "array"
             items:
-              $ref: "#/definitions/ContainerChange"
+              type: "object"
+              properties:
+                Path:
+                  description: "Path to file that has changed"
+                  type: "string"
+                Kind:
+                  description: "Kind of change"
+                  type: "integer"
+                  enum:
+                    - 0
+                    - 1
+                    - 2
           examples:
             application/json:
               - Path: "/dev"
@@ -2449,8 +2249,6 @@ paths:
     post:
       summary: "Restart a container"
       operationId: "PostContainerRestart"
-      consumes:
-        - "application/octet-stream"
       responses:
         204:
           description: "no error"
@@ -2522,7 +2320,12 @@ paths:
         200:
           description: "no error"
           schema:
-            $ref: "#/definitions/ContainerUpdateResponse"
+            type: "object"
+            properties:
+              Warnings:
+                type: "array"
+                items:
+                  type: "string"
         404:
           description: "no such container"
           schema:
@@ -2650,6 +2453,7 @@ paths:
       operationId: "PostContainerAttach"
       produces:
         - "application/vnd.docker.raw-stream"
+        - "application/json"
       responses:
         101:
           description: "no error, hints proxy about hijacking"
@@ -2779,7 +2583,11 @@ paths:
         200:
           description: "no error"
           schema:
-            $ref: "#/definitions/ContainerWait"
+            type: "object"
+            properties:
+              StatusCode:
+                description: "Exit code of the container"
+                type: "integer"
         404:
           description: "no such container"
           schema:
@@ -2981,7 +2789,33 @@ paths:
           schema:
             type: "array"
             items:
-              $ref: "#/definitions/ImageItem"
+              type: "object"
+              properties:
+                Id:
+                  type: "string"
+                ParentId:
+                  type: "string"
+                RepoTags:
+                  type: "array"
+                  items:
+                    type: "string"
+                RepoDigests:
+                  type: "array"
+                  items:
+                    type: "string"
+                Created:
+                  type: "integer"
+                  format: "int64"
+                Size:
+                  type: "integer"
+                  format: "int64"
+                VirtualSize:
+                  type: "integer"
+                  format: "int64"
+                Labels:
+                  type: "object"
+                  additionalProperties:
+                    type: "string"
           examples:
             application/json:
               - RepoTags:
@@ -3332,7 +3166,24 @@ paths:
           schema:
             type: "array"
             items:
-              $ref: "#/definitions/ImageHistoryItem"
+              type: "object"
+              properties:
+                Id:
+                  type: "string"
+                Created:
+                  type: "integer"
+                  format: "int64"
+                CreatedBy:
+                  type: "string"
+                Tags:
+                  type: "array"
+                  items:
+                    type: "string"
+                Size:
+                  type: "integer"
+                  format: "int64"
+                Comment:
+                  type: "string"
           examples:
             application/json:
               - Id: "3db9c44f45209632d6050b35958829c3a2aa256d81b9a7be45b362ff85c54710"
@@ -3466,22 +3317,22 @@ paths:
       responses:
         200:
           description: "No error"
-          examples:
-            application/json:
-              - Untagged: "3e2f21a89f"
-              - Deleted: "3e2f21a89f"
-              - Deleted: "53b4f83ac9"
           schema:
             type: "array"
             items:
               type: "object"
               properties:
                 Untagged:
-                  type: "string"
                   description: "The image ID of an image that was untagged"
-                Deleted:
                   type: "string"
+                Deleted:
                   description: "The image ID of an image that was deleted"
+                  type: "string"
+          examples:
+            application/json:
+              - Untagged: "3e2f21a89f"
+              - Deleted: "3e2f21a89f"
+              - Deleted: "53b4f83ac9"
         404:
           description: "No such image"
           schema:
@@ -3525,7 +3376,18 @@ paths:
           schema:
             type: "array"
             items:
-              $ref: "#/definitions/ImageSearchResult"
+              type: "object"
+              properties:
+                description:
+                  type: "string"
+                is_official:
+                  type: "boolean"
+                is_automated:
+                  type: "boolean"
+                name:
+                  type: "string"
+                star_count:
+                  type: "integer"
           examples:
             application/json:
               - description: ""
@@ -3584,11 +3446,11 @@ paths:
             type: "object"
             properties:
               Status:
-                type: "string"
                 description: "The status of the authentication"
-              IdentityToken:
                 type: "string"
+              IdentityToken:
                 description: "An opaque token used to authenticate a user after a successful login"
+                type: "string"
           examples:
             application/json:
               Status: "Login Succeeded"
@@ -3617,7 +3479,131 @@ paths:
         200:
           description: "No error"
           schema:
-            $ref: "#/definitions/SystemInformation"
+            type: "object"
+            properties:
+              Architecture:
+                type: "string"
+              Containers:
+                type: "integer"
+              ContainersRunning:
+                type: "integer"
+              ContainersStopped:
+                type: "integer"
+              ContainersPaused:
+                type: "integer"
+              CpuCfsPeriod:
+                type: "boolean"
+              CpuCfsQuota:
+                type: "boolean"
+              Debug:
+                type: "boolean"
+              DiscoveryBackend:
+                type: "string"
+              DockerRootDir:
+                type: "string"
+              Driver:
+                type: "string"
+              DriverStatus:
+                type: "array"
+                items:
+                  type: "array"
+                  items:
+                    type: "string"
+              SystemStatus:
+                type: "array"
+                items:
+                  type: "array"
+                  items:
+                    type: "string"
+              Plugins:
+                type: "object"
+                properties:
+                  Volume:
+                    type: "array"
+                    items:
+                      type: "string"
+                  Network:
+                    type: "array"
+                    items:
+                      type: "string"
+              ExecutionDriver:
+                type: "string"
+              ExperimentalBuild:
+                type: "boolean"
+              HttpProxy:
+                type: "string"
+              HttpsProxy:
+                type: "string"
+              ID:
+                type: "string"
+              IPv4Forwarding:
+                type: "boolean"
+              Images:
+                type: "integer"
+              IndexServerAddress:
+                type: "string"
+              InitPath:
+                type: "string"
+              InitSha1:
+                type: "string"
+              KernelVersion:
+                type: "string"
+              Labels:
+                type: "array"
+                items:
+                  type: "string"
+              MemTotal:
+                type: "integer"
+              MemoryLimit:
+                type: "boolean"
+              NCPU:
+                type: "integer"
+              NEventsListener:
+                type: "integer"
+              NFd:
+                type: "integer"
+              NGoroutines:
+                type: "integer"
+              Name:
+                type: "string"
+              NoProxy:
+                type: "string"
+              OomKillDisable:
+                type: "boolean"
+              OSType:
+                type: "string"
+              OomScoreAdj:
+                type: "integer"
+              OperatingSystem:
+                type: "string"
+              RegistryConfig:
+                type: "object"
+                properties:
+                  IndexConfigs:
+                    type: "object"
+                    additionalProperties:
+                      type: "object"
+                      properties:
+                        Mirrors:
+                          type: "array"
+                          items:
+                            type: "string"
+                        Name:
+                          type: "string"
+                        Official:
+                          type: "boolean"
+                        Secure:
+                          type: "boolean"
+                  InsecureRegistryCIDRs:
+                    type: "array"
+                    items:
+                      type: "string"
+              SwapLimit:
+                type: "boolean"
+              SystemTime:
+                type: "string"
+              ServerVersion:
+                type: "string"
           examples:
             application/json:
               Architecture: "x86_64"
@@ -3766,7 +3752,6 @@ paths:
       operationId: "PostImageCommit"
       consumes:
         - "application/json"
-        - "application/octet-stream"
       produces:
         - "application/json"
       responses:
@@ -3776,8 +3761,8 @@ paths:
             type: "object"
             properties:
               Id:
-                type: "string"
                 description: "The ID of the image created"
+                type: "string"
           examples:
             application/json:
               Id: "596069db4bf5"
@@ -3857,28 +3842,28 @@ paths:
             type: "object"
             properties:
               Type:
-                type: "string"
                 description: "The type of object emitting the event"
-              Action:
                 type: "string"
+              Action:
                 description: "The type of event"
+                type: "string"
               Actor:
                 type: "object"
                 properties:
                   ID:
-                    type: "string"
                     description: "The ID of the object emitting the event"
+                    type: "string"
                   Attributes:
-                    type: "object"
                     description: "Various key/value attributes of the object, depending on its type"
+                    type: "object"
                     additionalProperties:
                       type: "string"
               time:
-                type: "integer"
                 description: "Timestamp of event"
-              timeNano:
                 type: "integer"
+              timeNano:
                 description: "Timestamp of event, with nanosecond accuracy"
+                type: "integer"
           examples:
             application/json:
               Type: "container"
@@ -4043,8 +4028,8 @@ paths:
             type: "object"
             properties:
               Id:
-                type: "string"
                 description: "The ID of the exec instance created."
+                type: "string"
               Warnings:
                 type: "array"
                 items:
@@ -4318,20 +4303,20 @@ paths:
             type: "object"
             properties:
               Name:
-                type: "string"
                 description: "The new volume's name. If not specified, Docker generates a name."
-              Driver:
                 type: "string"
+              Driver:
                 description: "Name of the volume driver to use."
+                type: "string"
                 default: "local"
               DriverOpts:
-                type: "object"
                 description: "A mapping of driver options and values. These options are passed directly to the driver and are driver specific."
+                type: "object"
                 additionalProperties:
                   type: "string"
               Labels:
-                type: "object"
                 description: "A mapping of arbitrary key/value data to set on the volume."
+                type: "object"
                 additionalProperties:
                   type: "string"
             example:
@@ -4535,8 +4520,8 @@ paths:
             type: "object"
             properties:
               Id:
-                type: "string"
                 description: "The ID of the created network."
+                type: "string"
               Warning:
                 type: "string"
             example:
@@ -4560,32 +4545,32 @@ paths:
             required: ["Name"]
             properties:
               Name:
-                type: "string"
                 description: "The network's name."
-              CheckDuplicate:
-                type: "boolean"
-                description: "Check for networks with duplicate names."
-              Driver:
                 type: "string"
+              CheckDuplicate:
+                description: "Check for networks with duplicate names."
+                type: "boolean"
+              Driver:
                 description: "Name of the network driver plugin to use."
+                type: "string"
                 default: "bridge"
               Internal:
-                type: "boolean"
                 description: "Restrict external access to the network."
-              IPAM:
-                $ref: "#/definitions/IPAM"
-                description: "Optional custom IP scheme for the network."
-              EnableIPv6:
                 type: "boolean"
+              IPAM:
+                description: "Optional custom IP scheme for the network."
+                $ref: "#/definitions/IPAM"
+              EnableIPv6:
                 description: "Enable IPv6 on the network."
+                type: "boolean"
               Options:
-                type: "object"
                 description: "Network specific options to be used by the drivers."
+                type: "object"
                 additionalProperties:
                   type: "string"
               Labels:
-                type: "object"
                 description: "Arbitrary key/value metadata to attach to the network."
+                type: "object"
                 additionalProperties:
                   type: "string"
             example:
