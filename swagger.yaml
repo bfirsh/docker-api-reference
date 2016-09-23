@@ -1441,38 +1441,48 @@ definitions:
         description: "Additional human-readable status of this container (e.g. `Exit 0`)"
         type: "string"
   EndpointSettings:
-    description: "EndpointSettings stores the network endpoint details"
+    description: "Configuration for a network endpoint."
     type: "object"
     properties:
+      IPAMConfig:
+        description: "IPAM configurations for the endpoint"
+        type: "object"
+        properties:
+          IPv4Address:
+            type: "string"
+          IPv6Address:
+            type: "string"
+          LinkLocalIPs:
+            type: "array"
+            items:
+              type: "string"
+      Links:
+        type: "array"
+        items:
+          type: "string"
       Aliases:
         type: "array"
         items:
           type: "string"
+      NetworkID:
+        type: "string"
       EndpointID:
         type: "string"
       Gateway:
+        type: "string"
+      IPAddress:
+        type: "string"
+      IPPrefixLen:
+        type: "integer"
+      IPv6Gateway:
         type: "string"
       GlobalIPv6Address:
         type: "string"
       GlobalIPv6PrefixLen:
         type: "integer"
         format: "int64"
-      IPAMConfig:
-        description: "TODO"
-      IPAddress:
-        type: "string"
-      IPPrefixLen:
-        type: "integer"
         format: "int64"
-      IPv6Gateway:
-        type: "string"
-      Links:
-        type: "array"
-        items:
-          type: "string"
       MacAddress:
-        type: "string"
-      NetworkID:
         type: "string"
 paths:
   /containers/json:
@@ -1693,6 +1703,15 @@ paths:
                 properties:
                   HostConfig:
                     $ref: "#/definitions/HostConfig"
+                  NetworkingConfig:
+                    description: "This container's networking configuration."
+                    type: "object"
+                    properties:
+                      EndpointsConfig:
+                        description: "A mapping of network name to endpoint configuration for that network."
+                        type: "object"
+                        additionalProperties:
+                          $ref: "#/definitions/EndpointSettings"
             example:
               Hostname: ""
               Domainname: ""
@@ -4683,6 +4702,8 @@ paths:
               Container:
                 type: "string"
                 description: "The ID or name of the container to connect to the network."
+              EndpointConfig:
+                $ref: "#/definitions/EndpointSettings"
             example:
               Container: "3613f73ba0e4"
               EndpointConfig:
