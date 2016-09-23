@@ -313,6 +313,7 @@ definitions:
         format: "int64"
 
   HostConfig:
+    description: "Container configuration that depends on the host we are running on"
     allOf:
       - $ref: "#/definitions/Resources"
       - type: "object"
@@ -527,7 +528,7 @@ definitions:
               - "hyperv"
 
   Config:
-    description: "Configuration data about a container"
+    description: "Configuration for a container that is portable between hosts"
     type: "object"
     properties:
       Hostname:
@@ -664,95 +665,8 @@ definitions:
         type: "array"
         items:
           type: "string"
-  ContainerConfig:
-    type: "object"
-    properties:
-      Id:
-        type: "string"
-      Names:
-        type: "array"
-        items:
-          type: "string"
-      Image:
-        type: "string"
-      Command:
-        type: "string"
-      Created:
-        type: "integer"
-      Status:
-        type: "string"
-      Ports:
-        type: "array"
-        items:
-          $ref: "#/definitions/Port"
-      Labels:
-        type: "object"
-        additionalProperties:
-          type: "string"
-      SizeRw:
-        type: "integer"
-      SizeRootFs:
-        type: "integer"
-      Hostname:
-        type: "string"
-      Domainname:
-        type: "string"
-      User:
-        type: "string"
-      AttachStdin:
-        type: "boolean"
-        default: false
-      AttachStdout:
-        type: "boolean"
-        default: true
-      AttachStderr:
-        type: "boolean"
-        default: true
-      Tty:
-        type: "boolean"
-        default: false
-      OpenStdin:
-        type: "boolean"
-        default: false
-      StdinOnce:
-        type: "boolean"
-        default: false
-      Env:
-        type: "array"
-        items:
-          type: "string"
-      Cmd:
-        type:
-          - "array"
-          - "string"
-        items:
-          type: "string"
-      Entrypoint:
-        type:
-          - "array"
-          - "string"
-        items:
-          type: "string"
-      Mounts:
-        type: "array"
-        items:
-          $ref: "#/definitions/MountPoint"
-      WorkingDir:
-        type: "string"
-      NetworkDisabled:
-        type: "boolean"
-      MacAddress:
-        type: "string"
-      ExposedPorts:
-        type: "object"
-        additionalProperties:
-          type: "object"
-          enum:
-            - {}
-          default: {}
-      HostConfig:
-        $ref: "#/definitions/HostConfig"
   NetworkConfig:
+    description: "TODO: check is correct"
     type: "object"
     properties:
       Bridge:
@@ -813,78 +727,6 @@ definitions:
       RestartPolicy:
         MaximumRetryCount: 4
         Name: "on-failure"
-  ContainerState:
-    type: "object"
-    properties:
-      Error:
-        type: "string"
-      ExitCode:
-        type: "integer"
-      FinishedAt:
-        type: "string"
-      OOMKilled:
-        type: "boolean"
-      Paused:
-        type: "boolean"
-      Pid:
-        type: "integer"
-      Restarting:
-        type: "boolean"
-      Running:
-        type: "boolean"
-      StartedAt:
-        type: "string"
-  Container:
-    type: "object"
-    properties:
-      AppArmorProfile:
-        type: "string"
-      Args:
-        type: "array"
-        items:
-          type: "string"
-      Config:
-        $ref: "#/definitions/ContainerConfig"
-      Created:
-        type: "string"
-      Driver:
-        type: "string"
-      ExecDriver:
-        type: "string"
-      ExecIDs:
-        type: "string"
-      HostConfig:
-        $ref: "#/definitions/HostConfig"
-      HostnamePath:
-        type: "string"
-      HostsPath:
-        type: "string"
-      LogPath:
-        type: "string"
-      Id:
-        type: "string"
-      Image:
-        type: "string"
-      MountLabel:
-        type: "string"
-      Name:
-        type: "string"
-      NetworkSettings:
-        $ref: "#/definitions/NetworkConfig"
-      Path:
-        type: "string"
-      ProcessLabel:
-        type: "string"
-      ResolvConfPath:
-        type: "string"
-      RestartCount:
-        type: "integer"
-      State:
-        $ref: "#/definitions/ContainerState"
-      Mounts:
-        type: "array"
-        items:
-          $ref: "#/definitions/MountPoint"
   ContainerTop:
     type: "object"
     properties:
@@ -964,7 +806,7 @@ definitions:
       Parent:
         type: "string"
       ContainerConfig:
-        $ref: "#/definitions/ContainerConfig"
+        $ref: "#/definitions/Config"
       DockerVersion:
         type: "string"
       VirtualSize:
@@ -986,7 +828,7 @@ definitions:
         items:
           type: "string"
       Config:
-        $ref: "#/definitions/ContainerConfig"
+        $ref: "#/definitions/Config"
   ImageHistoryItem:
     type: "object"
     properties:
@@ -1482,7 +1324,6 @@ definitions:
       GlobalIPv6PrefixLen:
         type: "integer"
         format: "int64"
-        format: "int64"
       MacAddress:
         type: "string"
 paths:
@@ -1874,7 +1715,113 @@ paths:
         200:
           description: "no error"
           schema:
-            $ref: "#/definitions/Container"
+            type: "object"
+            properties:
+              Id:
+                description: "The ID of the container"
+                type: "string"
+              Created:
+                description: "The time the container was created"
+                type: "string"
+              Path:
+                description: "The path to the command being run"
+                type: "string"
+              Args:
+                description: "The arguments to the command being run"
+                type: "array"
+                items:
+                  type: "string"
+              State:
+                description: "The state of the container."
+                type: "object"
+                properties:
+                  Status:
+                    description: "The status of the container. For example, `running` or `exited`."
+                    type: "string"
+                  Running:
+                    description: "Whether this container is running."
+                    type: "boolean"
+                  Paused:
+                    description: "Whether this container is paused."
+                    type: "boolean"
+                  Restarting:
+                    description: "Whether this container is restarting."
+                    type: "boolean"
+                  OOMKilled:
+                    description: "Whether this container has been killed because it ran out of memory."
+                    type: "boolean"
+                  Dead:
+                    type: "boolean"
+                  Pid:
+                    description: "The process ID of this container"
+                    type: "integer"
+                  ExitCode:
+                    description: "The last exit code of this container"
+                    type: "integer"
+                  Error:
+                    type: "string"
+                  StartedAt:
+                    description: "The time when this container was last started."
+                    type: "string"
+                  FinishedAt:
+                    description: "The time when this container last exited."
+                    type: "string"
+              Image:
+                description: "The container's image"
+                type: "string"
+              ResolvConfPath:
+                type: "string"
+              HostnamePath:
+                type: "string"
+              HostsPath:
+                type: "string"
+              LogPath:
+                type: "string"
+              Node:
+                description: "TODO"
+                type: "object"
+              Name:
+                type: "string"
+              RestartCount:
+                type: "integer"
+              Driver:
+                type: "string"
+              MountLabel:
+                type: "string"
+              ProcessLabel:
+                type: "string"
+              AppArmorProfile:
+                type: "string"
+              ExecIDs:
+                type: "string"
+              HostConfig:
+                $ref: "#/definitions/HostConfig"
+              GraphDriver:
+                description: "Information about this container's graph driver."
+                type: "object"
+                properties:
+                  Name:
+                    type: "string"
+                  Data:
+                    type: "object"
+                    additionalProperties:
+                      type: "string"
+              SizeRw:
+                description: "The size of files that have been created or changed by this container."
+                type: "integer"
+                format: "int64"
+              SizeRootFs:
+                description: "The total size of all the files in this container."
+                type: "integer"
+                format: "int64"
+              Mounts:
+                type: "array"
+                items:
+                  $ref: "#/definitions/MountPoint"
+              Config:
+                $ref: "#/definitions/Config"
+              NetworkSettings:
+                $ref: "#/definitions/NetworkConfig"
           examples:
             application/json:
               AppArmorProfile: ""
@@ -3850,7 +3797,7 @@ paths:
           in: "body"
           description: "The container configuration"
           schema:
-            $ref: "#/definitions/ContainerConfig"
+            $ref: "#/definitions/Config"
         - name: "container"
           in: "query"
           description: "The ID or name of the container to commit"
@@ -4261,8 +4208,8 @@ paths:
                 type: "boolean"
               OpenStdout:
                 type: "boolean"
-              Container:
-                $ref: "#/definitions/Container"
+              ContainerID:
+                type: "string"
           examples:
             application/json:
               CanRemove: false
