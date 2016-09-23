@@ -1367,6 +1367,7 @@ definitions:
   Error:
     type: "object"
     description: "Represents an error."
+    required: [message]
     properties:
       message:
         description: "The error message."
@@ -4609,6 +4610,7 @@ paths:
           required: true
           schema:
             type: "object"
+            required: ["Name"]
             properties:
               Name:
                 type: "string"

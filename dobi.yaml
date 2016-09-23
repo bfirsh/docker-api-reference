@@ -1,0 +1,18 @@
+
+meta:
+    project: docker-api-reference
+    default: validate
+
+mount=source:
+    bind: .
+    path: /code
+
+image=validator:
+    image: swagger-validator
+    context: dockerfiles
+    dockerfile: Dockerfile.validate
+
+job=validate:
+    use: validator
+    mounts: [source]
+
