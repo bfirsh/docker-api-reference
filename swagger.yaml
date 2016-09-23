@@ -1367,7 +1367,7 @@ definitions:
   Error:
     type: "object"
     description: "Represents an error."
-    required: [message]
+    required: ["message"]
     properties:
       message:
         description: "The error message."
