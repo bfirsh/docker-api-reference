@@ -39,5 +39,14 @@ job=swagger.json:
     artifact: "swagger.json"
 
 
+compose=serve-index:
+    files: [docker-compose.yml]
+    project: '{project}'
+
+
 alias=validate:
     tasks: [yaml-lint, swagger-validate]
+
+
+alias=preview:
+    tasks: ['serve-index:attach']
