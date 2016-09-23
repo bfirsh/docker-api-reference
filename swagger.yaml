@@ -526,201 +526,144 @@ definitions:
               - "process"
               - "hyperv"
 
-
-  ContainerCreateConfig:
+  Config:
+    description: "Configuration data about a container"
     type: "object"
     properties:
       Hostname:
+        description: "The hostname to use for the container, as a valid RFC 1123 hostname."
         type: "string"
-        description: "The hostname to use for the container, as a valid RFC 1123 hostname"
       Domainname:
+        description: "The domain name to use for the container."
         type: "string"
-        description: "The domain name to use for the container"
       User:
+        description: "The user that commands are run as inside the container."
         type: "string"
-        description: "The user inside the container"
       AttachStdin:
+        description: "Whether to attach to stdin."
         type: "boolean"
         default: false
-        description: "Whether to attach to stdin"
-      Image:
-        type: "string"
-        description: "The name of the image to use when creating the container"
-      Command:
-        type: "string"
-        description: "Command to run as a string or list of strings"
-      Ports:
-        type: "array"
-        items:
-          $ref: "#/definitions/Port"
-      Labels:
-        type: "object"
-        additionalProperties:
-          type: "string"
-      SizeRw:
-        type: "integer"
-      SizeRootFs:
-        type: "integer"
       AttachStdout:
+        description: "Whether to attach to stdout."
         type: "boolean"
         default: true
       AttachStderr:
+        description: "Whether to attach to stderr."
         type: "boolean"
         default: true
-      Tty:
-        type: "boolean"
-        default: false
-      OpenStdin:
-        type: "boolean"
-        default: false
-      StdinOnce:
-        type: "boolean"
-        default: false
-      Env:
-        type: "array"
-        items:
-          type: "string"
-      Cmd:
-        type:
-          - "array"
-          - "string"
-        items:
-          type: "string"
-      Entrypoint:
-        type:
-          - "array"
-          - "string"
-        items:
-          type: "string"
-      WorkingDir:
-        type: "string"
-      NetworkDisabled:
-        type: "boolean"
-      MacAddress:
-        type: "string"
       ExposedPorts:
+        description: |
+          An object mapping ports to an empty object in the form:
+
+          `{"<port>/<tcp|udp>": {}}`
         type: "object"
         additionalProperties:
           type: "object"
           enum:
             - {}
           default: {}
-      HostConfig:
-        $ref: "#/definitions/HostConfig"
-    example:
-      Hostname: ""
-      Domainname: ""
-      User: ""
-      AttachStdin: false
-      AttachStdout: true
-      AttachStderr: true
-      Tty: false
-      OpenStdin: false
-      StdinOnce: false
+      Tty:
+        description: "Attach standard streams to a TTY, including stdin if it is not closed."
+        type: "boolean"
+        default: false
+      OpenStdin:
+        description: "Open stdin"
+        type: "boolean"
+        default: false
+      StdinOnce:
+        description: "Close stdin after one attached client disconnects"
+        type: "boolean"
+        default: false
       Env:
-        - "FOO=bar"
-        - "BAZ=quux"
+        description: |
+          A list of environment variables to set inside the container in the form `["VAR=value"[,"VAR2=value2"]]`
+        type: "array"
+        items:
+          type: "string"
       Cmd:
-        - "date"
-      Entrypoint: ""
-      Image: "ubuntu"
-      Labels:
-        com.example.vendor: "Acme"
-        com.example.license: "GPL"
-        com.example.version: "1.0"
+        description: "Command to run specified as a string or an array of strings."
+        type:
+          - "array"
+          - "string"
+        items:
+          type: "string"
+      Healthcheck:
+        description: "A test to perform to check that the container is healthy."
+        type: "object"
+        properties:
+          Test:
+            description: |
+              The test to perform. Possible values are:
+
+              - `{}` inherit healthcheck from image or parent image
+              - `{"NONE"}` disable healthcheck
+              - `{"CMD", args...}` exec arguments directly
+              - `{"CMD-SHELL", command}` run command with system's default shell
+            type: "array"
+            items:
+              type: "string"
+          Interval:
+            description: "The time to wait between checks in nanoseconds. 0 means inherit."
+            type: "integer"
+          Timeout:
+            description: "The time to wait before considering the check to have hung. 0 means inherit."
+            type: "integer"
+          Retries:
+            description: "The number of consecutive failures needed to consider a container as unhealthy. 0 means inherit."
+            type: "integer"
+      ArgsEscaped:
+        description: "Command is already escaped (Windows only)"
+        type: "boolean"
+      Image:
+        description: "The name of the image to use when creating the container"
+        type: "string"
       Volumes:
-        /volumes/data: {}
-      WorkingDir: ""
-      NetworkDisabled: false
-      MacAddress: "12:34:56:78:9a:bc"
-      ExposedPorts:
-        22/tcp: {}
-      StopSignal: "SIGTERM"
-      HostConfig:
-        Binds:
-          - "/tmp:/tmp"
-        Links:
-          - "redis3:redis"
-        Memory: 0
-        MemorySwap: 0
-        MemoryReservation: 0
-        KernelMemory: 0
-        CpuPercent: 80
-        CpuShares: 512
-        CpuPeriod: 100000
-        CpuQuota: 50000
-        CpusetCpus: "0,1"
-        CpusetMems: "0,1"
-        MaximumIOps: 0
-        MaximumIOBps: 0
-        BlkioWeight: 300
-        BlkioWeightDevice:
-          - {}
-        BlkioDeviceReadBps:
-          - {}
-        BlkioDeviceReadIOps:
-          - {}
-        BlkioDeviceWriteBps:
-          - {}
-        BlkioDeviceWriteIOps:
-          - {}
-        MemorySwappiness: 60
-        OomKillDisable: false
-        OomScoreAdj: 500
-        PidMode: ""
-        PidsLimit: -1
-        PortBindings:
-          22/tcp:
-            - HostPort: "11022"
-        PublishAllPorts: false
-        Privileged: false
-        ReadonlyRootfs: false
-        Dns:
-          - "8.8.8.8"
-        DnsOptions:
-          - ""
-        DnsSearch:
-          - ""
-        VolumesFrom:
-          - "parent"
-          - "other:ro"
-        CapAdd:
-          - "NET_ADMIN"
-        CapDrop:
-          - "MKNOD"
-        GroupAdd:
-          - "newgroup"
-        RestartPolicy:
-          Name: ""
-          MaximumRetryCount: 0
-        AutoRemove: true
-        NetworkMode: "bridge"
-        Devices: []
-        Ulimits:
-          - {}
-        LogConfig:
-          Type: "json-file"
-          Config: {}
-        SecurityOpt: []
-        StorageOpt: {}
-        CgroupParent: ""
-        VolumeDriver: ""
-        ShmSize: 67108864
-      NetworkingConfig:
-        EndpointsConfig:
-          isolated_nw:
-            IPAMConfig:
-              IPv4Address: "172.20.30.33"
-              IPv6Address: "2001:db8:abcd::3033"
-              LinkLocalIPs:
-                - "169.254.34.68"
-                - "fe80::3468"
-            Links:
-              - "container_1"
-              - "container_2"
-            Aliases:
-              - "server_x"
-              - "server_y"
+        description: "An object mapping mount point paths inside the container to empty objects."
+        type: "object"
+        properties:
+          additionalProperties:
+            type: "object"
+            enum:
+              - {}
+            default: {}
+      WorkingDir:
+        description: "The working directory for commands to run in."
+        type: "string"
+      Entrypoint:
+        description: |
+          The entry point for the container as a string or an array of strings.
+
+          If the array consists of exactly one empty string (`[""]`) then the entry point is reset to system default (i.e., the entry point used by docker when there is no `ENTRYPOINT` instruction in the Dockerfile).
+        type:
+          - "array"
+          - "string"
+        items:
+          type: "string"
+      NetworkDisabled:
+        description: "Disable networking for the container."
+        type: "boolean"
+      MacAddress:
+        description: "MAC address of the container."
+        type: "string"
+      OnBuild:
+        description: "`ONBUILD` metadata that were defined in the image's `Dockerfile`."
+        type: "array"
+        items:
+          type: "string"
+      Labels:
+        description: "User-defined key/value data attached to the container."
+        type: "object"
+        additionalProperties:
+          type: "string"
+      StopSignal:
+        description: "Signal to stop a container as a string or unsigned integer."
+        type: "string"
+        default: "SIGTERM"
+      Shell:
+        description: "Shell for when `RUN`, `CMD`, and `ENTRYPOINT` uses a shell."
+        type: "array"
+        items:
+          type: "string"
   ContainerConfig:
     type: "object"
     properties:
@@ -1428,7 +1371,6 @@ definitions:
       message:
         description: "The error message."
         type: "string"
-        required: true
     example:
       message: "Something went wrong."
   ContainerListSummary:
@@ -1745,7 +1687,127 @@ paths:
           in: "body"
           description: "Container to create"
           schema:
-            $ref: "#/definitions/ContainerCreateConfig"
+            allOf:
+              - $ref: "#/definitions/Config"
+              - type: "object"
+                properties:
+                  HostConfig:
+                    $ref: "#/definitions/HostConfig"
+            example:
+              Hostname: ""
+              Domainname: ""
+              User: ""
+              AttachStdin: false
+              AttachStdout: true
+              AttachStderr: true
+              Tty: false
+              OpenStdin: false
+              StdinOnce: false
+              Env:
+                - "FOO=bar"
+                - "BAZ=quux"
+              Cmd:
+                - "date"
+              Entrypoint: ""
+              Image: "ubuntu"
+              Labels:
+                com.example.vendor: "Acme"
+                com.example.license: "GPL"
+                com.example.version: "1.0"
+              Volumes:
+                /volumes/data: {}
+              WorkingDir: ""
+              NetworkDisabled: false
+              MacAddress: "12:34:56:78:9a:bc"
+              ExposedPorts:
+                22/tcp: {}
+              StopSignal: "SIGTERM"
+              HostConfig:
+                Binds:
+                  - "/tmp:/tmp"
+                Links:
+                  - "redis3:redis"
+                Memory: 0
+                MemorySwap: 0
+                MemoryReservation: 0
+                KernelMemory: 0
+                CpuPercent: 80
+                CpuShares: 512
+                CpuPeriod: 100000
+                CpuQuota: 50000
+                CpusetCpus: "0,1"
+                CpusetMems: "0,1"
+                MaximumIOps: 0
+                MaximumIOBps: 0
+                BlkioWeight: 300
+                BlkioWeightDevice:
+                  - {}
+                BlkioDeviceReadBps:
+                  - {}
+                BlkioDeviceReadIOps:
+                  - {}
+                BlkioDeviceWriteBps:
+                  - {}
+                BlkioDeviceWriteIOps:
+                  - {}
+                MemorySwappiness: 60
+                OomKillDisable: false
+                OomScoreAdj: 500
+                PidMode: ""
+                PidsLimit: -1
+                PortBindings:
+                  22/tcp:
+                    - HostPort: "11022"
+                PublishAllPorts: false
+                Privileged: false
+                ReadonlyRootfs: false
+                Dns:
+                  - "8.8.8.8"
+                DnsOptions:
+                  - ""
+                DnsSearch:
+                  - ""
+                VolumesFrom:
+                  - "parent"
+                  - "other:ro"
+                CapAdd:
+                  - "NET_ADMIN"
+                CapDrop:
+                  - "MKNOD"
+                GroupAdd:
+                  - "newgroup"
+                RestartPolicy:
+                  Name: ""
+                  MaximumRetryCount: 0
+                AutoRemove: true
+                NetworkMode: "bridge"
+                Devices: []
+                Ulimits:
+                  - {}
+                LogConfig:
+                  Type: "json-file"
+                  Config: {}
+                SecurityOpt: []
+                StorageOpt: {}
+                CgroupParent: ""
+                VolumeDriver: ""
+                ShmSize: 67108864
+              NetworkingConfig:
+                EndpointsConfig:
+                  isolated_nw:
+                    IPAMConfig:
+                      IPv4Address: "172.20.30.33"
+                      IPv6Address: "2001:db8:abcd::3033"
+                      LinkLocalIPs:
+                        - "169.254.34.68"
+                        - "fe80::3468"
+                    Links:
+                      - "container_1"
+                      - "container_2"
+                    Aliases:
+                      - "server_x"
+                      - "server_y"
+
           required: true
       responses:
         201:
