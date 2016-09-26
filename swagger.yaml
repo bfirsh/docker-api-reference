@@ -699,40 +699,53 @@ definitions:
     properties:
       Id:
         type: "string"
-      Container:
+      RepoTags:
+        type: "array"
+        items:
+          type: "string"
+      RepoDigests:
+        type: "array"
+        items:
+          type: "string"
+      Parent:
         type: "string"
       Comment:
         type: "string"
-      Os:
+      Created:
         type: "string"
-      Architecture:
-        type: "string"
-      Parent:
+      Container:
         type: "string"
       ContainerConfig:
         $ref: "#/definitions/Config"
       DockerVersion:
         type: "string"
-      VirtualSize:
-        type: "integer"
-      Size:
-        type: "integer"
       Author:
         type: "string"
-      Created:
-        type: "string"
-      GraphDriver:
-        $ref: "#/definitions/GraphDriver"
-      RepoDigests:
-        type: "array"
-        items:
-          type: "string"
-      RepoTags:
-        type: "array"
-        items:
-          type: "string"
       Config:
         $ref: "#/definitions/Config"
+      Architecture:
+        type: "string"
+      Os:
+        type: "string"
+      Size:
+        type: "integer"
+        format: "int64"
+      VirtualSize:
+        type: "integer"
+        format: "int64"
+      GraphDriver:
+        $ref: "#/definitions/GraphDriver"
+      RootFS:
+        type: "object"
+        properties:
+          Type:
+            type: "string"
+          Layers:
+            type: "array"
+            items:
+              type: "string"
+          BaseLayer:
+            type: "string"
   AuthConfig:
     type: "object"
     properties:
