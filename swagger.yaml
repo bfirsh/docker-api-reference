@@ -88,19 +88,6 @@ definitions:
         type: "boolean"
       Propagation:
         type: "string"
-  Ulimit:
-    type: "object"
-    description: "Specifies resource limits, such as max open files"
-    properties:
-      Name:
-        description: "Name of ulimit"
-        type: "string"
-      Soft:
-        description: "Soft limit"
-        type: "integer"
-      Hard:
-        description: "Hard limit"
-        type: "integer"
   DeviceMapping:
     type: "object"
     description: "A device mapping between the host and container"
@@ -290,10 +277,20 @@ definitions:
         format: "int64"
       Ulimits:
         description: |
-          A list of ulimits to set in the container. For example: `{"Name": "nofile", "Soft": 1024, "Hard": 2048}`"
+          A list of resource limits to set in the container. For example: `{"Name": "nofile", "Soft": 1024, "Hard": 2048}`"
         type: "array"
         items:
-          $ref: "#/definitions/Ulimit"
+          type: "object"
+          properties:
+            Name:
+              description: "Name of ulimit"
+              type: "string"
+            Soft:
+              description: "Soft limit"
+              type: "integer"
+            Hard:
+              description: "Hard limit"
+              type: "integer"
       # Applicable to Windows
       CpuCount:
         description: "CPU count (Windows only)"
