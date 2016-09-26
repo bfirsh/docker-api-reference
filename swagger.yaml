@@ -685,12 +685,15 @@ definitions:
         items:
           $ref: "#/definitions/Port"
   GraphDriver:
+    description: "Information about this container's graph driver."
     type: "object"
     properties:
       Name:
         type: "string"
       Data:
         type: "object"
+        additionalProperties:
+          type: "string"
   Image:
     type: "object"
     properties:
@@ -1530,15 +1533,7 @@ paths:
               HostConfig:
                 $ref: "#/definitions/HostConfig"
               GraphDriver:
-                description: "Information about this container's graph driver."
-                type: "object"
-                properties:
-                  Name:
-                    type: "string"
-                  Data:
-                    type: "object"
-                    additionalProperties:
-                      type: "string"
+                $ref: "#/definitions/GraphDriver"
               SizeRw:
                 description: "The size of files that have been created or changed by this container."
                 type: "integer"
