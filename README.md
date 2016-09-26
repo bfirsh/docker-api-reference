@@ -6,9 +6,13 @@ See https://github.com/docker/engine-api/issues/77 for background.
 
 ## Usage
 
-To view docs, run `docker-compose up` and go to http://localhost
+Install Dobi, the build tool:
 
-To validate the Swagger configuration, run `make validate`.
+    curl -L -o /usr/local/bin/dobi "https://github.com/dnephin/dobi/releases/download/v0.5/dobi-$(uname -s)"; chmod +x /usr/local/bin/dobi
 
-To generate a `swagger.json` file, run `make swagger.json`.
+To view docs, run `dobi preview` and go to http://localhost
+
+To validate the Swagger configuration, run `dobi validate`.
+
+To generate a `swagger.json` file, run `dobi swagger.json`.
 
