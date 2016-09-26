@@ -1000,6 +1000,226 @@ definitions:
         format: "int64"
       MacAddress:
         type: "string"
+  PluginMount:
+    type: "object"
+    properties:
+      Name:
+        type: "string"
+      Description:
+        type: "string"
+      Settable:
+        type: "array"
+        items:
+          type: "string"
+      Source:
+        type: "string"
+      Destination:
+        type: "string"
+      Type:
+        type: "string"
+      Options:
+        type: "array"
+        items:
+          type: "string"
+  PluginDevice:
+    type: "object"
+    properties:
+      Name:
+        type: "string"
+      Description:
+        type: "string"
+      Settable:
+        type: "array"
+        items:
+          type: "string"
+      Path:
+        type: "string"
+  Plugin:
+    description: "A plugin for the Remote API"
+    type: "object"
+    properties:
+      Id:
+        type: "string"
+      Name:
+        type: "string"
+      Tag:
+        type: "string"
+      Enabled:
+        description: "True when the plugin is running. False when the plugin is not running, only installed."
+        type: "boolean"
+      Config:
+        description: "Settings that can be modified by users."
+        type: "object"
+        properties:
+          Mounts:
+            type: "array"
+            items:
+              $ref: "#/definitions/PluginMount"
+          Env:
+            type: "array"
+            items:
+              type: "string"
+          Args:
+            type: "array"
+            items:
+              type: "string"
+          Devices:
+            type: "array"
+            items:
+              $ref: "#/definitions/PluginDevice"
+      Manifest:
+        description: "The manifest of a plugin."
+        type: "object"
+        properties:
+          ManifestVersion:
+            type: "string"
+          Description:
+            type: "string"
+          Documentation:
+            type: "string"
+          Interface:
+            description: "The interface between Docker and the plugin"
+            type: "object"
+            properties:
+              Types:
+                type: "array"
+                items:
+                  type: "string"
+              Socket:
+                type: "string"
+          Entrypoint:
+            type: "array"
+            items:
+              type: "string"
+          Workdir:
+            type: "string"
+          User:
+            type: "object"
+            properties:
+              UID:
+                type: "integer"
+              GID:
+                type: "integer"
+          Network:
+            type: "object"
+            properties:
+              Type:
+                type: "string"
+          Capabilities:
+            type: "array"
+            items:
+              type: "string"
+          Mounts:
+            type: "array"
+            items:
+              $ref: "#/definitions/PluginMount"
+          Devices:
+            type: "array"
+            items:
+              $ref: "#/definitions/PluginDevice"
+          Env:
+            type: "object"
+            properties:
+              Name:
+                type: "string"
+              Description:
+                type: "string"
+              Settable:
+                type: "array"
+                items:
+                  type: "string"
+              Value:
+                type: "string"
+          Args:
+            type: "object"
+            properties:
+              Name:
+                type: "string"
+              Description:
+                type: "string"
+              Settable:
+                type: "array"
+                items:
+                  type: "string"
+              Value:
+                type: "array"
+                items:
+                  type: "string"
+    example:
+      Id: "5724e2c8652da337ab2eedd19fc6fc0ec908e4bd907c7421bf6a8dfc70c4c078"
+      Name: "tiborvass/no-remove"
+      Tag: "latest"
+      Active: true
+      Config:
+        Mounts:
+          - Name: ""
+            Description: ""
+            Settable: null
+            Source: "/data"
+            Destination: "/data"
+            Type: "bind"
+            Options:
+              - "shared"
+              - "rbind"
+          - Name: ""
+            Description: ""
+            Settable: null
+            Source: null
+            Destination: "/foobar"
+            Type: "tmpfs"
+            Options: null
+        Env:
+          - "DEBUG=1"
+        Args: null
+        Devices: null
+      Manifest:
+        ManifestVersion: "v0"
+        Description: "A test plugin for Docker"
+        Documentation: "https://docs.docker.com/engine/extend/plugins/"
+        Interface:
+          Types:
+            - "docker.volumedriver/1.0"
+          Socket: "plugins.sock"
+        Entrypoint:
+          - "plugin-no-remove"
+          - "/data"
+        Workdir: ""
+        User: {}
+        Network:
+          Type: "host"
+        Capabilities: null
+        Mounts:
+          - Name: ""
+            Description: ""
+            Settable: null
+            Source: "/data"
+            Destination: "/data"
+            Type: "bind"
+            Options:
+              - "shared"
+              - "rbind"
+          - Name: ""
+            Description: ""
+            Settable: null
+            Source: null
+            Destination: "/foobar"
+            Type: "tmpfs"
+            Options: null
+        Devices:
+          - Name: "device"
+            Description: "a host device to mount"
+            Settable: null
+            Path: "/dev/cpu_dma_latency"
+        Env:
+          - Name: "DEBUG"
+            Description: "If set, prints debug messages"
+            Settable: null
+            Value: "1"
+        Args:
+          Name: "args"
+          Description: "command line arguments"
+          Settable: null
+          Value: []
 paths:
   /containers/json:
     get:
@@ -4667,3 +4887,247 @@ paths:
                 description: "Force the container to disconnect from the network."
       tags:
         - "Network"
+  /plugins:
+    get:
+      summary: "List plugins"
+      operationId: "GetPluginsList"
+      description: "Returns information about installed plugins."
+      produces:
+        - "application/json"
+      responses:
+        200:
+          description: "No error"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Plugin"
+            example:
+              - Id: "5724e2c8652da337ab2eedd19fc6fc0ec908e4bd907c7421bf6a8dfc70c4c078"
+                Name: "tiborvass/no-remove"
+                Tag: "latest"
+                Active: true
+                Config:
+                  Mounts:
+                    - Name: ""
+                      Description: ""
+                      Settable: null
+                      Source: "/data"
+                      Destination: "/data"
+                      Type: "bind"
+                      Options:
+                        - "shared"
+                        - "rbind"
+                    - Name: ""
+                      Description: ""
+                      Settable: null
+                      Source: null
+                      Destination: "/foobar"
+                      Type: "tmpfs"
+                      Options: null
+                  Env:
+                    - "DEBUG=1"
+                  Args: null
+                  Devices: null
+                Manifest:
+                  ManifestVersion: "v0"
+                  Description: "A test plugin for Docker"
+                  Documentation: "https://docs.docker.com/engine/extend/plugins/"
+                  Interface:
+                    Types:
+                      - "docker.volumedriver/1.0"
+                    Socket: "plugins.sock"
+                  Entrypoint:
+                    - "plugin-no-remove"
+                    - "/data"
+                  Workdir: ""
+                  User: {}
+                  Network:
+                    Type: "host"
+                  Capabilities: null
+                  Mounts:
+                    - Name: ""
+                      Description: ""
+                      Settable: null
+                      Source: "/data"
+                      Destination: "/data"
+                      Type: "bind"
+                      Options:
+                        - "shared"
+                        - "rbind"
+                    - Name: ""
+                      Description: ""
+                      Settable: null
+                      Source: null
+                      Destination: "/foobar"
+                      Type: "tmpfs"
+                      Options: null
+                  Devices:
+                    - Name: "device"
+                      Description: "a host device to mount"
+                      Settable: null
+                      Path: "/dev/cpu_dma_latency"
+                  Env:
+                    - Name: "DEBUG"
+                      Description: "If set, prints debug messages"
+                      Settable: null
+                      Value: "1"
+                  Args:
+                    Name: "args"
+                    Description: "command line arguments"
+                    Settable: null
+                    Value: []
+        500:
+          description: "Server error"
+          schema:
+            $ref: "#/definitions/Error"
+      tags:
+        - "Plugins"
+  /plugins/pull:
+    post:
+      summary: "Install a plugin"
+      operationId: "PostPluginsPull"
+      description: |
+        Pulls and installs a plugin. After the plugin is installed, it can be enabled using the [`POST /plugins/{name}/enable` endpoint](#operation/PostPluginEnable).
+      produces:
+        - "application/json"
+      responses:
+        200:
+          description: "no error"
+          schema:
+            type: "array"
+            items:
+              description: "Describes a permission the user has to accept upon installing the plugin."
+              type: "object"
+              properties:
+                Name:
+                  type: "string"
+                Description:
+                  type: "string"
+                Value:
+                  type: "array"
+                  items:
+                    type: "string"
+            example:
+              - Name: "network"
+                Description: ""
+                Value:
+                  - "host"
+              - Name: "mount"
+                Description: ""
+                Value:
+                  - "/data"
+              - Name: "device"
+                Description: ""
+                Value:
+                  - "/dev/cpu_dma_latency"
+        500:
+          description: "server error"
+          schema:
+            $ref: "#/definitions/Error"
+      parameters:
+        - name: "name"
+          in: "query"
+          description: |
+            The plugin to install.
+
+            The `:latest` tag is optional, and is used as the default if omitted.
+          required: true
+          type: "string"
+        - name: "X-Registry-Auth"
+          in: "header"
+          description: "A base64-encoded auth configuration to use when pulling a plugin from a registry. [See the authentication section for details.](#section/Authentication)"
+          type: "string"
+      tags:
+        - "Plugins"
+  /plugins/{name}:
+    get:
+      summary: "Inspect a plugin"
+      operationId: "GetPluginsInspect"
+      responses:
+        200:
+          description: "no error"
+          schema:
+            $ref: "#/definitions/Plugin"
+        404:
+          description: "plugin is not installed"
+          schema:
+            $ref: "#/definitions/Error"
+        500:
+          description: "server error"
+          schema:
+            $ref: "#/definitions/Error"
+      parameters:
+        - name: "name"
+          in: "path"
+          description: "The name of the plugin. The `:latest` tag is optional, and is the default if omitted."
+          required: true
+          type: "string"
+      tags:
+        - "Plugins"
+    delete:
+      summary: "Remove a plugin"
+      operationId: "DeletePlugins"
+      responses:
+        200:
+          description: "no error"
+          schema:
+            $ref: "#/definitions/Plugin"
+        404:
+          description: "plugin is not installed"
+          schema:
+            $ref: "#/definitions/Error"
+        500:
+          description: "server error"
+          schema:
+            $ref: "#/definitions/Error"
+      parameters:
+        - name: "name"
+          in: "path"
+          description: "The name of the plugin. The `:latest` tag is optional, and is the default if omitted."
+          required: true
+          type: "string"
+        - name: "force"
+          in: "query"
+          description: "Disable the plugin before removing. This may result in issues if the plugin is in use by a container."
+          type: "boolean"
+          default: false
+      tags:
+        - "Plugins"
+  /plugins/{name}/enable:
+    post:
+      summary: "Enable a plugin"
+      operationId: "PostPluginsEnable"
+      responses:
+        200:
+          description: "no error"
+        500:
+          description: "server error"
+          schema:
+            $ref: "#/definitions/Error"
+      parameters:
+        - name: "name"
+          in: "path"
+          description: "The name of the plugin. The `:latest` tag is optional, and is the default if omitted."
+          required: true
+          type: "string"
+      tags:
+        - "Plugins"
+  /plugins/{name}/disable:
+    post:
+      summary: "Disable a plugin"
+      operationId: "PostPluginsDisable"
+      responses:
+        200:
+          description: "no error"
+        500:
+          description: "server error"
+          schema:
+            $ref: "#/definitions/Error"
+      parameters:
+        - name: "name"
+          in: "path"
+          description: "The name of the plugin. The `:latest` tag is optional, and is the default if omitted."
+          required: true
+          type: "string"
+      tags:
+        - "Plugins"
