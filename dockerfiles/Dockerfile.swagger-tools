@@ -3,4 +3,4 @@ FROM    node:0.10
 RUN     npm install -g swagger-tools
 
 WORKDIR /code
-ENTRYPOINT ["swagger-tools", "validate", "swagger.yaml"]
+ENTRYPOINT ["swagger-tools", "validate"]

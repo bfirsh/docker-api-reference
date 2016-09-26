@@ -7,12 +7,46 @@ mount=source:
     bind: .
     path: /code
 
-image=validator:
-    image: swagger-validator
-    context: dockerfiles
-    dockerfile: Dockerfile.validate
 
-job=validate:
-    use: validator
+image=spec-validator:
+    image: swagger-spec-validator
+    context: dockerfiles/
+    dockerfile: Dockerfile.swagger-tools
+
+image=linter:
+    image: yaml-linter
+    context: dockerfiles/
+    dockerfile: Dockerfile.yamllint
+
+
+job=swagger-validate:
+    use: spec-validator
     mounts: [source]
+    command: "swagger.yaml"
 
+job=yaml-lint:
+    use: linter
+    mounts: [source]
+    command: "swagger.yaml"
+
+job=swagger.json:
+    use: linter
+    mounts: [source]
+    entrypoint: "sh -c '
+        python -c \"import sys, yaml, json;
+            json.dump(yaml.load(sys.stdin), sys.stdout, indent=4)\"
+        < swagger.yaml > swagger.json'"
+    artifact: "swagger.json"
+
+
+compose=serve-index:
+    files: [docker-compose.yml]
+    project: '{project}'
+
+
+alias=validate:
+    tasks: [yaml-lint, swagger-validate]
+
+
+alias=preview:
+    tasks: ['serve-index:attach']

@@ -1,5 +1,5 @@
 nginx:
-  image: nginx
+  image: nginx:1.11-alpine
   volumes:
    - "./:/usr/share/nginx/html"
   ports:
