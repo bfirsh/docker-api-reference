@@ -172,6 +172,27 @@ definitions:
                 type: "object"
                 additionalProperties:
                   type: "string"
+  RestartPolicy:
+    description: |
+      The behavior to apply when the container exits. The default is not to restart.
+
+      An ever increasing delay (double the previous delay, starting at 100ms) is added before each restart to prevent flooding the server.
+    type: "object"
+    properties:
+      Name:
+        type: "string"
+        description: |
+          - `always` Always restart
+          - `unless-stopped` Restart always except when the user has manually stopped the container
+          - `on-failure` Restart only when the container exit code is non-zero
+        enum:
+          - "always"
+          - "unless-stopped"
+          - "on-failure"
+      MaximumRetryCount:
+        type: "integer"
+        description: "If `on-failure` is used, the number of times to retry before giving up"
+    default: {}
   Resources:
     description: "A container's resources (cgroups config, ulimits, etc)"
     type: "object"
@@ -367,26 +388,7 @@ definitions:
                   type: "string"
                   description: "The host port number, as a string"
           RestartPolicy:
-            type: "object"
-            description: |
-              The behavior to apply when the container exits. The default is not to restart.
-
-              An ever increasing delay (double the previous delay, starting at 100ms) is added before each restart to prevent flooding the server.
-            properties:
-              Name:
-                type: "string"
-                description: |
-                  - `always` Always restart
-                  - `unless-stopped` Restart always except when the user has manually stopped the container
-                  - `on-failure` Restart only when the container exit code is non-zero
-                enum:
-                  - "always"
-                  - "unless-stopped"
-                  - "on-failure"
-              MaximumRetryCount:
-                type: "integer"
-                description: "If `on-failure` is used, the number of times to retry before giving up"
-            default: {}
+            $ref: "#/definitions/RestartPolicy"
           AutoRemove:
             type: "boolean"
             description: "Automatically remove the container when the container's process exits. This has no effect if `RestartPolicy` is set."
@@ -682,48 +684,6 @@ definitions:
         type: "array"
         items:
           $ref: "#/definitions/Port"
-  UpdateConfig:
-    type: "object"
-    properties:
-      BlkioWeight:
-        description: "Block IO weight (relative weight vs. other containers) (UNIX only)"
-        type: "integer"
-      CpuShares:
-        description: "CPU shares (relative weight vs. other containers)"
-        type: "integer"
-      CpuPeriod:
-        description: "CPU Completely Fair Scheduler period (UNIX only)"
-        type: "integer"
-      CpuQuota:
-        description: "CPU Completely Fair Scheduler quota (UNIX only)"
-        type: "integer"
-      CpusetCpus:
-        type: "string"
-      CpusetMems:
-        type: "string"
-      Memory:
-        description: "Memory limit (in bytes)"
-        type: "integer"
-      MemorySwap:
-        type: "integer"
-      MemoryReservation:
-        type: "integer"
-      KernelMemory:
-        type: "integer"
-    example:
-      BlkioWeight: 300
-      CpuShares: 512
-      CpuPeriod: 100000
-      CpuQuota: 50000
-      CpusetCpus: "0,1"
-      CpusetMems: "0"
-      Memory: 314572800
-      MemorySwap: 514288000
-      MemoryReservation: 209715200
-      KernelMemory: 52428800
-      RestartPolicy:
-        MaximumRetryCount: 4
-        Name: "on-failure"
   GraphDriver:
     type: "object"
     properties:
@@ -2342,10 +2302,28 @@ paths:
           type: "string"
         - name: "update"
           in: "body"
-          description: "Update config json"
-          schema:
-            $ref: "#/definitions/UpdateConfig"
           required: true
+          schema:
+            allOf:
+              - $ref: "#/definitions/Resources"
+              - type: "object"
+                properties:
+                  RestartPolicy:
+                    $ref: "#/definitions/RestartPolicy"
+            example:
+              BlkioWeight: 300
+              CpuShares: 512
+              CpuPeriod: 100000
+              CpuQuota: 50000
+              CpusetCpus: "0,1"
+              CpusetMems: "0"
+              Memory: 314572800
+              MemorySwap: 514288000
+              MemoryReservation: 209715200
+              KernelMemory: 52428800
+              RestartPolicy:
+                MaximumRetryCount: 4
+                Name: "on-failure"
       tags:
         - "Container"
   /containers/{id}/rename:
