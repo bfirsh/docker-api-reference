@@ -1220,6 +1220,134 @@ definitions:
           Description: "command line arguments"
           Settable: null
           Value: []
+  NodeSpec:
+    type: "object"
+    properties:
+      Name:
+        description: "Name for the node."
+        type: "string"
+      Labels:
+        description: "User-defined key/value metadata."
+        type: "object"
+        additionalProperties:
+          type: "string"
+      Role:
+        description: "Role of the node."
+        type: "string"
+        enum:
+          - "worker"
+          - "manager"
+      Availability:
+        description: "Availability of the node."
+        type: "string"
+        enum:
+          - "active"
+          - "pause"
+          - "drain"
+    example:
+      Availability: "active"
+      Name: "node-name"
+      Role: "manager"
+      Labels:
+        foo: "bar"
+  Node:
+    type: "object"
+    properties:
+      ID:
+        type: "string"
+      Version:
+        type: "object"
+        properties:
+          Index:
+            type: "integer"
+            format: "int64"
+      CreatedAt:
+        type: "string"
+        format: "dateTime"
+      UpdatedAt:
+        type: "string"
+        format: "dateTime"
+      Spec:
+        $ref: "#/definitions/NodeSpec"
+      Description:
+        type: "object"
+        properties:
+          Hostname:
+            type: "string"
+          Platform:
+            type: "object"
+            properties:
+              Architecture:
+                type: "string"
+              OS:
+                type: "string"
+          Resources:
+            type: "object"
+            properties:
+              NanoCPUs:
+                type: "integer"
+                format: "int64"
+              MemoryBytes:
+                type: "integer"
+                format: "int64"
+          Engine:
+            type: "object"
+            properties:
+              EngineVersion:
+                type: "string"
+              Labels:
+                type: "object"
+                additionalProperties:
+                  type: "string"
+              Plugins:
+                type: "array"
+                items:
+                  type: "object"
+                  properties:
+                    Type:
+                      type: "string"
+                    Name:
+                      type: "string"
+    example:
+      ID: "24ifsmvkjbyhk"
+      Version:
+        Index: 8
+      CreatedAt: "2016-06-07T20:31:11.853781916Z"
+      UpdatedAt: "2016-06-07T20:31:11.999868824Z"
+      Spec:
+        Name: "my-node"
+        Role: "manager"
+        Availability: "active"
+        Labels:
+          foo: "bar"
+      Description:
+        Hostname: "bf3067039e47"
+        Platform:
+          Architecture: "x86_64"
+          OS: "linux"
+        Resources:
+          NanoCPUs: 4000000000
+          MemoryBytes: 8272408576
+        Engine:
+          EngineVersion: "1.12.0-dev"
+          Labels:
+            foo: "bar"
+          Plugins:
+            - Type: "Volume"
+              Name: "local"
+            - Type: "Network"
+              Name: "bridge"
+            - Type: "Network"
+              Name: "null"
+            - Type: "Network"
+              Name: "overlay"
+      Status:
+        State: "ready"
+      ManagerStatus:
+        Leader: true
+        Reachability: "reachable"
+        Addr: "172.17.0.2:2377"
+
 paths:
   /containers/json:
     get:
@@ -5131,3 +5259,117 @@ paths:
           type: "string"
       tags:
         - "Plugins"
+  /nodes:
+    get:
+      summary: "List nodes"
+      operationId: "GetNodesList"
+      responses:
+        200:
+          description: "no error"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Node"
+        500:
+          description: "server error"
+          schema:
+            $ref: "#/definitions/Error"
+      parameters:
+        - name: "filters"
+          in: "query"
+          description: |
+            Filters to process on the nodes list, encoded as JSON (a `map[string][]string`).
+
+            Available filters:
+            - `id=<node id>`
+            - `name=<node name>`
+            - `membership=`(`pending`|`accepted`|`rejected`)`
+            - `role=`(`worker`|`manager`)`
+          type: "string"
+      tags:
+        - "Nodes"
+  /nodes/{id}:
+    get:
+      summary: "Inspect a node"
+      operationId: "GetNodesInspect"
+      responses:
+        200:
+          description: "no error"
+          schema:
+            $ref: "#/definitions/Node"
+        404:
+          description: "no such node"
+          schema:
+            $ref: "#/definitions/Error"
+        500:
+          description: "server error"
+          schema:
+            $ref: "#/definitions/Error"
+      parameters:
+        - name: "id"
+          in: "path"
+          description: "The ID of the node"
+          type: "string"
+          required: true
+      tags:
+        - "Nodes"
+    delete:
+      summary: "Delete a node"
+      operationId: "DeleteNodes"
+      responses:
+        200:
+          description: "no error"
+        404:
+          description: "no such node"
+          schema:
+            $ref: "#/definitions/Error"
+        500:
+          description: "server error"
+          schema:
+            $ref: "#/definitions/Error"
+      parameters:
+        - name: "id"
+          in: "path"
+          description: "The ID of the node"
+          type: "string"
+          required: true
+        - name: "force"
+          in: "query"
+          description: "Force remove an active node"
+          default: false
+          type: "boolean"
+      tags:
+        - "Nodes"
+  /nodes/{id}/update:
+    post:
+      summary: "Update a node"
+      operationId: "PostNodesUpdate"
+      responses:
+        200:
+          description: "no error"
+        404:
+          description: "no such node"
+          schema:
+            $ref: "#/definitions/Error"
+        500:
+          description: "server error"
+          schema:
+            $ref: "#/definitions/Error"
+      parameters:
+        - name: "id"
+          in: "path"
+          description: "The ID of the node"
+          type: "string"
+          required: true
+        - name: "body"
+          in: "body"
+          schema:
+            $ref: "#/definitions/NodeSpec"
+        - name: "version"
+          in: "query"
+          description: "The version number of the node object being updated. This is required to avoid conflicting writes."
+          type: "integer"
+          format: "int64"
+          required: true
+      tags:
+        - "Nodes"
