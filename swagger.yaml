@@ -4205,8 +4205,7 @@ paths:
           description: "no error"
           schema:
             type: "string"
-          examples:
-            text/plain: "OK"
+            example: "OK"
         500:
           description: "server error"
           schema:
