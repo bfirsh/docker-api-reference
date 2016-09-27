@@ -1347,7 +1347,146 @@ definitions:
         Leader: true
         Reachability: "reachable"
         Addr: "172.17.0.2:2377"
+  SwarmSpec:
+    description: "User modifiable swarm configuration."
+    type: "object"
+    properties:
+      Name:
+        description: "Name of the swarm."
+        type: "string"
+      Labels:
+        description: "User-defined key/value metadata."
+        type: "object"
+        additionalProperties:
+          type: "string"
+      Orchestration:
+        description: "Orchestration configuration."
+        type: "object"
+        properties:
+          TaskHistoryRetentionLimit:
+            description: "The number of historic tasks to keep per instance or node. If negative, never remove completed or failed tasks."
+            type: "integer"
+            format: "int64"
+      Raft:
+        description: "Raft configuration."
+        type: "object"
+        properties:
+          SnapshotInterval:
+            description: "The number of log entries between snapshots."
+            type: "integer"
+            format: "int64"
+          KeepOldSnapshots:
+            description: "The number of snapshots to keep beyond the current snapshot."
+            type: "integer"
+            format: "int64"
+          LogEntriesForSlowFollowers:
+            description: "The number of log entries to keep around to sync up slow followers after a snapshot is created."
+            type: "integer"
+            format: "int64"
+          ElectionTick:
+            description: |
+              The number of ticks that a follower will wait for a message from the leader before becoming a candidate and starting an election. `ElectionTick` must be greater than `HeartbeatTick`.
 
+              A tick currently defaults to one second, so these translate directly to seconds currently, but this is NOT guaranteed.
+            type: "integer"
+          HeartbeatTick:
+            description: |
+              The number of ticks between heartbeats. Every HeartbeatTick ticks, the leader will send a heartbeat to the followers.
+
+              A tick currently defaults to one second, so these translate directly to seconds currently, but this is NOT guaranteed.
+            type: "integer"
+      Dispatcher:
+        description: "Dispatcher configuration."
+        type: "object"
+        properties:
+          HeartbeatPeriod:
+            description: "The delay for an agent to send a heartbeat to the dispatcher."
+            type: "integer"
+            format: "int64"
+      CAConfig:
+        description: "CA configuration."
+        type: "object"
+        properties:
+          NodeCertExpiry:
+            description: "The duration node certificates are issued for."
+            type: "integer"
+            format: "int64"
+          ExternalCAs:
+            description: "Configuration for forwarding signing requests to an external certificate authority."
+            type: "array"
+            items:
+              type: "object"
+              properties:
+                Protocol:
+                  description: "Protocol for communication with the external CA
+          (currently only `cfssl` is supported)."
+                  type: "string"
+                  enum:
+                    - "cfssl"
+                  default: "cfssl"
+                URL:
+                  description: "URL where certificate signing requests should be sent."
+                  type: "string"
+                Options:
+                  description: "An object with key/value pairs that are interpreted as protocol-specific options for the external CA driver."
+                  type: "object"
+                  additionalProperties:
+                    type: "string"
+      TaskDefaults:
+        description: "Defaults for creating tasks in this cluster."
+        type: "object"
+        properties:
+          LogDriver:
+            description: |
+              The log driver to use for tasks created in the orchestrator if unspecified by a service.
+
+              Updating this value will only have an affect on new tasks. Old tasks will continue use their previously configured log driver until recreated.
+            type: "object"
+            properties:
+              Name:
+                type: "string"
+              Options:
+                type: "object"
+                additionalProperties:
+                  type: "string"
+    example:
+      Name: "default"
+      Orchestration:
+        TaskHistoryRetentionLimit: 10
+      Raft:
+        SnapshotInterval: 10000
+        LogEntriesForSlowFollowers: 500
+        HeartbeatTick: 1
+        ElectionTick: 3
+      Dispatcher:
+        HeartbeatPeriod: 5000000000
+      CAConfig:
+        NodeCertExpiry: 7776000000000000
+      JoinTokens:
+        Worker: "SWMTKN-1-3pu6hszjas19xyp7ghgosyx9k8atbfcr8p2is99znpy26u2lkl-1awxwuwd3z9j1z3puu7rcgdbx"
+        Manager: "SWMTKN-1-3pu6hszjas19xyp7ghgosyx9k8atbfcr8p2is99znpy26u2lkl-7p73s1dx5in4tatdymyhg9hu2"
+  # The Swarm information for `GET /info`. It is the same as `GET /swarm`, but
+  # without `JoinTokens`.
+  ClusterInfo:
+    type: "object"
+    properties:
+      ID:
+        description: "The ID of the swarm."
+        type: "string"
+      Version:
+        type: "object"
+        properties:
+          Index:
+            type: "integer"
+            format: "int64"
+      CreatedAt:
+        type: "string"
+        format: "dateTime"
+      UpdatedAt:
+        type: "string"
+        format: "dateTime"
+      Spec:
+        $ref: "#/definitions/SwarmSpec"
 paths:
   /containers/json:
     get:
@@ -5373,3 +5512,221 @@ paths:
           required: true
       tags:
         - "Nodes"
+  /swarm:
+    get:
+      summary: "Inspect swarm"
+      operationId: "GetSwarmInspect"
+      responses:
+        200:
+          description: "no error"
+          schema:
+            allOf:
+              - $ref: "#/definitions/ClusterInfo"
+              - type: "object"
+                properties:
+                  JoinTokens:
+                    description: "The tokens workers and managers need to join the swarm."
+                    type: "object"
+                    properties:
+                      Worker:
+                        description: "The token workers can use to join the swarm."
+                        type: "string"
+                      Manager:
+                        description: "The token managers can use to join the swarm."
+                        type: "string"
+            example:
+              CreatedAt: "2016-08-15T16:00:20.349727406Z"
+              Spec:
+                Dispatcher:
+                  HeartbeatPeriod: 5000000000
+                Orchestration:
+                  TaskHistoryRetentionLimit: 10
+                CAConfig:
+                  NodeCertExpiry: 7776000000000000
+                Raft:
+                  LogEntriesForSlowFollowers: 500
+                  HeartbeatTick: 1
+                  SnapshotInterval: 10000
+                  ElectionTick: 3
+                TaskDefaults: {}
+                Name: "default"
+              JoinTokens:
+                Worker: "SWMTKN-1-1h8aps2yszaiqmz2l3oc5392pgk8e49qhx2aj3nyv0ui0hez2a-6qmn92w6bu3jdvnglku58u11a"
+                Manager: "SWMTKN-1-1h8aps2yszaiqmz2l3oc5392pgk8e49qhx2aj3nyv0ui0hez2a-8llk83c4wm9lwioey2s316r9l"
+              ID: "70ilmkj2f6sp2137c753w2nmt"
+              UpdatedAt: "2016-08-15T16:32:09.623207604Z"
+              Version:
+                Index: 51
+        500:
+          description: "server error"
+          schema:
+            $ref: "#/definitions/Error"
+      tags:
+        - "Swarm"
+  /swarm/init:
+    post:
+      summary: "Initialize a new swarm"
+      operationId: "PostSwarmInit"
+      produces:
+        - "application/json"
+        - "text/plain"
+      responses:
+        200:
+          description: "no error"
+          schema:
+            description: "The node ID"
+            type: "string"
+            example: "7v2t30z9blmxuhnyo6s4cpenp"
+        400:
+          description: "bad parameter"
+          schema:
+            $ref: "#/definitions/Error"
+        406:
+          description: "node is already part of a swarm"
+          schema:
+            $ref: "#/definitions/Error"
+        500:
+          description: "server error"
+          schema:
+            $ref: "#/definitions/Error"
+      parameters:
+        - name: "body"
+          in: "body"
+          required: true
+          schema:
+            type: "object"
+            properties:
+              ListenAddr:
+                description: "Listen address used for inter-manager communication, as well as determining the networking interface used for the VXLAN Tunnel Endpoint (VTEP). This can either be an address/port combination in the form `192.168.1.1:4567`, or an interface followed by a port number, like `eth0:4567`. If the port number is omitted, the default swarm listening port is used."
+                type: "string"
+              AdvertiseAddr:
+                description: "Externally reachable address advertised to other nodes. This can either be an address/port combination in the form `192.168.1.1:4567`, or an interface followed by a port number, like `eth0:4567`. If the port number is omitted, the port number from the listen address is used. If `AdvertiseAddr` is not specified, it will be automatically detected when possible."
+                type: "string"
+              ForceNewCluster:
+                description: "Force creation of a new swarm."
+                type: "boolean"
+              Spec:
+                $ref: "#/definitions/SwarmSpec"
+            example:
+              ListenAddr: "0.0.0.0:2377"
+              AdvertiseAddr: "192.168.1.1:2377"
+              ForceNewCluster: false
+              Spec:
+                Orchestration: {}
+                Raft: {}
+                Dispatcher: {}
+                CAConfig: {}
+      tags:
+        - "Swarm"
+  /swarm/join:
+    post:
+      summary: "Join an existing swarm"
+      operationId: "PostSwarmJoin"
+      responses:
+        200:
+          description: "no error"
+        400:
+          description: "bad parameter"
+          schema:
+            $ref: "#/definitions/Error"
+        406:
+          description: "node is already part of a swarm"
+          schema:
+            $ref: "#/definitions/Error"
+        500:
+          description: "server error"
+          schema:
+            $ref: "#/definitions/Error"
+      parameters:
+        - name: "body"
+          in: "body"
+          required: true
+          schema:
+            type: "object"
+            properties:
+              ListenAddr:
+                description: "Listen address used for inter-manager communication if the node gets promoted to manager, as well as determining the networking interface used for the VXLAN Tunnel Endpoint (VTEP)."
+                type: "string"
+              AdvertiseAddr:
+                description: "Externally reachable address advertised to other nodes. This can either be an address/port combination in the form `192.168.1.1:4567`, or an interface followed by a port number, like `eth0:4567`. If the port number is omitted, the port number from the listen address is used. If `AdvertiseAddr` is not specified, it will be automatically detected when possible."
+                type: "string"
+              RemoteAddrs:
+                description: "Addresses of manager nodes already participating in the swarm."
+                type: "string"
+              JoinToken:
+                description: "Secret token for joining this swarm."
+                type: "string"
+            example:
+              ListenAddr: "0.0.0.0:2377"
+              AdvertiseAddr: "192.168.1.1:2377"
+              RemoteAddrs:
+                - "node1:2377"
+              JoinToken: "SWMTKN-1-3pu6hszjas19xyp7ghgosyx9k8atbfcr8p2is99znpy26u2lkl-7p73s1dx5in4tatdymyhg9hu2"
+      tags:
+        - "Swarm"
+  /swarm/leave:
+    post:
+      summary: "Leave a swarm"
+      operationId: "PostSwarmJoin"
+      responses:
+        200:
+          description: "no error"
+        406:
+          description: "node is not part of a swarm"
+          schema:
+            $ref: "#/definitions/Error"
+        500:
+          description: "server error"
+          schema:
+            $ref: "#/definitions/Error"
+      parameters:
+        - name: "force"
+          description: "Force leave swarm, even if this is the last manager or that it will break the cluster."
+          in: "query"
+          type: "boolean"
+          default: false
+      tags:
+        - "Swarm"
+  /swarm/update:
+    post:
+      summary: "Update a swarm"
+      operationId: "PostSwarmJoin"
+      responses:
+        200:
+          description: "no error"
+        400:
+          description: "bad parameter"
+          schema:
+            $ref: "#/definitions/Error"
+        406:
+          description: "node is not part of a swarm"
+          schema:
+            $ref: "#/definitions/Error"
+        500:
+          description: "server error"
+          schema:
+            $ref: "#/definitions/Error"
+      parameters:
+        - name: "body"
+          in: "body"
+          required: true
+          schema:
+            $ref: "#/definitions/SwarmSpec"
+        - name: "version"
+          in: "query"
+          description: "The version number of the swarm object being updated. This is required to avoid conflicting writes."
+          type: "integer"
+          format: "int64"
+          required: true
+        - name: "rotateWorkerToken"
+          in: "query"
+          description: "Rotate the worker join token."
+          type: "boolean"
+          default: false
+        - name: "rotateManagerToken"
+          in: "query"
+          description: "Rotate the manager join token."
+          type: "boolean"
+          default: false
+      tags:
+        - "Swarm"
