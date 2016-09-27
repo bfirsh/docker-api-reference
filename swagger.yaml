@@ -5670,7 +5670,7 @@ paths:
   /swarm/leave:
     post:
       summary: "Leave a swarm"
-      operationId: "PostSwarmJoin"
+      operationId: "PostSwarmLeave"
       responses:
         200:
           description: "no error"
@@ -5693,7 +5693,7 @@ paths:
   /swarm/update:
     post:
       summary: "Update a swarm"
-      operationId: "PostSwarmJoin"
+      operationId: "PostSwarmUpdate"
       responses:
         200:
           description: "no error"
