@@ -757,6 +757,10 @@ definitions:
         type: "string"
       serveraddress:
         type: "string"
+    example:
+      username: "hannibal"
+      password: "xxxx"
+      serveraddress: "https://index.docker.io/v1/"
   ProcessConfig:
     type: "object"
     properties:
