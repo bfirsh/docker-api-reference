@@ -1491,6 +1491,262 @@ definitions:
         format: "dateTime"
       Spec:
         $ref: "#/definitions/SwarmSpec"
+  TaskSpec:
+    description: "User modifiable task configuration."
+    properties:
+      ContainerSpec:
+        type: "object"
+        properties:
+          Image:
+            description: "The image name to use for the container."
+            type: "string"
+          Command:
+            description: "The command to be run in the image."
+            type: "array"
+            items:
+              type: "string"
+          Args:
+            description: "Arguments to the command."
+            type: "array"
+            items:
+              type: "string"
+          Env:
+            description: "A list of environment variables in the form `VAR=value`."
+            type: "array"
+            items:
+              type: "string"
+          Dir:
+            description: "The working directory for commands to run in."
+            type: "string"
+          User:
+            description: "The user inside the container."
+            type: "string"
+          Labels:
+            description: "A map of labels to associate with the service."
+            type: "object"
+            additionalProperties:
+              type: "string"
+          Mounts:
+            description: "Specification for mounts to be added to containers created as part of the service."
+            type: "array"
+            items:
+              $ref: "#/definitions/Mount"
+          StopGracePeriod:
+            description: "Amount of time to wait for the container to terminate before forcefully killing it."
+            type: "integer"
+            format: "int64"
+      Resources:
+        description: "Resource requirements which apply to each individual container created as part of the service."
+        type: "object"
+        properties:
+          Limits:
+            description: "Define resources limits."
+            type: "object"
+            properties:
+              NanoCPUs:
+                description: "CPU limit in units of 10<sup>-9</sup> CPU shares."
+                type: "integer"
+                format: "int64"
+              MemoryBytes:
+                description: "Memory limit in Bytes."
+                type: "integer"
+                format: "int64"
+          Reservation:
+            description: "Define resources reservation."
+            properties:
+              NanoCPUs:
+                description: "CPU reservation in units of 10<sup>-9</sup> CPU shares."
+                type: "integer"
+                format: "int64"
+              MemoryBytes:
+                description: "Memory reservation in Bytes."
+                type: "integer"
+                format: "int64"
+      RestartPolicy:
+        description: "Specification for the restart policy which applies to containers created as part of this service."
+        type: "object"
+        properties:
+          Condition:
+            description: "Condition for restart."
+            type: "string"
+            enum:
+              - "none"
+              - "on-failure"
+              - "any"
+          Delay:
+            description: "Delay between restart attempts."
+            type: "integer"
+            format: "int64"
+          MaxAttempts:
+            description: "Maximum attempts to restart a given container before giving up (default value is 0, which is ignored)."
+            type: "integer"
+            format: "int64"
+            default: 0
+          Window:
+            description: "Windows is the time window used to evaluate the restart policy (default value is 0, which is unbounded)."
+            type: "integer"
+            format: "int64"
+            default: 0
+      Placement:
+        type: "object"
+        properties:
+          Constraints:
+            description: "An array of constraints."
+            type: "array"
+            items:
+              type: "string"
+      Networks:
+        type: "array"
+        items:
+          type: "object"
+          properties:
+            Target:
+              type: "string"
+            Aliases:
+              type: "array"
+              items:
+                type: "string"
+      LogDriver:
+        description: "Specifies the log driver to use for tasks created from this spec. If not present, the default one for the swarm will be used, finally falling back to the engine default if not specified."
+        type: "object"
+        properties:
+          Name:
+            type: "string"
+          Options:
+            type: "object"
+            additionalProperties:
+              type: "string"
+  TaskState:
+    type: "string"
+    enum:
+      - "new"
+      - "allocated"
+      - "pending"
+      - "assigned"
+      - "accepted"
+      - "preparing"
+      - "ready"
+      - "starting"
+      - "running"
+      - "complete"
+      - "shutdown"
+      - "failed"
+      - "rejected"
+  Task:
+    type: "object"
+    properties:
+      ID:
+        description: "The ID of the task."
+        type: "string"
+      Version:
+        type: "object"
+        properties:
+          Index:
+            type: "integer"
+            format: "int64"
+      CreatedAt:
+        type: "string"
+        format: "dateTime"
+      UpdatedAt:
+        type: "string"
+        format: "dateTime"
+      Name:
+        description: "Name of the task."
+        type: "string"
+      Labels:
+        description: "User-defined key/value metadata."
+        type: "object"
+        additionalProperties:
+          type: "string"
+      Spec:
+        $ref: "#/definitions/TaskSpec"
+      ServiceID:
+        description: "The ID of the service this task is part of."
+        type: "string"
+      Slot:
+        type: "integer"
+      NodeID:
+        description: "The ID of the node that this task is on."
+        type: "string"
+      Status:
+        type: "object"
+        properties:
+          Timestamp:
+            type: "string"
+            format: "dateTime"
+          State:
+            $ref: "#/definitions/TaskState"
+          Message:
+            type: "string"
+          Err:
+            type: "string"
+          ContainerStatus:
+            type: "object"
+            properties:
+              ContainerID:
+                type: "string"
+              PID:
+                type: "integer"
+              ExitCode:
+                type: "integer"
+      DesiredState:
+        $ref: "#/definitions/TaskState"
+    example:
+      ID: "0kzzo1i0y4jz6027t0k7aezc7"
+      Version:
+        Index: 71
+      CreatedAt: "2016-06-07T21:07:31.171892745Z"
+      UpdatedAt: "2016-06-07T21:07:31.376370513Z"
+      Spec:
+        ContainerSpec:
+          Image: "redis"
+        Resources:
+          Limits: {}
+          Reservations: {}
+        RestartPolicy:
+          Condition: "any"
+          MaxAttempts: 0
+        Placement: {}
+      ServiceID: "9mnpnzenvg8p8tdbtq4wvbkcz"
+      Slot: 1
+      NodeID: "60gvrl6tm78dmak4yl7srz94v"
+      Status:
+        Timestamp: "2016-06-07T21:07:31.290032978Z"
+        State: "running"
+        Message: "started"
+        ContainerStatus:
+          ContainerID: "e5d62702a1b48d01c3e02ca1e0212a250801fa8d67caca0b6f35919ebc12f035"
+          PID: 677
+      DesiredState: "running"
+      NetworksAttachments:
+        - Network:
+            ID: "4qvuz4ko70xaltuqbt8956gd1"
+            Version:
+              Index: 18
+            CreatedAt: "2016-06-07T20:31:11.912919752Z"
+            UpdatedAt: "2016-06-07T21:07:29.955277358Z"
+            Spec:
+              Name: "ingress"
+              Labels:
+                com.docker.swarm.internal: "true"
+              DriverConfiguration: {}
+              IPAMOptions:
+                Driver: {}
+                Configs:
+                  - Subnet: "10.255.0.0/16"
+                    Gateway: "10.255.0.1"
+            DriverState:
+              Name: "overlay"
+              Options:
+                com.docker.network.driver.overlay.vxlanid_list: "256"
+            IPAMOptions:
+              Driver:
+                Name: "default"
+              Configs:
+                - Subnet: "10.255.0.0/16"
+                  Gateway: "10.255.0.1"
+          Addresses:
+            - "10.255.0.10/16"
   ServiceSpec:
     description: "User modifiable configuration for a service."
     properties:
@@ -1503,130 +1759,7 @@ definitions:
         additionalProperties:
           type: "string"
       TaskTemplate:
-        description: "Specification of the tasks to start as part of the new service."
-        properties:
-          ContainerSpec:
-            type: "object"
-            properties:
-              Image:
-                description: "The image name to use for the container."
-                type: "string"
-              Command:
-                description: "The command to be run in the image."
-                type: "array"
-                items:
-                  type: "string"
-              Args:
-                description: "Arguments to the command."
-                type: "array"
-                items:
-                  type: "string"
-              Env:
-                description: "A list of environment variables in the form `VAR=value`."
-                type: "array"
-                items:
-                  type: "string"
-              Dir:
-                description: "The working directory for commands to run in."
-                type: "string"
-              User:
-                description: "The user inside the container."
-                type: "string"
-              Labels:
-                description: "A map of labels to associate with the service."
-                type: "object"
-                additionalProperties:
-                  type: "string"
-              Mounts:
-                description: "Specification for mounts to be added to containers created as part of the service."
-                type: "array"
-                items:
-                  $ref: "#/definitions/Mount"
-              StopGracePeriod:
-                description: "Amount of time to wait for the container to terminate before forcefully killing it."
-                type: "integer"
-                format: "int64"
-          Resources:
-            description: "Resource requirements which apply to each individual container created as part of the service."
-            type: "object"
-            properties:
-              Limits:
-                description: "Define resources limits."
-                type: "object"
-                properties:
-                  NanoCPUs:
-                    description: "CPU limit in units of 10<sup>-9</sup> CPU shares."
-                    type: "integer"
-                    format: "int64"
-                  MemoryBytes:
-                    description: "Memory limit in Bytes."
-                    type: "integer"
-                    format: "int64"
-              Reservation:
-                description: "Define resources reservation."
-                properties:
-                  NanoCPUs:
-                    description: "CPU reservation in units of 10<sup>-9</sup> CPU shares."
-                    type: "integer"
-                    format: "int64"
-                  MemoryBytes:
-                    description: "Memory reservation in Bytes."
-                    type: "integer"
-                    format: "int64"
-          RestartPolicy:
-            description: "Specification for the restart policy which applies to containers created as part of this service."
-            type: "object"
-            properties:
-              Condition:
-                description: "Condition for restart."
-                type: "string"
-                enum:
-                  - "none"
-                  - "on-failure"
-                  - "any"
-              Delay:
-                description: "Delay between restart attempts."
-                type: "integer"
-                format: "int64"
-              MaxAttempts:
-                description: "Maximum attempts to restart a given container before giving up (default value is 0, which is ignored)."
-                type: "integer"
-                format: "int64"
-                default: 0
-              Window:
-                description: "Windows is the time window used to evaluate the restart policy (default value is 0, which is unbounded)."
-                type: "integer"
-                format: "int64"
-                default: 0
-          Placement:
-            type: "object"
-            properties:
-              Constraints:
-                description: "An array of constraints."
-                type: "array"
-                items:
-                  type: "string"
-          Networks:
-            type: "array"
-            items:
-              type: "object"
-              properties:
-                Target:
-                  type: "string"
-                Aliases:
-                  type: "array"
-                  items:
-                    type: "string"
-          LogDriver:
-            description: "Specifies the log driver to use for tasks created from this spec. If not present, the default one for the swarm will be used, finally falling back to the engine default if not specified."
-            type: "object"
-            properties:
-              Name:
-                type: "string"
-              Options:
-                type: "object"
-                additionalProperties:
-                  type: "string"
+        $ref: "#/definitions/TaskSpec"
       Mode:
         description: "Scheduling mode for the service."
         type: "object"
@@ -6275,3 +6408,174 @@ paths:
 
       tags:
         - "Services"
+  /tasks:
+    get:
+      summary: "List tasks"
+      operationId: "GetTasksList"
+      produces:
+        - "application/json"
+      responses:
+        200:
+          description: "no error"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Task"
+            example:
+              - ID: "0kzzo1i0y4jz6027t0k7aezc7"
+                Version:
+                  Index: 71
+                CreatedAt: "2016-06-07T21:07:31.171892745Z"
+                UpdatedAt: "2016-06-07T21:07:31.376370513Z"
+                Spec:
+                  ContainerSpec:
+                    Image: "redis"
+                  Resources:
+                    Limits: {}
+                    Reservations: {}
+                  RestartPolicy:
+                    Condition: "any"
+                    MaxAttempts: 0
+                  Placement: {}
+                ServiceID: "9mnpnzenvg8p8tdbtq4wvbkcz"
+                Slot: 1
+                NodeID: "60gvrl6tm78dmak4yl7srz94v"
+                Status:
+                  Timestamp: "2016-06-07T21:07:31.290032978Z"
+                  State: "running"
+                  Message: "started"
+                  ContainerStatus:
+                    ContainerID: "e5d62702a1b48d01c3e02ca1e0212a250801fa8d67caca0b6f35919ebc12f035"
+                    PID: 677
+                DesiredState: "running"
+                NetworksAttachments:
+                  - Network:
+                      ID: "4qvuz4ko70xaltuqbt8956gd1"
+                      Version:
+                        Index: 18
+                      CreatedAt: "2016-06-07T20:31:11.912919752Z"
+                      UpdatedAt: "2016-06-07T21:07:29.955277358Z"
+                      Spec:
+                        Name: "ingress"
+                        Labels:
+                          com.docker.swarm.internal: "true"
+                        DriverConfiguration: {}
+                        IPAMOptions:
+                          Driver: {}
+                          Configs:
+                            - Subnet: "10.255.0.0/16"
+                              Gateway: "10.255.0.1"
+                      DriverState:
+                        Name: "overlay"
+                        Options:
+                          com.docker.network.driver.overlay.vxlanid_list: "256"
+                      IPAMOptions:
+                        Driver:
+                          Name: "default"
+                        Configs:
+                          - Subnet: "10.255.0.0/16"
+                            Gateway: "10.255.0.1"
+                    Addresses:
+                      - "10.255.0.10/16"
+              - ID: "1yljwbmlr8er2waf8orvqpwms"
+                Version:
+                  Index: 30
+                CreatedAt: "2016-06-07T21:07:30.019104782Z"
+                UpdatedAt: "2016-06-07T21:07:30.231958098Z"
+                Name: "hopeful_cori"
+                Spec:
+                  ContainerSpec:
+                    Image: "redis"
+                  Resources:
+                    Limits: {}
+                    Reservations: {}
+                  RestartPolicy:
+                    Condition: "any"
+                    MaxAttempts: 0
+                  Placement: {}
+                ServiceID: "9mnpnzenvg8p8tdbtq4wvbkcz"
+                Slot: 1
+                NodeID: "60gvrl6tm78dmak4yl7srz94v"
+                Status:
+                  Timestamp: "2016-06-07T21:07:30.202183143Z"
+                  State: "shutdown"
+                  Message: "shutdown"
+                  ContainerStatus:
+                    ContainerID: "1cf8d63d18e79668b0004a4be4c6ee58cddfad2dae29506d8781581d0688a213"
+                DesiredState: "shutdown"
+                NetworksAttachments:
+                  - Network:
+                      ID: "4qvuz4ko70xaltuqbt8956gd1"
+                      Version:
+                        Index: 18
+                      CreatedAt: "2016-06-07T20:31:11.912919752Z"
+                      UpdatedAt: "2016-06-07T21:07:29.955277358Z"
+                      Spec:
+                        Name: "ingress"
+                        Labels:
+                          com.docker.swarm.internal: "true"
+                        DriverConfiguration: {}
+                        IPAMOptions:
+                          Driver: {}
+                          Configs:
+                            - Subnet: "10.255.0.0/16"
+                              Gateway: "10.255.0.1"
+                      DriverState:
+                        Name: "overlay"
+                        Options:
+                          com.docker.network.driver.overlay.vxlanid_list: "256"
+                      IPAMOptions:
+                        Driver:
+                          Name: "default"
+                        Configs:
+                          - Subnet: "10.255.0.0/16"
+                            Gateway: "10.255.0.1"
+                    Addresses:
+                      - "10.255.0.5/16"
+
+        500:
+          description: "server error"
+          schema:
+            $ref: "#/definitions/Error"
+      parameters:
+        - name: "filters"
+          in: "query"
+          type: "string"
+          description: |
+            A JSON encoded value of the filters (a `map[string][]string`) to process on the tasks list. Available filters:
+
+            - `id=<task id>`
+            - `name=<task name>`
+            - `service=<service name>`
+            - `node=<node id>`
+            - `label=key` or `label="key=value"`
+            - `desired-state=(running | shutdown | accepted)`
+      tags:
+        - "Tasks"
+  /tasks/{id}:
+    get:
+      summary: "Inspect a task"
+      operationId: "GetTasksInspect"
+      produces:
+        - "application/json"
+      responses:
+        200:
+          description: "no error"
+          schema:
+            $ref: "#/definitions/Task"
+        404:
+          description: "no such task"
+          schema:
+            $ref: "#/definitions/Error"
+        500:
+          description: "server error"
+          schema:
+            $ref: "#/definitions/Error"
+      parameters:
+        - name: "id"
+          in: "path"
+          description: "ID of the task"
+          required: true
+          type: "string"
+      tags:
+        - "Tasks"
