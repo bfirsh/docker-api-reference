@@ -1491,6 +1491,325 @@ definitions:
         format: "dateTime"
       Spec:
         $ref: "#/definitions/SwarmSpec"
+  ServiceSpec:
+    description: "User modifiable configuration for a service."
+    properties:
+      Name:
+        description: "Name of the service."
+        type: "string"
+      Labels:
+        description: "User-defined key/value metadata."
+        type: "object"
+        additionalProperties:
+          type: "string"
+      TaskTemplate:
+        description: "Specification of the tasks to start as part of the new service."
+        properties:
+          ContainerSpec:
+            type: "object"
+            properties:
+              Image:
+                description: "The image name to use for the container."
+                type: "string"
+              Command:
+                description: "The command to be run in the image."
+                type: "array"
+                items:
+                  type: "string"
+              Args:
+                description: "Arguments to the command."
+                type: "array"
+                items:
+                  type: "string"
+              Env:
+                description: "A list of environment variables in the form `VAR=value`."
+                type: "array"
+                items:
+                  type: "string"
+              Dir:
+                description: "The working directory for commands to run in."
+                type: "string"
+              User:
+                description: "The user inside the container."
+                type: "string"
+              Labels:
+                description: "A map of labels to associate with the service."
+                type: "object"
+                additionalProperties:
+                  type: "string"
+              Mounts:
+                description: "Specification for mounts to be added to containers created as part of the service."
+                type: "array"
+                items:
+                  $ref: "#/definitions/Mount"
+              StopGracePeriod:
+                description: "Amount of time to wait for the container to terminate before forcefully killing it."
+                type: "integer"
+                format: "int64"
+          Resources:
+            description: "Resource requirements which apply to each individual container created as part of the service."
+            type: "object"
+            properties:
+              Limits:
+                description: "Define resources limits."
+                type: "object"
+                properties:
+                  NanoCPUs:
+                    description: "CPU limit in units of 10<sup>-9</sup> CPU shares."
+                    type: "integer"
+                    format: "int64"
+                  MemoryBytes:
+                    description: "Memory limit in Bytes."
+                    type: "integer"
+                    format: "int64"
+              Reservation:
+                description: "Define resources reservation."
+                properties:
+                  NanoCPUs:
+                    description: "CPU reservation in units of 10<sup>-9</sup> CPU shares."
+                    type: "integer"
+                    format: "int64"
+                  MemoryBytes:
+                    description: "Memory reservation in Bytes."
+                    type: "integer"
+                    format: "int64"
+          RestartPolicy:
+            description: "Specification for the restart policy which applies to containers created as part of this service."
+            type: "object"
+            properties:
+              Condition:
+                description: "Condition for restart."
+                type: "string"
+                enum:
+                  - "none"
+                  - "on-failure"
+                  - "any"
+              Delay:
+                description: "Delay between restart attempts."
+                type: "integer"
+                format: "int64"
+              MaxAttempts:
+                description: "Maximum attempts to restart a given container before giving up (default value is 0, which is ignored)."
+                type: "integer"
+                format: "int64"
+                default: 0
+              Window:
+                description: "Windows is the time window used to evaluate the restart policy (default value is 0, which is unbounded)."
+                type: "integer"
+                format: "int64"
+                default: 0
+          Placement:
+            type: "object"
+            properties:
+              Constraints:
+                description: "An array of constraints."
+                type: "array"
+                items:
+                  type: "string"
+          Networks:
+            type: "array"
+            items:
+              type: "object"
+              properties:
+                Target:
+                  type: "string"
+                Aliases:
+                  type: "array"
+                  items:
+                    type: "string"
+          LogDriver:
+            description: "Specifies the log driver to use for tasks created from this spec. If not present, the default one for the swarm will be used, finally falling back to the engine default if not specified."
+            type: "object"
+            properties:
+              Name:
+                type: "string"
+              Options:
+                type: "object"
+                additionalProperties:
+                  type: "string"
+      Mode:
+        description: "Scheduling mode for the service."
+        type: "object"
+        properties:
+          Replicated:
+            type: "object"
+            properties:
+              Replicas:
+                type: "integer"
+                format: "int64"
+          Global:
+            type: "object"
+      UpdateConfig:
+        description: "Specification for the update strategy of the service."
+        type: "object"
+        properties:
+          Parallelism:
+            description: "Maximum number of tasks to be updated in one iteration (0 means unlimited parallelism)."
+            type: "integer"
+            format: "int64"
+          Delay:
+            description: "Amount of time between updates."
+            type: "integer"
+            format: "int64"
+          FailureAction:
+            description: "Action to take if an updated task fails to run, or stops running during the update."
+            type: "string"
+            enum:
+              - "continue"
+              - "pause"
+      Networks:
+        description: "Array of network names or IDs to attach the service to."
+        type: "array"
+        items:
+          type: "object"
+          properties:
+            Target:
+              type: "string"
+            Aliases:
+              type: "array"
+              items:
+                type: "string"
+      EndpointSpec:
+        $ref: "#/definitions/EndpointSpec"
+  EndpointPortConfig:
+    type: "object"
+    properties:
+      Name:
+        type: "string"
+      Protocol:
+        type: "string"
+        enum:
+          - "tcp"
+          - "udp"
+      TargetPort:
+        description: "The port inside the container."
+        type: "integer"
+      PublishedPort:
+        description: "The port on the swarm hosts."
+        type: "integer"
+  EndpointSpec:
+    description: "Properties that can be configured to access and load balance a service."
+    type: "object"
+    properties:
+      Mode:
+        description: "The mode of resolution to use for internal load balancing
+      between tasks."
+        type: "string"
+        enum:
+          - "vip"
+          - "dnsrr"
+        default: "vip"
+      Ports:
+        description: "List of exposed ports that this service is accessible on from the outside. Ports can only be provided if `vip` resolution mode is used."
+        type: "array"
+        items:
+          $ref: "#/definitions/EndpointPortConfig"
+  Service:
+    type: "object"
+    properties:
+      ID:
+        type: "string"
+      Version:
+        type: "object"
+        properties:
+          Index:
+            type: "integer"
+            format: "int64"
+      CreatedAt:
+        type: "string"
+        format: "dateTime"
+      UpdatedAt:
+        type: "string"
+        format: "dateTime"
+      Spec:
+        $ref: "#/definitions/ServiceSpec"
+      Endpoint:
+        type: "object"
+        properties:
+          Spec:
+            $ref: "#/definitions/EndpointSpec"
+          Ports:
+            type: "array"
+            items:
+              $ref: "#/definitions/EndpointPortConfig"
+          VirtualIPs:
+            type: "array"
+            items:
+              type: "object"
+              properties:
+                NetworkID:
+                  type: "string"
+                Addr:
+                  type: "string"
+      UpdateStatus:
+        description: "The status of a service update."
+        type: "object"
+        properties:
+          State:
+            type: "string"
+            enum:
+              - "updating"
+              - "paused"
+              - "completed"
+          StartedAt:
+            type: "string"
+            format: "dateTime"
+          CompletedAt:
+            type: "string"
+            format: "dateTime"
+          Message:
+            type: "string"
+    example:
+      ID: "9mnpnzenvg8p8tdbtq4wvbkcz"
+      Version:
+        Index: 19
+      CreatedAt: "2016-06-07T21:05:51.880065305Z"
+      UpdatedAt: "2016-06-07T21:07:29.962229872Z"
+      Spec:
+        Name: "hopeful_cori"
+        TaskTemplate:
+          ContainerSpec:
+            Image: "redis"
+          Resources:
+            Limits: {}
+            Reservations: {}
+          RestartPolicy:
+            Condition: "any"
+            MaxAttempts: 0
+          Placement: {}
+        Mode:
+          Replicated:
+            Replicas: 1
+        UpdateConfig:
+          Parallelism: 1
+          FailureAction: "pause"
+        EndpointSpec:
+          Mode: "vip"
+          Ports:
+            -
+              Protocol: "tcp"
+              TargetPort: 6379
+              PublishedPort: 30001
+      Endpoint:
+        Spec:
+          Mode: "vip"
+          Ports:
+            -
+              Protocol: "tcp"
+              TargetPort: 6379
+              PublishedPort: 30001
+        Ports:
+          -
+            Protocol: "tcp"
+            TargetPort: 6379
+            PublishedPort: 30001
+        VirtualIPs:
+          -
+            NetworkID: "4qvuz4ko70xaltuqbt8956gd1"
+            Addr: "10.255.0.2/16"
+          -
+            NetworkID: "4qvuz4ko70xaltuqbt8956gd1"
+            Addr: "10.255.0.3/16"
 paths:
   /containers/json:
     get:
@@ -5733,3 +6052,226 @@ paths:
           default: false
       tags:
         - "Swarm"
+  /services:
+    get:
+      summary: "List services"
+      operationId: "GetServicesList"
+      responses:
+        200:
+          description: "no error"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Service"
+        500:
+          description: "server error"
+          schema:
+            $ref: "#/definitions/Error"
+      parameters:
+        - name: "filters"
+          in: "query"
+          type: "string"
+          description: |
+            A JSON encoded value of the filters (a `map[string][]string`) to process on the services list. Available filters:
+
+            - `id=<node id>`
+            - `name=<node name>`
+      tags:
+        - "Services"
+  /services/create:
+    post:
+      summary: "Create a service"
+      operationId: "PostServicesCreate"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      responses:
+        201:
+          description: "no error"
+          schema:
+            type: "object"
+            properties:
+              ID:
+                description: "The ID of the created service."
+                type: "string"
+            example:
+              ID: "ak7w3gjqoa3kuz8xcpnyy0pvl"
+        406:
+          description: "server error or node is not part of a swarm"
+          schema:
+            $ref: "#/definitions/Error"
+        409:
+          description: "name conflicts with an existing service"
+          schema:
+            $ref: "#/definitions/Error"
+        500:
+          description: "server error"
+          schema:
+            $ref: "#/definitions/Error"
+      parameters:
+        - name: "body"
+          in: "body"
+          required: true
+          schema:
+            allOf:
+              - $ref: "#/definitions/ServiceSpec"
+              - example:
+                  Name: "web"
+                  TaskTemplate:
+                    ContainerSpec:
+                      Image: "nginx:alpine"
+                      Mounts:
+                        -
+                          ReadOnly: true
+                          Source: "web-data"
+                          Target: "/usr/share/nginx/html"
+                          Type: "volume"
+                          VolumeOptions:
+                            DriverConfig: {}
+                            Labels:
+                              com.example.something: "something-value"
+                      User: "33"
+                    LogDriver:
+                      Name: "json-file"
+                      Options:
+                        max-file: "3"
+                        max-size: "10M"
+                    Placement: {}
+                    Resources:
+                      Limits:
+                        MemoryBytes: 104857600
+                      Reservations: {}
+                    RestartPolicy:
+                      Condition: "on-failure"
+                      Delay: 10000000000
+                      MaxAttempts: 10
+                  Mode:
+                    Replicated:
+                      Replicas: 4
+                  UpdateConfig:
+                    Delay: 30000000000
+                    Parallelism: 2
+                    FailureAction: "pause"
+                  EndpointSpec:
+                    Ports:
+                      -
+                        Protocol: "tcp"
+                        PublishedPort: 8080
+                        TargetPort: 80
+                  Labels:
+                    foo: "bar"
+        - name: "X-Registry-Auth"
+          in: "header"
+          description: "A base64-encoded auth configuration for pulling from private registries. [See the authentication section for details.](#section/Authentication)"
+          type: "string"
+      tags:
+        - "Services"
+  /services/{id}:
+    get:
+      summary: "Inspect a service"
+      operationId: "GetServicesInspect"
+      responses:
+        200:
+          description: "no error"
+          schema:
+            $ref: "#/definitions/Service"
+        404:
+          description: "no such service"
+          schema:
+            $ref: "#/definitions/Error"
+        500:
+          description: "server error"
+          schema:
+            $ref: "#/definitions/Error"
+      parameters:
+        - name: "id"
+          in: "path"
+          description: "ID or name of service."
+          required: true
+          type: "string"
+      tags:
+        - "Services"
+    delete:
+      summary: "Delete a service"
+      operationId: "DeleteServices"
+      responses:
+        200:
+          description: "no error"
+        404:
+          description: "no such service"
+          schema:
+            $ref: "#/definitions/Error"
+        500:
+          description: "server error"
+          schema:
+            $ref: "#/definitions/Error"
+      parameters:
+        - name: "id"
+          in: "path"
+          description: "ID or name of service."
+          required: true
+          type: "string"
+      tags:
+        - "Services"
+  /services/{id}/update:
+    post:
+      summary: "Update a service"
+      operationId: "PostServicesUpdate"
+      responses:
+        200:
+          description: "no error"
+        404:
+          description: "no such service"
+          schema:
+            $ref: "#/definitions/Error"
+        500:
+          description: "server error"
+          schema:
+            $ref: "#/definitions/Error"
+      parameters:
+        - name: "id"
+          in: "path"
+          description: "ID or name of service."
+          required: true
+          type: "string"
+        - name: "body"
+          in: "body"
+          required: true
+          schema:
+            allOf:
+              - $ref: "#/definitions/ServiceSpec"
+              - example:
+                  Name: "top"
+                  TaskTemplate:
+                    ContainerSpec:
+                      Image: "busybox"
+                      Args:
+                        - "top"
+                    Resources:
+                      Limits: {}
+                      Reservations: {}
+                    RestartPolicy:
+                      Condition: "any"
+                      MaxAttempts: 0
+                    Placement: {}
+                  Mode:
+                    Replicated:
+                      Replicas: 1
+                  UpdateConfig:
+                    Parallelism: 1
+                  EndpointSpec:
+                    Mode: "vip"
+
+        - name: "version"
+          in: "query"
+          description: "The version number of the service object being updated. This is required to avoid conflicting writes."
+          required: true
+          type: "integer"
+        - name: "X-Registry-Auth"
+          in: "header"
+          description: "A base64-encoded auth configuration for pulling from private registries. [See the authentication section for details.](#section/Authentication)"
+          type: "string"
+
+      tags:
+        - "Services"
