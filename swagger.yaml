@@ -39,7 +39,7 @@ info:
 
     The API tends to be REST, but for some complex commands, like attach or pull, the HTTP connection is hijacked to transport `stdout`, `stdin`, and `stderr`.
 
-    TODO: more 
+    TODO: more
 
     # Authentication
 
@@ -3423,7 +3423,10 @@ paths:
           type: "string"
         - name: "logs"
           in: "query"
-          description: "Return logs"
+          description: |
+            Output previous logs from the container before streaming current output.
+
+            This is useful for attaching to a container that has started and you want to output everything since the container started. Once all of the previous output has been returned, it will seamlessly transition into streaming output live."
           type: "boolean"
           default: false
         - name: "stream"
