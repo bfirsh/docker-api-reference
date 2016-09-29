@@ -17,16 +17,6 @@ info:
 
     TODO: More general details.
 
-    # Running a container
-
-    As an example of how to use the API, the `docker run` command uses these API calls to implement running a container:
-
-      - [Create the container.](#operation/PostContainerCreate)
-      - If the container status code is 404, it means the image doesn't exist. The client will first try to [pull the image](#operation/PostImageCreate), then it will try to create the container again.
-      - [Start the container.](#operation/PostContainerStart)
-      - If you are not in detached mode, it will [attach to the container](#operation/PostContainerAttach) using `logs=1` (to get `stdout` and `stderr` since the container started) and `stream=1`.
-      - If you are in detached mode or only `stdin` is attached, display the container's ID.
-
     # Errors
 
     The Remote API uses standard HTTP status codes to indicate the success or failure of the API call. The body of the response will be JSON in the following format:
