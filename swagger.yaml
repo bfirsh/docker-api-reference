@@ -15,7 +15,7 @@ info:
   description: |
     The Docker API is an HTTP REST API served by Docker Engine. It is the API the Docker client uses to communicate with the Engine, so everything the Docker client can do can be done with the API.
 
-    TODO: More general details.
+    Most of the client's commands map directly to API endpoints (e.g. `docker ps` is `GET /containers/json`). The notable exception is running containers, which consists of several API calls. [There is example of using `curl` to run a container in the SDK documentation.](#TODO)
 
     # Errors
 
@@ -26,6 +26,20 @@ info:
       "message": "page not found"
     }
     ```
+
+    # Versioning
+
+    The API is usually changed in each release of Docker. If you want to write a client that doesn't break when connecting to newer Docker releases, you can lock to a specific API version.
+
+    For Docker 1.13, the API version is 1.25. To lock to this version, you prefix the URL with `/v1.25`. For example, calling `/info` is the same as calling `/v1.25/info`.
+
+    The API uses an open schema model, which means server may add extra properties to responses. Likewise, the server will ignore any extra query parameters and request body properties. When you write clients, you need to ignore additional properties in responses to ensure they do not break when talking to newer Docker daemons.
+
+    # Hijacking
+
+    The API tends to be REST, but for some complex commands, like attach or pull, the HTTP connection is hijacked to transport `stdout`, `stdin`, and `stderr`.
+
+    TODO: more 
 
     # Authentication
 
