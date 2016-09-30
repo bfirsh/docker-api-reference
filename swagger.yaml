@@ -1578,6 +1578,7 @@ definitions:
         $ref: "#/definitions/SwarmSpec"
   TaskSpec:
     description: "User modifiable task configuration."
+    type: "object"
     properties:
       ContainerSpec:
         type: "object"
@@ -6388,7 +6389,8 @@ paths:
           schema:
             allOf:
               - $ref: "#/definitions/ServiceSpec"
-              - example:
+              - type: "object"
+                example:
                   Name: "web"
                   TaskTemplate:
                     ContainerSpec:
@@ -6513,7 +6515,8 @@ paths:
           schema:
             allOf:
               - $ref: "#/definitions/ServiceSpec"
-              - example:
+              - type: "object"
+                example:
                   Name: "top"
                   TaskTemplate:
                     ContainerSpec:
