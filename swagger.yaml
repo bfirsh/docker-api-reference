@@ -786,33 +786,42 @@ definitions:
           type: "string"
   Volume:
     type: "object"
+    required: [Name, Driver, Mountpoint, Labels, Scope]
     properties:
       Name:
         type: "string"
         description: "Name of the volume."
+        x-nullable: false
       Driver:
         type: "string"
         description: "Name of the volume driver used by the volume."
+        x-nullable: false
       Mountpoint:
         type: "string"
         description: "Mount path of the volume on the host."
+        x-nullable: false
       Status:
         type: "object"
         description: |
-          Low-level details about the volume, provided by the volume driver. Details are returned as a map with key/value pairs: `{"key":"value","key2":"value2"}`.
+          Low-level details about the volume, provided by the volume driver.
+          Details are returned as a map with key/value pairs:
+          `{"key":"value","key2":"value2"}`.
 
-          The `Status` field is optional, and is omitted if the volume driver does not support this feature.
+          The `Status` field is optional, and is omitted if the volume driver
+          does not support this feature.
         additionalProperties:
-          type: "string"
+          type: "object"
       Labels:
         type: "object"
         description: "A mapping of abitrary key/value data set on this volume."
+        x-nullable: false
         additionalProperties:
           type: "string"
       Scope:
         type: "string"
         description: "The level at which the volume exists. Either `global` for cluster-wide, or `local` for machine level."
         default: "local"
+        x-nullable: false
         enum:
           - "local"
           - "global"
