@@ -18,6 +18,10 @@ image=linter:
     context: dockerfiles/
     dockerfile: Dockerfile.yamllint
 
+image=go-swagger:
+    image: quay.io/goswagger/swagger
+    tags: [0.6.0]
+    pull: once
 
 job=swagger-validate:
     use: spec-validator
@@ -28,6 +32,11 @@ job=yaml-lint:
     use: linter
     mounts: [source]
     command: "swagger.yaml"
+
+job=go-swagger-validate:
+    use: go-swagger
+    mounts: [source]
+    command: "validate /code/swagger.yaml"
 
 job=swagger.json:
     use: linter
