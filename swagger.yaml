@@ -822,9 +822,17 @@ definitions:
         description: "The level at which the volume exists. Either `global` for cluster-wide, or `local` for machine level."
         default: "local"
         x-nullable: false
-        enum:
-          - "local"
-          - "global"
+        enum: ["local", "global"]
+      Size:
+        type: "integer"
+        description: "The disk space used by the volume (local driver only)"
+        default: -1
+        x-nullable: false
+      RefCount:
+        type: "integer"
+        description: "The number of containers referencing this volume."
+        default: -1
+        x-nullable: false
     example:
       Name: "tardis"
       Driver: "custom"
