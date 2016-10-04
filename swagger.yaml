@@ -62,20 +62,28 @@ definitions:
   Port:
     type: "object"
     description: "An open port on a container"
+    required: [PrivatePort, Type]
     properties:
       IP:
         type: "string"
+        format: "ip-address"
       PrivatePort:
         type: "integer"
+        format: "uint16"
+        x-nullable: false
         description: "Port on the container"
       PublicPort:
         type: "integer"
+        format: "uint16"
         description: "Port exposed on the host"
       Type:
         type: "string"
-        enum:
-          - "tcp"
-          - "udp"
+        x-nullable: false
+        enum: ["tcp", "udp"]
+    example:
+      PrivatePort: 8080
+      PublicPort: 80
+      Type: "tcp"
   MountPoint:
     type: "object"
     description: "A mount point inside a container"
@@ -754,6 +762,58 @@ definitions:
               type: "string"
           BaseLayer:
             type: "string"
+
+  ImageSummary:
+    type: "object"
+    required:
+      - Id
+      - ParentId
+      - RepoTags
+      - RepoDigests
+      - Created
+      - Size
+      - SharedSize
+      - VirtualSize
+      - Labels
+      - Containers
+    properties:
+      Id:
+        type: "string"
+        x-nullable: false
+      ParentId:
+        type: "string"
+        x-nullable: false
+      RepoTags:
+        type: "array"
+        x-nullable: false
+        items:
+          type: "string"
+      RepoDigests:
+        type: "array"
+        x-nullable: false
+        items:
+          type: "string"
+      Created:
+        type: "integer"
+        x-nullable: false
+      Size:
+        type: "integer"
+        x-nullable: false
+      SharedSize:
+        type: "integer"
+        x-nullable: false
+      VirtualSize:
+        type: "integer"
+        x-nullable: false
+      Labels:
+        type: "object"
+        x-nullable: false
+        additionalProperties:
+          type: "string"
+      Containers:
+        x-nullable: false
+        type: "integer"
+
   AuthConfig:
     type: "object"
     properties:
@@ -786,36 +846,53 @@ definitions:
           type: "string"
   Volume:
     type: "object"
+    required: [Name, Driver, Mountpoint, Labels, Scope]
     properties:
       Name:
         type: "string"
         description: "Name of the volume."
+        x-nullable: false
       Driver:
         type: "string"
         description: "Name of the volume driver used by the volume."
+        x-nullable: false
       Mountpoint:
         type: "string"
         description: "Mount path of the volume on the host."
+        x-nullable: false
       Status:
         type: "object"
         description: |
-          Low-level details about the volume, provided by the volume driver. Details are returned as a map with key/value pairs: `{"key":"value","key2":"value2"}`.
+          Low-level details about the volume, provided by the volume driver.
+          Details are returned as a map with key/value pairs:
+          `{"key":"value","key2":"value2"}`.
 
-          The `Status` field is optional, and is omitted if the volume driver does not support this feature.
+          The `Status` field is optional, and is omitted if the volume driver
+          does not support this feature.
         additionalProperties:
-          type: "string"
+          type: "object"
       Labels:
         type: "object"
         description: "A mapping of abitrary key/value data set on this volume."
+        x-nullable: false
         additionalProperties:
           type: "string"
       Scope:
         type: "string"
         description: "The level at which the volume exists. Either `global` for cluster-wide, or `local` for machine level."
         default: "local"
-        enum:
-          - "local"
-          - "global"
+        x-nullable: false
+        enum: ["local", "global"]
+      Size:
+        type: "integer"
+        description: "The disk space used by the volume (local driver only)"
+        default: -1
+        x-nullable: false
+      RefCount:
+        type: "integer"
+        description: "The number of containers referencing this volume."
+        default: -1
+        x-nullable: false
     example:
       Name: "tardis"
       Driver: "custom"
@@ -3796,37 +3873,11 @@ paths:
         - "application/json"
       responses:
         200:
-          description: "no error"
+          description: "Summary image data for the images matching the query"
           schema:
             type: "array"
             items:
-              type: "object"
-              properties:
-                Id:
-                  type: "string"
-                ParentId:
-                  type: "string"
-                RepoTags:
-                  type: "array"
-                  items:
-                    type: "string"
-                RepoDigests:
-                  type: "array"
-                  items:
-                    type: "string"
-                Created:
-                  type: "integer"
-                  format: "int64"
-                Size:
-                  type: "integer"
-                  format: "int64"
-                VirtualSize:
-                  type: "integer"
-                  format: "int64"
-                Labels:
-                  type: "object"
-                  additionalProperties:
-                    type: "string"
+              $ref: "#/definitions/ImageSummary"
           examples:
             application/json:
               - RepoTags:
