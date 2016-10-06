@@ -84,6 +84,7 @@ definitions:
       PrivatePort: 8080
       PublicPort: 80
       Type: "tcp"
+
   MountPoint:
     type: "object"
     description: "A mount point inside a container"
@@ -104,6 +105,7 @@ definitions:
         type: "boolean"
       Propagation:
         type: "string"
+
   DeviceMapping:
     type: "object"
     description: "A device mapping between the host and container"
@@ -118,6 +120,7 @@ definitions:
       PathOnHost: "/dev/deviceName"
       PathInContainer: "/dev/deviceName"
       CgroupPermissions: "mrw"
+
   ThrottleDevice:
     type: "object"
     properties:
@@ -129,6 +132,7 @@ definitions:
         type: "integer"
         format: "int64"
         minimum: 0
+
   Mount:
     type: "object"
     properties:
@@ -188,6 +192,7 @@ definitions:
                 type: "object"
                 additionalProperties:
                   type: "string"
+
   RestartPolicy:
     description: |
       The behavior to apply when the container exits. The default is not to restart.
@@ -209,6 +214,7 @@ definitions:
         type: "integer"
         description: "If `on-failure` is used, the number of times to retry before giving up"
     default: {}
+
   Resources:
     description: "A container's resources (cgroups config, ulimits, etc)"
     type: "object"
@@ -680,6 +686,7 @@ definitions:
         type: "array"
         items:
           type: "string"
+
   NetworkConfig:
     description: "TODO: check is correct"
     type: "object"
@@ -700,6 +707,7 @@ definitions:
         type: "array"
         items:
           $ref: "#/definitions/Port"
+
   GraphDriver:
     description: "Information about this container's graph driver."
     type: "object"
@@ -710,6 +718,7 @@ definitions:
         type: "object"
         additionalProperties:
           type: "string"
+
   Image:
     type: "object"
     properties:
@@ -829,6 +838,7 @@ definitions:
       username: "hannibal"
       password: "xxxx"
       serveraddress: "https://index.docker.io/v1/"
+
   ProcessConfig:
     type: "object"
     properties:
@@ -844,6 +854,7 @@ definitions:
         type: "array"
         items:
           type: "string"
+
   Volume:
     type: "object"
     required: [Name, Driver, Mountpoint, Labels, Scope]
@@ -903,6 +914,7 @@ definitions:
         com.example.some-label: "some-value"
         com.example.some-other-label: "some-other-value"
       Scope: "local"
+
   Network:
     type: "object"
     properties:
@@ -972,6 +984,7 @@ definitions:
           type: "object"
           additionalProperties:
             type: "string"
+
   NetworkContainer:
     type: "object"
     properties:
@@ -983,6 +996,7 @@ definitions:
         type: "string"
       IPv6Address:
         type: "string"
+
   BuildInfo:
     type: "object"
     properties:
@@ -1000,6 +1014,7 @@ definitions:
         type: "string"
       progressDetail:
         $ref: "#/definitions/ProgressDetail"
+
   CreateImageInfo:
     type: "object"
     properties:
@@ -1011,6 +1026,7 @@ definitions:
         type: "string"
       progressDetail:
         $ref: "#/definitions/ProgressDetail"
+
   PushImageInfo:
     type: "object"
     properties:
@@ -1036,7 +1052,8 @@ definitions:
         type: "integer"
       message:
         type: "integer"
-  Error:
+
+  ErrorResponse:
     description: "Represents an error."
     type: "object"
     required: ["message"]
@@ -1044,8 +1061,10 @@ definitions:
       message:
         description: "The error message."
         type: "string"
+        x-nullable: false
     example:
       message: "Something went wrong."
+
   EndpointSettings:
     description: "Configuration for a network endpoint."
     type: "object"
@@ -1089,13 +1108,18 @@ definitions:
         format: "int64"
       MacAddress:
         type: "string"
+
   PluginMount:
     type: "object"
+    x-nullable: false
+    required: [Name, Description, Settable, Source, Destination, Type, Options]
     properties:
       Name:
         type: "string"
+        x-nullable: false
       Description:
         type: "string"
+        x-nullable: false
       Settable:
         type: "array"
         items:
@@ -1104,41 +1128,88 @@ definitions:
         type: "string"
       Destination:
         type: "string"
+        x-nullable: false
       Type:
         type: "string"
+        x-nullable: false
       Options:
         type: "array"
         items:
           type: "string"
+
   PluginDevice:
     type: "object"
+    required: [Name, Description, Settable, Path]
+    x-nullable: false
     properties:
       Name:
         type: "string"
+        x-nullable: false
       Description:
         type: "string"
+        x-nullable: false
       Settable:
         type: "array"
         items:
           type: "string"
       Path:
         type: "string"
+
+  PluginEnv:
+    type: "object"
+    x-nullable: false
+    required: [Name, Description, Settable, Value]
+    properties:
+      Name:
+        x-nullable: false
+        type: "string"
+      Description:
+        x-nullable: false
+        type: "string"
+      Settable:
+        type: "array"
+        items:
+          type: "string"
+      Value:
+        type: "string"
+
+  PluginInterfaceType:
+    type: "object"
+    x-nullable: false
+    required: [Prefix, Capability, Version]
+    properties:
+      Prefix:
+        type: "string"
+        x-nullable: false
+      Capability:
+        type: "string"
+        x-nullable: false
+      Version:
+        type: "string"
+        x-nullable: false
+
   Plugin:
     description: "A plugin for the Remote API"
     type: "object"
+    required: [Config, Enabled, Manifest, Name, Tag]
     properties:
       Id:
         type: "string"
       Name:
         type: "string"
+        x-nullable: false
       Tag:
         type: "string"
+        x-nullable: false
       Enabled:
         description: "True when the plugin is running. False when the plugin is not running, only installed."
         type: "boolean"
+        x-nullable: false
       Config:
         description: "Settings that can be modified by users."
         type: "object"
+        x-nullable: false
+        required: [Args, Devices, Env, Mounts]
         properties:
           Mounts:
             type: "array"
@@ -1159,40 +1230,67 @@ definitions:
       Manifest:
         description: "The manifest of a plugin."
         type: "object"
+        x-nullable: false
+        required:
+          - ManifestVersion
+          - Description
+          - Documentation
+          - Interface
+          - Entrypoint
+          - Workdir
+          - Network
+          - Capabilities
+          - Mounts
+          - Devices
+          - Env
+          - Args
         properties:
           ManifestVersion:
             type: "string"
+            x-nullable: false
           Description:
             type: "string"
+            x-nullable: false
           Documentation:
             type: "string"
+            x-nullable: false
           Interface:
             description: "The interface between Docker and the plugin"
+            x-nullable: false
             type: "object"
+            required: [Types, Socket]
             properties:
               Types:
                 type: "array"
                 items:
-                  type: "string"
+                  $ref: "#/definitions/PluginInterfaceType"
               Socket:
                 type: "string"
+                x-nullable: false
           Entrypoint:
             type: "array"
             items:
               type: "string"
           Workdir:
             type: "string"
+            x-nullable: false
           User:
             type: "object"
+            x-nullable: false
             properties:
               UID:
                 type: "integer"
+                format: "uint32"
               GID:
                 type: "integer"
+                format: "uint32"
           Network:
             type: "object"
+            x-nullable: false
+            required: [Type]
             properties:
               Type:
+                x-nullable: false
                 type: "string"
           Capabilities:
             type: "array"
@@ -1207,24 +1305,19 @@ definitions:
             items:
               $ref: "#/definitions/PluginDevice"
           Env:
-            type: "object"
-            properties:
-              Name:
-                type: "string"
-              Description:
-                type: "string"
-              Settable:
-                type: "array"
-                items:
-                  type: "string"
-              Value:
-                type: "string"
+            type: "array"
+            items:
+              $ref: "#/definitions/PluginEnv"
           Args:
             type: "object"
+            x-nullable: false
+            required: [Name, Description, Settable, Value]
             properties:
               Name:
+                x-nullable: false
                 type: "string"
               Description:
+                x-nullable: false
                 type: "string"
               Settable:
                 type: "array"
@@ -1309,6 +1402,7 @@ definitions:
           Description: "command line arguments"
           Settable: null
           Value: []
+
   NodeSpec:
     type: "object"
     properties:
@@ -1578,7 +1672,6 @@ definitions:
         $ref: "#/definitions/SwarmSpec"
   TaskSpec:
     description: "User modifiable task configuration."
-    type: "object"
     properties:
       ContainerSpec:
         type: "object"
@@ -2280,11 +2373,11 @@ paths:
         400:
           description: "bad parameter"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
         500:
           description: "server error"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
       tags:
         - "Container"
   /containers/create:
@@ -2457,26 +2550,26 @@ paths:
         400:
           description: "bad parameter"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
         404:
           description: "no such container"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
           examples:
             application/json:
               message: "No such container: c2ada9df5af8"
         406:
           description: "impossible to attach"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
         409:
           description: "conflict"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
         500:
           description: "server error"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
       tags:
         - "Container"
   /containers/{id}/json:
@@ -2749,14 +2842,14 @@ paths:
         404:
           description: "no such container"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
           examples:
             application/json:
               message: "No such container: c2ada9df5af8"
         500:
           description: "server error"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
       parameters:
         - name: "id"
           in: "path"
@@ -2826,14 +2919,14 @@ paths:
         404:
           description: "no such container"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
           examples:
             application/json:
               message: "No such container: c2ada9df5af8"
         500:
           description: "server error"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
       parameters:
         - name: "id"
           in: "path"
@@ -2868,14 +2961,14 @@ paths:
         404:
           description: "no such container"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
           examples:
             application/json:
               message: "No such container: c2ada9df5af8"
         500:
           description: "server error"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
       parameters:
         - name: "id"
           in: "path"
@@ -2958,14 +3051,14 @@ paths:
         404:
           description: "no such container"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
           examples:
             application/json:
               message: "No such container: c2ada9df5af8"
         500:
           description: "server error"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
       parameters:
         - name: "id"
           in: "path"
@@ -2987,14 +3080,14 @@ paths:
         404:
           description: "no such container"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
           examples:
             application/json:
               message: "No such container: c2ada9df5af8"
         500:
           description: "server error"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
       parameters:
         - name: "id"
           in: "path"
@@ -3111,14 +3204,14 @@ paths:
         404:
           description: "no such container"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
           examples:
             application/json:
               message: "No such container: c2ada9df5af8"
         500:
           description: "server error"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
       parameters:
         - name: "id"
           in: "path"
@@ -3147,14 +3240,14 @@ paths:
         404:
           description: "no such container"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
           examples:
             application/json:
               message: "No such container: c2ada9df5af8"
         500:
           description: "cannot resize container"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
       parameters:
         - name: "id"
           in: "path"
@@ -3181,18 +3274,18 @@ paths:
         304:
           description: "container already started"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
         404:
           description: "no such container"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
           examples:
             application/json:
               message: "No such container: c2ada9df5af8"
         500:
           description: "server error"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
       parameters:
         - name: "id"
           in: "path"
@@ -3215,18 +3308,18 @@ paths:
         304:
           description: "container already stopped"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
         404:
           description: "no such container"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
           examples:
             application/json:
               message: "No such container: c2ada9df5af8"
         500:
           description: "server error"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
       parameters:
         - name: "id"
           in: "path"
@@ -3249,14 +3342,14 @@ paths:
         404:
           description: "no such container"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
           examples:
             application/json:
               message: "No such container: c2ada9df5af8"
         500:
           description: "server error"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
       parameters:
         - name: "id"
           in: "path"
@@ -3280,14 +3373,14 @@ paths:
         404:
           description: "no such container"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
           examples:
             application/json:
               message: "No such container: c2ada9df5af8"
         500:
           description: "server error"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
       parameters:
         - name: "id"
           in: "path"
@@ -3323,14 +3416,14 @@ paths:
         404:
           description: "no such container"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
           examples:
             application/json:
               message: "No such container: c2ada9df5af8"
         500:
           description: "server error"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
       parameters:
         - name: "id"
           in: "path"
@@ -3373,18 +3466,18 @@ paths:
         404:
           description: "no such container"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
           examples:
             application/json:
               message: "No such container: c2ada9df5af8"
         409:
           description: "name already in use"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
         500:
           description: "server error"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
       parameters:
         - name: "id"
           in: "path"
@@ -3412,14 +3505,14 @@ paths:
         404:
           description: "no such container"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
           examples:
             application/json:
               message: "No such container: c2ada9df5af8"
         500:
           description: "server error"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
       parameters:
         - name: "id"
           in: "path"
@@ -3439,14 +3532,14 @@ paths:
         404:
           description: "no such container"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
           examples:
             application/json:
               message: "No such container: c2ada9df5af8"
         500:
           description: "server error"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
       parameters:
         - name: "id"
           in: "path"
@@ -3546,18 +3639,18 @@ paths:
         400:
           description: "bad parameter"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
         404:
           description: "no such container"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
           examples:
             application/json:
               message: "No such container: c2ada9df5af8"
         500:
           description: "server error"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
       parameters:
         - name: "id"
           in: "path"
@@ -3612,18 +3705,18 @@ paths:
         400:
           description: "bad parameter"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
         404:
           description: "no such container"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
           examples:
             application/json:
               message: "No such container: c2ada9df5af8"
         500:
           description: "server error"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
       parameters:
         - name: "id"
           in: "path"
@@ -3680,14 +3773,14 @@ paths:
         404:
           description: "no such container"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
           examples:
             application/json:
               message: "No such container: c2ada9df5af8"
         500:
           description: "server error"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
       parameters:
         - name: "id"
           in: "path"
@@ -3706,18 +3799,18 @@ paths:
         400:
           description: "bad parameter"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
         404:
           description: "no such container"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
           examples:
             application/json:
               message: "No such container: c2ada9df5af8"
         500:
           description: "server error"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
       parameters:
         - name: "id"
           in: "path"
@@ -3751,18 +3844,18 @@ paths:
         400:
           description: "client error, bad parameter, details in JSON response body, one of: must specify path parameter (path cannot be empty) not a directory (path was asserted to be a directory but exists as a file)"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
         404:
           description: "client error, resource not found, one of: 1) no such container (container id does not exist) 2) no such file or directory (path resource does not exist)"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
           examples:
             application/json:
               message: "No such container: c2ada9df5af8"
         500:
           description: "server error"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
       parameters:
         - name: "id"
           in: "path"
@@ -3788,18 +3881,18 @@ paths:
         400:
           description: "client error, bad parameter, details in JSON response body, one of: must specify path parameter (path cannot be empty) not a directory (path was asserted to be a directory but exists as a file)"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
         404:
           description: "client error, resource not found, one of: 1) no such container (container id does not exist) 2) no such file or directory (path resource does not exist)"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
           examples:
             application/json:
               message: "No such container: c2ada9df5af8"
         500:
           description: "server error"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
       parameters:
         - name: "id"
           in: "path"
@@ -3826,22 +3919,22 @@ paths:
         400:
           description: "Bad parameter"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
         403:
           description: "Permission denied, the volume or container rootfs is marked as read-only."
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
         404:
           description: "No such container or path does not exist inside the container"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
           examples:
             application/json:
               message: "No such container: c2ada9df5af8"
         500:
           description: "Server error"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
       parameters:
         - name: "id"
           in: "path"
@@ -3903,7 +3996,7 @@ paths:
         500:
           description: "server error"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
       parameters:
         - name: "all"
           in: "query"
@@ -4053,7 +4146,7 @@ paths:
         500:
           description: "server error"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
       tags:
         - "Image"
   /images/create:
@@ -4072,7 +4165,7 @@ paths:
         500:
           description: "server error"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
       parameters:
         - name: "fromImage"
           in: "query"
@@ -4200,14 +4293,14 @@ paths:
         404:
           description: "No such image"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
           examples:
             application/json:
               message: "No such image: someimage (tag: latest)"
         500:
           description: "Server error"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
       parameters:
         - name: "name"
           in: "path"
@@ -4274,11 +4367,11 @@ paths:
         404:
           description: "No such image"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
         500:
           description: "Server error"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
       parameters:
         - name: "name"
           in: "path"
@@ -4305,11 +4398,11 @@ paths:
         404:
           description: "No such image"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
         500:
           description: "Server error"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
       parameters:
         - name: "name"
           in: "path"
@@ -4338,19 +4431,19 @@ paths:
         400:
           description: "Bad parameter"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
         404:
           description: "No such image"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
         409:
           description: "Conflict"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
         500:
           description: "Server error"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
       parameters:
         - name: "name"
           in: "path"
@@ -4399,15 +4492,15 @@ paths:
         404:
           description: "No such image"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
         409:
           description: "Conflict"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
         500:
           description: "Server error"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
       parameters:
         - name: "name"
           in: "path"
@@ -4471,7 +4564,7 @@ paths:
         500:
           description: "Server error"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
       parameters:
         - name: "term"
           in: "query"
@@ -4523,7 +4616,7 @@ paths:
         500:
           description: "Server error"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
       parameters:
         - name: "authConfig"
           in: "body"
@@ -4738,7 +4831,7 @@ paths:
         500:
           description: "Server error"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
       tags:
         - "Misc"
   /version:
@@ -4786,7 +4879,7 @@ paths:
         500:
           description: "server error"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
       tags:
         - "Misc"
   /_ping:
@@ -4805,7 +4898,7 @@ paths:
         500:
           description: "server error"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
       tags:
         - "Misc"
   /commit:
@@ -4831,14 +4924,14 @@ paths:
         404:
           description: "no such container"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
           examples:
             application/json:
               message: "No such container: c2ada9df5af8"
         500:
           description: "server error"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
       parameters:
         - name: "containerConfig"
           in: "body"
@@ -4941,7 +5034,7 @@ paths:
         500:
           description: "server error"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
       parameters:
         - name: "since"
           in: "query"
@@ -5006,7 +5099,7 @@ paths:
         500:
           description: "server error"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
       parameters:
         - name: "name"
           in: "path"
@@ -5036,7 +5129,7 @@ paths:
         500:
           description: "server error"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
       parameters:
         - name: "names"
           in: "query"
@@ -5064,7 +5157,7 @@ paths:
         500:
           description: "server error"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
       parameters:
         - name: "imagesTarball"
           in: "body"
@@ -5103,18 +5196,18 @@ paths:
         404:
           description: "no such container"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
           examples:
             application/json:
               message: "No such container: c2ada9df5af8"
         409:
           description: "container is paused"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
         500:
           description: "Server error"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
       parameters:
         - name: "execConfig"
           in: "body"
@@ -5173,11 +5266,11 @@ paths:
         404:
           description: "No such exec instance"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
         409:
           description: "Container is stopped or paused"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
       parameters:
         - name: "execStartConfig"
           in: "body"
@@ -5211,7 +5304,7 @@ paths:
         404:
           description: "No such exec instance"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
       parameters:
         - name: "id"
           in: "path"
@@ -5279,11 +5372,11 @@ paths:
         404:
           description: "No such exec instance"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
         500:
           description: "Server error"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
       parameters:
         - name: "id"
           in: "path"
@@ -5292,26 +5385,32 @@ paths:
           type: "string"
       tags:
         - "Exec"
+
   /volumes:
     get:
       summary: "List volumes"
-      operationId: "GetVolumesList"
-      produces:
-        - "application/json"
+      operationId: "VolumesList"
+      produces: ["application/json"]
       responses:
         200:
-          description: "No error"
+          description: "Summary volume data that matches the query"
           schema:
             type: "object"
+            required: [Volumes, Warnings]
             properties:
               Volumes:
                 type: "array"
+                x-nullable: false
+                description: "List of volumes"
                 items:
                   $ref: "#/definitions/Volume"
               Warnings:
                 type: "array"
+                x-nullable: false
+                description: "Warnings that occurred when fetching the list of volumes"
                 items:
                   type: "string"
+
           examples:
             application/json:
               Volumes:
@@ -5326,36 +5425,40 @@ paths:
         500:
           description: "Server error"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
       parameters:
         - name: "filters"
           in: "query"
           description: |
-            JSON encoded value of the filters (a `map[string][]string`) to process on the volumes list. Available filters:
+            JSON encoded value of the filters (a `map[string][]string`) to
+            process on the volumes list. Available filters:
 
             - `name=<volume-name>` Matches all or part of a volume name.
-            - `dangling=<boolean>` When set to `true` (or `1`), returns all volumes that are not in use by a container. When set to `false` (or `0`), only volumes that are in use by one or more containers are returned.
-            - `driver=<volume-driver-name>` Matches all or part of a volume driver name.
+            - `dangling=<boolean>` When set to `true` (or `1`), returns all
+               volumes that are not in use by a container. When set to `false`
+               (or `0`), only volumes that are in use by one or more
+               containers are returned.
+            - `driver=<volume-driver-name>` Matches all or part of a volume
+              driver name.
           type: "string"
-      tags:
-        - "Volume"
+          format: "json"
+      tags: ["Volume"]
+
   /volumes/create:
     post:
       summary: "Create a volume"
-      operationId: "PostVolumesCreate"
-      consumes:
-        - "application/json"
-      produces:
-        - "application/json"
+      operationId: "VolumesCreate"
+      consumes: ["application/json"]
+      produces: ["application/json"]
       responses:
         201:
-          description: "No error"
+          description: "The volume was created successfully"
           schema:
             $ref: "#/definitions/Volume"
         500:
           description: "Server error"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
       parameters:
         - name: "volumeConfig"
           in: "body"
@@ -5367,10 +5470,12 @@ paths:
               Name:
                 description: "The new volume's name. If not specified, Docker generates a name."
                 type: "string"
+                x-nullable: false
               Driver:
                 description: "Name of the volume driver to use."
                 type: "string"
                 default: "local"
+                x-nullable: false
               DriverOpts:
                 description: "A mapping of driver options and values. These options are passed directly to the driver and are driver specific."
                 type: "object"
@@ -5387,14 +5492,13 @@ paths:
                 com.example.some-label: "some-value"
                 com.example.some-other-label: "some-other-value"
               Driver: "custom"
-      tags:
-        - "Volume"
+      tags: ["Volume"]
+
   /volumes/{name}:
     get:
       summary: "Inspect a volume"
-      operationId: "GetVolumesInspect"
-      produces:
-        - "application/json"
+      operationId: "VolumesInspect"
+      produces: ["application/json"]
       responses:
         200:
           description: "No error"
@@ -5403,50 +5507,50 @@ paths:
         404:
           description: "No such volume"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
         500:
           description: "Server error"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
       parameters:
         - name: "name"
           in: "path"
           required: true
           description: "Volume name or ID"
           type: "string"
-      tags:
-        - "Volume"
+      tags: ["Volume"]
+
     delete:
       summary: "Remove a volume"
       description: "Instruct the driver to remove the volume."
-      operationId: "DeleteVolumes"
+      operationId: "VolumesDelete"
       responses:
         204:
-          description: "No error"
+          description: "The volume was removed"
         404:
           description: "No such volume or volume driver"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
         409:
           description: "Volume is in use and cannot be removed"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
         500:
           description: "Server error"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
       parameters:
         - name: "name"
           in: "path"
           required: true
           description: "Volume name or ID"
           type: "string"
-      tags:
-        - "Volume"
+      tags: ["Volume"]
+
   /networks:
     get:
       summary: "List networks"
-      operationId: "GetNetworksList"
+      operationId: "NetworksList"
       produces:
         - "application/json"
       responses:
@@ -5507,7 +5611,7 @@ paths:
         500:
           description: "Server error"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
       parameters:
         - name: "filters"
           in: "query"
@@ -5520,8 +5624,8 @@ paths:
             - `name=<network-name>` Matches all or part of a network name.
             - `type=["custom"|"builtin"]` Filters networks by type. The `custom` keyword returns all user-defined networks.
           type: "string"
-      tags:
-        - "Network"
+      tags: ["Network"]
+
   /networks/{id}:
     get:
       summary: "Inspect a network"
@@ -5536,15 +5640,15 @@ paths:
         404:
           description: "Network not found"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
       parameters:
         - name: "id"
           in: "path"
           description: "Network ID or name"
           required: true
           type: "string"
-      tags:
-        - "Network"
+      tags: ["Network"]
+
     delete:
       summary: "Remove a network"
       operationId: "DeleteNetworks"
@@ -5554,19 +5658,19 @@ paths:
         404:
           description: "no such network"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
         500:
           description: "Server error"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
       parameters:
         - name: "id"
           in: "path"
           description: "Network ID or name"
           required: true
           type: "string"
-      tags:
-        - "Network"
+      tags: ["Network"]
+
   /networks/create:
     post:
       summary: "Create a network"
@@ -5592,11 +5696,11 @@ paths:
         404:
           description: "plugin not found"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
         500:
           description: "Server error"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
       parameters:
         - name: "networkConfig"
           in: "body"
@@ -5660,8 +5764,8 @@ paths:
               Labels:
                 com.example.some-label: "some-value"
                 com.example.some-other-label: "some-other-value"
-      tags:
-        - "Network"
+      tags: ["Network"]
+
   /networks/{id}/connect:
     post:
       summary: "Connect a container to a network"
@@ -5674,15 +5778,15 @@ paths:
         403:
           description: "Operation not supported for swarm scoped networks"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
         404:
           description: "Network or container not found"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
         500:
           description: "Server error"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
       parameters:
         - name: "id"
           in: "path"
@@ -5706,8 +5810,8 @@ paths:
                 IPAMConfig:
                   IPv4Address: "172.24.56.89"
                   IPv6Address: "2001:db8::5689"
-      tags:
-        - "Network"
+      tags: ["Network"]
+
   /networks/{id}/disconnect:
     post:
       summary: "Disconnect a container from a network"
@@ -5720,15 +5824,15 @@ paths:
         403:
           description: "Operation not supported for swarm scoped networks"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
         404:
           description: "Network or container not found"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
         500:
           description: "Server error"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
       parameters:
         - name: "id"
           in: "path"
@@ -5747,8 +5851,8 @@ paths:
               Force:
                 type: "boolean"
                 description: "Force the container to disconnect from the network."
-      tags:
-        - "Network"
+      tags: ["Network"]
+
   /plugins:
     get:
       summary: "List plugins"
@@ -5841,7 +5945,7 @@ paths:
         500:
           description: "Server error"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
       tags:
         - "Plugins"
   /plugins/pull:
@@ -5885,7 +5989,7 @@ paths:
         500:
           description: "server error"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
       parameters:
         - name: "name"
           in: "query"
@@ -5913,11 +6017,11 @@ paths:
         404:
           description: "plugin is not installed"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
         500:
           description: "server error"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
       parameters:
         - name: "name"
           in: "path"
@@ -5937,11 +6041,11 @@ paths:
         404:
           description: "plugin is not installed"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
         500:
           description: "server error"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
       parameters:
         - name: "name"
           in: "path"
@@ -5965,7 +6069,7 @@ paths:
         500:
           description: "server error"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
       parameters:
         - name: "name"
           in: "path"
@@ -5984,7 +6088,7 @@ paths:
         500:
           description: "server error"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
       parameters:
         - name: "name"
           in: "path"
@@ -6007,7 +6111,7 @@ paths:
         500:
           description: "server error"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
       parameters:
         - name: "filters"
           in: "query"
@@ -6034,11 +6138,11 @@ paths:
         404:
           description: "no such node"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
         500:
           description: "server error"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
       parameters:
         - name: "id"
           in: "path"
@@ -6056,11 +6160,11 @@ paths:
         404:
           description: "no such node"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
         500:
           description: "server error"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
       parameters:
         - name: "id"
           in: "path"
@@ -6084,11 +6188,11 @@ paths:
         404:
           description: "no such node"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
         500:
           description: "server error"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
       parameters:
         - name: "id"
           in: "path"
@@ -6155,7 +6259,7 @@ paths:
         500:
           description: "server error"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
       tags:
         - "Swarm"
   /swarm/init:
@@ -6175,15 +6279,15 @@ paths:
         400:
           description: "bad parameter"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
         406:
           description: "node is already part of a swarm"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
         500:
           description: "server error"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
       parameters:
         - name: "body"
           in: "body"
@@ -6223,15 +6327,15 @@ paths:
         400:
           description: "bad parameter"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
         406:
           description: "node is already part of a swarm"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
         500:
           description: "server error"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
       parameters:
         - name: "body"
           in: "body"
@@ -6269,11 +6373,11 @@ paths:
         406:
           description: "node is not part of a swarm"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
         500:
           description: "server error"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
       parameters:
         - name: "force"
           description: "Force leave swarm, even if this is the last manager or that it will break the cluster."
@@ -6292,15 +6396,15 @@ paths:
         400:
           description: "bad parameter"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
         406:
           description: "node is not part of a swarm"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
         500:
           description: "server error"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
       parameters:
         - name: "body"
           in: "body"
@@ -6339,7 +6443,7 @@ paths:
         500:
           description: "server error"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
       parameters:
         - name: "filters"
           in: "query"
@@ -6373,15 +6477,15 @@ paths:
         406:
           description: "server error or node is not part of a swarm"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
         409:
           description: "name conflicts with an existing service"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
         500:
           description: "server error"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
       parameters:
         - name: "body"
           in: "body"
@@ -6389,8 +6493,7 @@ paths:
           schema:
             allOf:
               - $ref: "#/definitions/ServiceSpec"
-              - type: "object"
-                example:
+              - example:
                   Name: "web"
                   TaskTemplate:
                     ContainerSpec:
@@ -6453,11 +6556,11 @@ paths:
         404:
           description: "no such service"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
         500:
           description: "server error"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
       parameters:
         - name: "id"
           in: "path"
@@ -6475,11 +6578,11 @@ paths:
         404:
           description: "no such service"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
         500:
           description: "server error"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
       parameters:
         - name: "id"
           in: "path"
@@ -6498,11 +6601,11 @@ paths:
         404:
           description: "no such service"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
         500:
           description: "server error"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
       parameters:
         - name: "id"
           in: "path"
@@ -6515,8 +6618,7 @@ paths:
           schema:
             allOf:
               - $ref: "#/definitions/ServiceSpec"
-              - type: "object"
-                example:
+              - example:
                   Name: "top"
                   TaskTemplate:
                     ContainerSpec:
@@ -6678,7 +6780,7 @@ paths:
         500:
           description: "server error"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
       parameters:
         - name: "filters"
           in: "query"
@@ -6708,11 +6810,11 @@ paths:
         404:
           description: "no such task"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
         500:
           description: "server error"
           schema:
-            $ref: "#/definitions/Error"
+            $ref: "#/definitions/ErrorResponse"
       parameters:
         - name: "id"
           in: "path"
