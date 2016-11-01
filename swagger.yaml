@@ -3855,18 +3855,25 @@ paths:
               type: "string"
               description: "TODO"
         400:
-          description: "client error, bad parameter, details in JSON response body, one of: must specify path parameter (path cannot be empty) not a directory (path was asserted to be a directory but exists as a file)"
+          description: "Bad parameter"
           schema:
-            $ref: "#/definitions/ErrorResponse"
+            allOf:
+              - $ref: "#/definitions/ErrorResponse"
+              - type: "object"
+                properties:
+                  message:
+                    description: "The error message. Either \"must specify path parameter\" (path cannot be empty) or \"not a directory\" (path was asserted to be a directory but exists as a file)."
+                    type: "string"
+                    x-nullable: false
         404:
-          description: "client error, resource not found, one of: 1) no such container (container id does not exist) 2) no such file or directory (path resource does not exist)"
+          description: "Container or path does not exist"
           schema:
             $ref: "#/definitions/ErrorResponse"
           examples:
             application/json:
               message: "No such container: c2ada9df5af8"
         500:
-          description: "server error"
+          description: "Server error"
           schema:
             $ref: "#/definitions/ErrorResponse"
       parameters:
@@ -3892,11 +3899,18 @@ paths:
         200:
           description: "no error"
         400:
-          description: "client error, bad parameter, details in JSON response body, one of: must specify path parameter (path cannot be empty) not a directory (path was asserted to be a directory but exists as a file)"
+          description: "Bad parameter"
           schema:
-            $ref: "#/definitions/ErrorResponse"
+            allOf:
+              - $ref: "#/definitions/ErrorResponse"
+              - type: "object"
+                properties:
+                  message:
+                    description: "The error message. Either \"must specify path parameter\" (path cannot be empty) or \"not a directory\" (path was asserted to be a directory but exists as a file)."
+                    type: "string"
+                    x-nullable: false
         404:
-          description: "client error, resource not found, one of: 1) no such container (container id does not exist) 2) no such file or directory (path resource does not exist)"
+          description: "Container or path does not exist"
           schema:
             $ref: "#/definitions/ErrorResponse"
           examples:
