@@ -8,7 +8,7 @@ See https://github.com/docker/engine-api/issues/77 for background.
 
 Install Dobi, the build tool:
 
-    curl -L -o /usr/local/bin/dobi "https://github.com/dnephin/dobi/releases/download/v0.5/dobi-$(uname -s)"; chmod +x /usr/local/bin/dobi
+    curl -L -o /usr/local/bin/dobi "https://github.com/dnephin/dobi/releases/download/v0.8/dobi-$(uname -s)"; chmod +x /usr/local/bin/dobi
 
 To view docs, run `dobi preview` and go to http://localhost
 
