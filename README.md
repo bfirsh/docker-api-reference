@@ -4,6 +4,8 @@ A work in progress. It produces this: https://bfirsh.github.io/docker-api-refere
 
 See https://github.com/docker/engine-api/issues/77 for background.
 
+**Note:** swagger.yaml is [now in docker/docker](https://github.com/docker/docker/blob/master/api/swagger.yaml), which is now the source of truth. For the current state of implementing the docs, [see this pull request](https://github.com/docker/docker.github.io/pull/210).
+
 ## Usage
 
 Install Dobi, the build tool:
